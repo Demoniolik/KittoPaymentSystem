@@ -1,5 +1,6 @@
 package com.example.ServletTest.command;
 
+import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.model.user.UserBuilder;
 import com.example.ServletTest.model.user.UserType;
@@ -8,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class RegisterCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(RegisterCommand.class);
@@ -17,7 +19,9 @@ public class RegisterCommand implements ServletCommand {
 
     public RegisterCommand() {
         // TODO: Load all the jsp pages from properties file
-        userService = new UserService();
+        userService = new UserService(UserDaoImpl.getInstance());
+        registrationPage = "registration.jsp";
+        mainPage = "WEB-INF/MainContent.jsp";
     }
 
     @Override
@@ -41,6 +45,7 @@ public class RegisterCommand implements ServletCommand {
                     .build();
             if (userService.register(user)) {
                 resultPage = mainPage;
+                LoginCommand.putUserToSession(request, user);
             }
         }
         return resultPage;

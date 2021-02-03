@@ -15,20 +15,32 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
     private static UserDaoImpl instance;
+    private static BasicConnectionPool basicConnectionPool;
+    private static final String QUERY_TO_CREATE_USER = "INSERT INTO user SET first_name = ?," +
+            "second_name = ?," +
+            "login = ?," +
+            "password = ?," +
+            "blocked = ?," +
+            "user_type_id = ?";
     private static final String QUERY_TO_GET_ALL_USERS = "SELECT * FROM user";
     private static final String QUERY_TO_GET_USER = "SELECT * FROM user WHERE id = ?";
     private static final String QUERY_TO_UPDATE_USER = "UPDATE user WHERE id = ?" +
                                                         "SET id = ?, first_name = ?," +
                                                         "second_name = ?, login = ?," +
                                                         "password = ?, blocked = ?" +
-                                                        "user_type = ?";
+                                                        "user_type_id = ?";
     private static final String QUERY_TO_DELETE_USER = "DELETE FROM user WHERE id = ?";
-    private static final String QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD = "SELECT * FROM user WHERE email = ? " +
+    private static final String QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD = "SELECT * FROM user WHERE login = ? " +
                                                                                                 "AND password = ?";
 
     private UserDaoImpl() {
         // TODO: load all the constant queries from the properties file
-
+        try {
+            basicConnectionPool = BasicConnectionPool.create();
+        } catch (SQLException exception) {
+            logger.error(exception.getMessage());
+            // TODO: throw database exception
+        }
     }
 
     public static UserDaoImpl getInstance() {
@@ -51,8 +63,35 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void save() {
-
+    public User save(User user) {
+        try {
+           Connection connection = basicConnectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_USER);
+            statement.setString(1, user.getFirstName());
+            statement.setString(2, user.getLastName());
+            statement.setString(3, user.getLogin());
+            statement.setString(4, user.getPassword());
+            statement.setBoolean(5, user.isBlocked());
+            statement.setLong(6, user.getUserType().ordinal() + 1);
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows == 0) {
+                logger.error("User creation is failed");
+            }else {
+                logger.info("User creation is successful");
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        user.setId(generatedKeys.getLong(1));
+                    }else {
+                        logger.error("Failed to create user, no obtained id");
+                        // TODO: here you need to throw database exception
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            logger.error(exception.getMessage());
+            // TODO: throw database exception
+        }
+        return user;
     }
 
     @Override
@@ -66,12 +105,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserByEmailAndPassword(String email, String password) {
+    public User getUserByEmailAndPassword(String login, String password) {
+        logger.info("Searching for user by his/her login and password");
         try {
-            BasicConnectionPool connectionPool = BasicConnectionPool.create();
-            Connection connection = connectionPool.getConnection();
+            Connection connection = basicConnectionPool.getConnection();
             PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD);
-            statement.setString(1, email);
+            statement.setString(1, login);
             statement.setString(2, password);
             statement.execute();
             return getUserFromResultSet(statement.getResultSet());
@@ -93,8 +132,9 @@ public class UserDaoImpl implements UserDao {
                         .setLogin(resultSet.getString("login"))
                         .setPassword(resultSet.getString("password"))
                         .setBlocked(resultSet.getBoolean("blocked"))
-                        .setUserType(UserType.values()[resultSet.getInt("userTypeId") - 1])
+                        .setUserType(UserType.values()[resultSet.getInt("user_type_id") - 1])
                         .build();
+                logger.info("User was found and packed in object");
             }
         } catch (SQLException exception) {
             logger.error(exception.getMessage());

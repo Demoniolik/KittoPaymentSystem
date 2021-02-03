@@ -1,7 +1,8 @@
 package com.example.ServletTest.model.user;
 
 public class User {
-    private long id;
+    // TODO: think of a different way of setting id to default wrong value
+    private long id = -1; // Probably bad practice
     private String firstName;
     private String lastName;
     private String login;

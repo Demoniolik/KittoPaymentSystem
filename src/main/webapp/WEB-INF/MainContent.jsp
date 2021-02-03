@@ -4,6 +4,6 @@
     <title>Logged user</title>
 </head>
 <body>
-    <h1 align="center">Hello ${sessionScope.get("user_data")}</h1>
+    <h1 align="center">Hello ${sessionScope.get("firstName")}, ${sessionScope.get("lastName")}</h1>
 </body>
 </html>
