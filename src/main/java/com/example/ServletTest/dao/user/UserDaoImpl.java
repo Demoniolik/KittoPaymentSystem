@@ -47,7 +47,8 @@ public class UserDaoImpl implements UserDao {
         if (instance != null) {
             return instance;
         }
-        return new UserDaoImpl();
+        instance = new UserDaoImpl();
+        return instance;
     }
 
     @Override

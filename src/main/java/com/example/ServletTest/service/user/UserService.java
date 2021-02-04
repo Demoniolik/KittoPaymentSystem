@@ -1,7 +1,6 @@
-package com.example.ServletTest.service;
+package com.example.ServletTest.service.user;
 
 import com.example.ServletTest.dao.user.UserDao;
-import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.user.User;
 import org.apache.log4j.Logger;
 

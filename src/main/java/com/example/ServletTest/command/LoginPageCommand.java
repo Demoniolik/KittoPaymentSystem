@@ -12,6 +12,8 @@ public class LoginPageCommand implements ServletCommand {
 
     public LoginPageCommand() {
         // TODO: Here we load jsp pages from properties file
+        loginPage = "WEB-INF/login.jsp";
+        mainPage = "WEB-INF/MainContent.jsp";
     }
 
     @Override
@@ -22,10 +24,10 @@ public class LoginPageCommand implements ServletCommand {
         && request.getSession().getAttribute("authorized").equals(true)) {
             resultPage = mainPage;
         } // TODO: Here probably you should check if these values are just empty string
-        else if (request.getParameter("email") == null || request.getParameter("password") == null) {
+        else if (request.getParameter("login") == null || request.getParameter("password") == null) {
             logger.info("Returning to login page");
             resultPage = loginPage;
         }
-        return null;
+        return resultPage;
     }
 }

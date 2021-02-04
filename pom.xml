@@ -47,6 +47,11 @@
             <artifactId>log4j</artifactId>
             <version>1.2.12</version>
         </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

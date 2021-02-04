@@ -4,12 +4,11 @@ import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.model.user.UserBuilder;
 import com.example.ServletTest.model.user.UserType;
-import com.example.ServletTest.service.UserService;
+import com.example.ServletTest.service.user.UserService;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 public class RegisterCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(RegisterCommand.class);
