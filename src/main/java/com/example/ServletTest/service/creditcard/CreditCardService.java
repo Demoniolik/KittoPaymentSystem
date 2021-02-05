@@ -22,4 +22,8 @@ public class CreditCardService {
         // TODO: fix moment when return value is null
         return creditCardDao.replenishCreditCard(creditCardNumber, replenishMoney);
     }
+
+    public CreditCard getCreditCardByNumber(long cardNumber) {
+        return creditCardDao.getCardByNumber(cardNumber);
+    }
 }

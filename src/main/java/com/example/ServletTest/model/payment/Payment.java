@@ -21,6 +21,7 @@ public class Payment {
         this.id = id;
         this.money = money;
         this.paymentStatus = paymentStatus;
+        this.date = date;
         this.creditCardIdSource = creditCardIdSource;
         this.creditCardUserIdSource = creditCardUserIdSource;
         this.creditCardIdDestination = creditCardIdDestination;

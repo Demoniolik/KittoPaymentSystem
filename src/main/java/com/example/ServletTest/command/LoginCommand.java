@@ -22,8 +22,9 @@ public class LoginCommand implements ServletCommand {
         userService = new UserService(UserDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         // TODO: here we have to load out jsp files
-        loginPage = "WEB-INF/login.jsp";
+        loginPage = "WEB-INF/index.jsp";
         mainPage = "WEB-INF/MainContent.jsp";
+        //adminPage = "WEB-INF/admin/admin.jsp";
     }
 
     @Override

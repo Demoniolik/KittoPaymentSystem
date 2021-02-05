@@ -12,7 +12,7 @@ public class LoginPageCommand implements ServletCommand {
 
     public LoginPageCommand() {
         // TODO: Here we load jsp pages from properties file
-        loginPage = "WEB-INF/login.jsp";
+        loginPage = "WEB-INF/index.jsp";
         mainPage = "WEB-INF/MainContent.jsp";
     }
 

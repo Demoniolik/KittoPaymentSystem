@@ -24,6 +24,7 @@ public class ReplenishCreditCardCommand implements ServletCommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing replenishing credit card command");
         double replenishMoney = Double.parseDouble(request.getParameter("replenishMoney"));
+        // TODO: here you need to verify money to be positive number
         long cardNumber = Long.parseLong(request.getParameter("chosenCreditCard"));
         if (creditCardService.replenishCreditCard(cardNumber, replenishMoney)) {
             logger.info("Credit card was replenished");

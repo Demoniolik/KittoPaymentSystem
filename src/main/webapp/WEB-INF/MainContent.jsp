@@ -20,13 +20,24 @@
     <h2>Replenishing your credit card</h2>
 
     <form action="${pageContext.request.contextPath}/replenishCreditCard" method="post">
-        <input type="number" name="replenishMoney" placeholder="0" required>
+        <input type="number" min="0" name="replenishMoney" placeholder="0" required>
         <select name="chosenCreditCard">
             <c:forEach items="${user_credit_cards}" var="item">
                 <option><c:out value="${item.getNumber()}" /></option>
             </c:forEach>
         </select>
         <button type="submit">Replenish</button>
+    </form>
+
+    <form action="${pageContext.request.contextPath}/createPayment" method="post">
+        <input type="number" name="destinationNumber" placeholder="destination" required>
+        <input type="number" name="moneyToPay" placeholder="money to pay" required>
+        <select name="sourceNumber">
+            <c:forEach items="${user_credit_cards}" var="item">
+                <option><c:out value="${item.getNumber()}" /></option>
+            </c:forEach>
+        </select>
+        <button type="submit">Create transaction</button>
     </form>
 
 </body>
