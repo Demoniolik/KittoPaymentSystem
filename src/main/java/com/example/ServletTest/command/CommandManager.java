@@ -24,6 +24,7 @@ public class CommandManager {
         logger.info("POST commands are loaded");
         postCommands.put("/register", new RegisterCommand());
         postCommands.put("/login", new LoginCommand());
+        postCommands.put("/replenishCreditCard", new ReplenishCreditCardCommand());
 
     }
 

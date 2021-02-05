@@ -17,4 +17,9 @@ public class CreditCardService {
     public List<CreditCard> getAllCreditCards(long userId) {
         return creditCardDao.getAllCardOfCurrentUser(userId);
     }
+
+    public boolean replenishCreditCard(long creditCardNumber, double replenishMoney) {
+        // TODO: fix moment when return value is null
+        return creditCardDao.replenishCreditCard(creditCardNumber, replenishMoney);
+    }
 }

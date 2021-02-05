@@ -5,7 +5,8 @@
     <title>Logged user</title>
 </head>
 <body>
-    <h1 align="center">Hello ${sessionScope.get("firstName")}, ${sessionScope.get("lastName")}</h1>
+    <h1 align="center">Hello ${sessionScope.get("user").getFirstName()}, ${sessionScope.get("user").getLastName()}</h1>
+    <h3>List of your active cards</h3>
     <table>
         <c:forEach items="${user_credit_cards}" var="item">
             <tr>
@@ -15,5 +16,18 @@
             </tr>
         </c:forEach>
     </table>
+
+    <h2>Replenishing your credit card</h2>
+
+    <form action="${pageContext.request.contextPath}/replenishCreditCard" method="post">
+        <input type="number" name="replenishMoney" placeholder="0" required>
+        <select name="chosenCreditCard">
+            <c:forEach items="${user_credit_cards}" var="item">
+                <option><c:out value="${item.getNumber()}" /></option>
+            </c:forEach>
+        </select>
+        <button type="submit">Replenish</button>
+    </form>
+
 </body>
 </html>

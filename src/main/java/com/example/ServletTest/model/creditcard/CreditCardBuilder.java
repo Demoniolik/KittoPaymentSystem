@@ -5,6 +5,7 @@ public class CreditCardBuilder {
     private long number;
     private String name;
     private double moneyOnCard;
+    private int  cvcCode;
     private boolean blocked;
     private long userId;
 
@@ -28,6 +29,11 @@ public class CreditCardBuilder {
         return this;
     }
 
+    public CreditCardBuilder setCvcCode(int cvcCode) {
+        this.cvcCode = cvcCode;
+        return this;
+    }
+
     public CreditCardBuilder setBlocked(boolean blocked) {
         this.blocked = blocked;
         return this;
@@ -39,6 +45,6 @@ public class CreditCardBuilder {
     }
 
     public CreditCard build() {
-        return new CreditCard(id, number, name, moneyOnCard, blocked, userId);
+        return new CreditCard(id, number, name, moneyOnCard, cvcCode, blocked, userId);
     }
 }

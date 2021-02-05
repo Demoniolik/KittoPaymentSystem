@@ -5,6 +5,7 @@ public class CreditCard {
     private long number;
     private String name;
     private double moneyOnCard;
+    private int cvcCode;
     private boolean blocked;
     private long userId;
 
@@ -12,11 +13,12 @@ public class CreditCard {
 
     }
 
-    public CreditCard(long id, long number, String name, double moneyOnCard, boolean blocked, long userId) {
+    public CreditCard(long id, long number, String name, double moneyOnCard, int cvcCode, boolean blocked, long userId) {
         this.id = id;
         this.number = number;
         this.name = name;
         this.moneyOnCard = moneyOnCard;
+        this.cvcCode = cvcCode;
         this.blocked = blocked;
         this.userId = userId;
     }
@@ -35,6 +37,14 @@ public class CreditCard {
 
     public void setNumber(long number) {
         this.number = number;
+    }
+
+    public int getCvcCode() {
+        return cvcCode;
+    }
+
+    public void setCvcCode(int cvcCode) {
+        this.cvcCode = cvcCode;
     }
 
     public String getName() {

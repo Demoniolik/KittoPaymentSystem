@@ -6,10 +6,12 @@ import com.example.ServletTest.model.creditcard.CreditCard;
 import java.util.List;
 
 public interface CreditCardDao extends DAO<CreditCard> {
-    CreditCard getCardByNumber();
+    CreditCard getCardByNumber(long creditCardNumber);
     CreditCard getCardByName();
     List<CreditCard> getAllCardsByName();
     List<CreditCard> getAllCardsByNumber();
     List<CreditCard> getAllCardsByMoneyOnAccount();
     List<CreditCard> getAllCardOfCurrentUser(long userId);
+
+    boolean replenishCreditCard(long creditCardNumber, double replenishMoney);
 }
