@@ -2,11 +2,15 @@ package com.example.ServletTest.dao.payment;
 
 import com.example.ServletTest.connectionpool.BasicConnectionPool;
 import com.example.ServletTest.model.payment.Payment;
+import com.example.ServletTest.model.payment.PaymentBuilder;
 import com.example.ServletTest.model.payment.PaymentStatus;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PaymentDaoImpl implements PaymentDao {
     private static final Logger logger = Logger.getLogger(PaymentDaoImpl.class);
@@ -15,7 +19,12 @@ public class PaymentDaoImpl implements PaymentDao {
     private static final String QUERY_TO_CREATE_PAYMENT = "INSERT INTO payment SET money = ?, " +
             "status = ?, date = ?, credit_card_id_source = ?, " +
             "credit_card_id_destination = ?";
-    private static final String QUERY_TO_CHANGE_STATUS = "UPDATE payment SET status = ? WHERE id = ?";
+    private static final String QUERY_TO_CHANGE_STATUS =
+            "UPDATE payment SET status = ? WHERE id = ?";
+    private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_USER_ID =
+            "SELECT * FROM payment " +
+                    "WHERE credit_card_id_source = ? " +
+                    "OR credit_card_id_destination = ?";
 
     private PaymentDaoImpl() {
         try {
@@ -96,5 +105,54 @@ public class PaymentDaoImpl implements PaymentDao {
             //TODO: throw new database exception
             logger.error(exception);
         }
+    }
+
+    @Override
+    public List<Payment> getAllPaymentsByUserId(long userId) {
+        try (Connection connection = basicConnectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_PAYMENTS_BY_USER_ID)) {
+            statement.setLong(1, userId);
+            statement.setLong(2, userId);
+            statement.execute();
+            return getPaymentsFromResultSet(statement.getResultSet(), userId);
+        } catch (SQLException exception) {
+            // TODO: Throw new database exception
+            logger.error(exception);
+        }
+        return null;
+    }
+
+    private List<Payment> getPaymentsFromResultSet(ResultSet resultSet, long currentCreditCard) {
+        List<Payment> payments = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                if (resultSet.getLong("credit_card_id_source") == currentCreditCard) {
+                    payments.add(new PaymentBuilder()
+                            .setMoney(resultSet.getDouble("money") * -1)
+                            .setPaymentStatus(PaymentStatus.valueOf(resultSet.getString("status").toUpperCase()))
+                            .setDate(LocalDateTime.parse(resultSet.getString("date")))
+                            .setCreditCardIdSource(resultSet.getLong("credit_card_id_source"))
+                            .setCreditCardIdDestination(resultSet.getLong("credit_card_id_destination"))
+                            .build());
+                } else {
+                    payments.add(new PaymentBuilder()
+                            .setMoney(resultSet.getDouble("money"))
+                            .setPaymentStatus(PaymentStatus.valueOf(resultSet.getString("status").toUpperCase()))
+                            .setDate(LocalDateTime.parse(resultSet.getString("date")))
+                            .setCreditCardIdSource(resultSet.getLong("credit_card_id_source"))
+                            .setCreditCardIdDestination(resultSet.getLong("credit_card_id_destination"))
+                            .build());
+                }
+            }
+        } catch (SQLException exception) {
+            //TODO: database exception
+            logger.error(exception);
+        }
+        return payments;
+    }
+
+    @Override
+    public List<Payment> getAllCardsByCardNumber() {
+        return null;
     }
 }

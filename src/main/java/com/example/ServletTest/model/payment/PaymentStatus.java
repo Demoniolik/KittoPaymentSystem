@@ -4,7 +4,13 @@ public enum PaymentStatus {
     PREPARED("prepared"),
     SENT("sent");
 
-    PaymentStatus(String status) {
+    private String status;
 
+    public String getStatus() {
+        return status;
+    }
+
+    PaymentStatus(String status) {
+        this.status = status;
     }
 }

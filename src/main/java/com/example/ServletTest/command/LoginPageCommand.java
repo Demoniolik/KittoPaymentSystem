@@ -18,7 +18,7 @@ public class LoginPageCommand implements ServletCommand {
     public LoginPageCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         // TODO: Here we load jsp pages from properties file
-        loginPage = "WEB-INF/index.jsp";
+        loginPage = "index.jsp";
         mainPage = "WEB-INF/MainContent.jsp";
     }
 

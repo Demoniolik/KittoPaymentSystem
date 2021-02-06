@@ -51,12 +51,11 @@
 
     <h2>All payments</h2>
 
-    table>
+    <table>
     <c:forEach items="${user_payments}" var="item">
         <tr>
-            <td><c:out value="${item.getName()}" /></td>
-            <td><c:out value="${item.getNumber()}" /></td>
-            <td><c:out value="${item.getMoneyOnCard()}" /></td>
+            <td><c:out value="${item.getMoney()}" /></td>
+            <td><c:out value="${item.getDate()}" /></td>
         </tr>
     </c:forEach>
     </table>

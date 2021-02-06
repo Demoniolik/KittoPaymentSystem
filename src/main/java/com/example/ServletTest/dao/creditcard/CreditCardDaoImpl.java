@@ -17,7 +17,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     private static final String QUERY_TO_GET_ALL_CARDS_BY_USER_ID =
             "SELECT * FROM credit_card WHERE user_id = ?";
     private static final String QUERY_TO_UPDATE_MONEY_STATUS_OF_CARD_BY_CARD_NUMBER =
-            "UPDATE credit_card SET money_on_card = ? where number = ?";
+            "UPDATE credit_card SET money_on_card = ? WHERE number = ?";
     private static final String QUERY_TO_GET_CREDIT_CARD_BY_NUMBER =
             "SELECT * FROM credit_card WHERE number = ?";
 
