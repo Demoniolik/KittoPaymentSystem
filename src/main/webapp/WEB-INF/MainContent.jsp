@@ -17,6 +17,13 @@
         </c:forEach>
     </table>
 
+    <h2>Create new card</h2>
+
+    <form action="${pageContext.request.contextPath}/createNewCreditCard">
+        <input type="text" name="cardName">
+        <button type="submit">Create new card</button>
+    </form>
+
     <h2>Replenishing your credit card</h2>
 
     <form action="${pageContext.request.contextPath}/replenishCreditCard" method="post">
@@ -29,6 +36,8 @@
         <button type="submit">Replenish</button>
     </form>
 
+    <h2>Creating new payment</h2>
+
     <form action="${pageContext.request.contextPath}/createPayment" method="post">
         <input type="number" name="destinationNumber" placeholder="destination" required>
         <input type="number" name="moneyToPay" placeholder="money to pay" required>
@@ -39,6 +48,18 @@
         </select>
         <button type="submit">Create transaction</button>
     </form>
+
+    <h2>All payments</h2>
+
+    table>
+    <c:forEach items="${user_payments}" var="item">
+        <tr>
+            <td><c:out value="${item.getName()}" /></td>
+            <td><c:out value="${item.getNumber()}" /></td>
+            <td><c:out value="${item.getMoneyOnCard()}" /></td>
+        </tr>
+    </c:forEach>
+    </table>
 
 </body>
 </html>

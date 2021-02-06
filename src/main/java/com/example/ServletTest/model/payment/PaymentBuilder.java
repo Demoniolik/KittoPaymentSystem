@@ -8,9 +8,7 @@ public class PaymentBuilder {
     private PaymentStatus paymentStatus;
     private LocalDateTime date;
     private long creditCardIdSource;
-    private long creditCardUserIdSource;
     private long creditCardIdDestination;
-    private long creditCardUserIdDestination;
 
     public PaymentBuilder setId(long id) {
         this.id = id;
@@ -37,24 +35,14 @@ public class PaymentBuilder {
         return this;
     }
 
-    public PaymentBuilder setCreditCardUserIdSource(long creditCardUserIdSource) {
-        this.creditCardUserIdSource = creditCardUserIdSource;
-        return this;
-    }
-
     public PaymentBuilder setCreditCardIdDestination(long creditCardIdDestination) {
         this.creditCardIdDestination = creditCardIdDestination;
         return this;
     }
 
-    public PaymentBuilder setCreditCardUserIdDestination(long creditCardUserIdDestination) {
-        this.creditCardUserIdDestination = creditCardUserIdDestination;
-        return this;
-    }
-
     public Payment build() {
-        return new Payment(id, money, paymentStatus, date, creditCardIdSource, creditCardUserIdSource,
-                creditCardIdDestination, creditCardUserIdDestination);
+        return new Payment(id, money, paymentStatus, date, creditCardIdSource,
+                creditCardIdDestination);
     }
 
 }

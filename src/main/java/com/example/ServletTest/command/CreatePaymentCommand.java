@@ -39,9 +39,7 @@ public class CreatePaymentCommand implements ServletCommand {
         CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationNumber);
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
                 .setCreditCardIdSource(sourceCreditCard.getId())
-                .setCreditCardUserIdSource(1)
                 .setCreditCardIdDestination(destinationCreditCard.getId())
-                .setCreditCardUserIdDestination(1)
                 .setDate(LocalDateTime.now())
                 .setPaymentStatus(PaymentStatus.PREPARED)
                 .build();
@@ -50,6 +48,7 @@ public class CreatePaymentCommand implements ServletCommand {
             creditCardService.replenishCreditCard(destinationNumber, moneyToPay);
             // TODO: here you need to go to db and put SENT status
             payment.setPaymentStatus(PaymentStatus.SENT);
+            paymentService.changeStatus(payment);
             HttpSession session = request.getSession();
             session.setAttribute("user_credit_cards",
                     creditCardService.getAllCreditCards(((User)session.getAttribute("user")).getId()));

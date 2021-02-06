@@ -8,24 +8,19 @@ public class Payment {
     private PaymentStatus paymentStatus;
     private LocalDateTime date;
     private long creditCardIdSource;
-    private long creditCardUserIdSource;
     private long creditCardIdDestination;
-    private long creditCardUserIdDestination;
 
     public Payment() {}
 
     public Payment(long id, double money, PaymentStatus paymentStatus,
                    LocalDateTime date, long creditCardIdSource,
-                   long creditCardUserIdSource, long creditCardIdDestination,
-                   long creditCardUserIdDestination) {
+                   long creditCardIdDestination) {
         this.id = id;
         this.money = money;
         this.paymentStatus = paymentStatus;
         this.date = date;
         this.creditCardIdSource = creditCardIdSource;
-        this.creditCardUserIdSource = creditCardUserIdSource;
         this.creditCardIdDestination = creditCardIdDestination;
-        this.creditCardUserIdDestination = creditCardUserIdDestination;
     }
 
     public long getId() {
@@ -68,27 +63,11 @@ public class Payment {
         this.creditCardIdSource = creditCardIdSource;
     }
 
-    public long getCreditCardUserIdSource() {
-        return creditCardUserIdSource;
-    }
-
-    public void setCreditCardUserIdSource(long creditCardUserIdSource) {
-        this.creditCardUserIdSource = creditCardUserIdSource;
-    }
-
     public long getCreditCardIdDestination() {
         return creditCardIdDestination;
     }
 
     public void setCreditCardIdDestination(long creditCardIdDestination) {
         this.creditCardIdDestination = creditCardIdDestination;
-    }
-
-    public long getCreditCardUserIdDestination() {
-        return creditCardUserIdDestination;
-    }
-
-    public void setCreditCardUserIdDestination(long creditCardUserIdDestination) {
-        this.creditCardUserIdDestination = creditCardUserIdDestination;
     }
 }

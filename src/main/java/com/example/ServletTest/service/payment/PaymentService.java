@@ -17,4 +17,8 @@ public class PaymentService {
         return payment != null && paymentDao.save(payment).getId() != 0;
     }
 
+    public void changeStatus(Payment payment) {
+        paymentDao.changeStatus(payment);
+    }
+
 }
