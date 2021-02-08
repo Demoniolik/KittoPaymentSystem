@@ -4,6 +4,7 @@ import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
+import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
@@ -47,6 +48,9 @@ public class LoginCommand implements ServletCommand {
                 //TODO: add all the accounts and cards to the user
                 HttpSession session = request.getSession();
                 session.setAttribute("userCreditCards", creditCards);
+                List<Payment> payments = paymentService
+                        .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getNumber());
+                session.setAttribute("creditCardPayments", payments);
                 resultPage = mainPage;
             }else {
                 request.setAttribute("idLogged", false);

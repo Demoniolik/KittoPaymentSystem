@@ -24,7 +24,8 @@ public class PaymentService {
     }
 
     public List<Payment> getListOfPaymentsThatBelongToCreditCard(long currentCreditCard) {
-        return paymentDao.getAllPaymentsByUserId(currentCreditCard);
+        logger.info("Retriving all payments that belong to credit card");
+        return paymentDao.getAllPaymentsByCreditCardNumber(currentCreditCard);
     }
 
     public List<String> getAllCategories() {

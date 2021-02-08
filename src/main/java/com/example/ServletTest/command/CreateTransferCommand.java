@@ -15,43 +15,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
-public class CreatePaymentCommand implements ServletCommand{
-    private static final Logger logger = Logger.getLogger(CreatePaymentCommand.class);
-    private static PaymentService paymentService;
-    private static CreditCardService creditCardService;
+public class CreateTransferCommand implements ServletCommand {
+    private static final Logger logger = Logger.getLogger(CreateTransferCommand.class);
+    private PaymentService paymentService;
+    private CreditCardService creditCardService;
     private String mainPage;
-    private static final Map<String, Long> paymentCategoryToCreditCardNumberAssociation = new HashMap<>();
 
-    public CreatePaymentCommand() {
+    public CreateTransferCommand() {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
-
-        // TODO: Here you need to put some properties file for categories
-        paymentCategoryToCreditCardNumberAssociation
-                .put("replenishing mobile phone", 9999999999L);
-        paymentCategoryToCreditCardNumberAssociation
-                .put("requisite", 1111111111L);
-        paymentCategoryToCreditCardNumberAssociation
-                .put("utilities", 1010101010L);
-        paymentCategoryToCreditCardNumberAssociation
-                .put("charity", 9090909090L);
-        // TODO: Here you need to load data from properties file
-        mainPage = "WEB-INF/MainContent.jsp";
+        // TODO: set page from properties file
+        mainPage = "WEB-INF/payments.jsp";
     }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("Executing payment creation command");
+        logger.info("Executing transfer creation command");
         double moneyToPay = Double.parseDouble(request.getParameter("moneyToPay"));
         long sourceNumber = Long.parseLong(request.getParameter("sourceNumber"));
-        String categoryOfPayment = request.getParameter("chosenCategory");
-        long destinationCreditCardNumber =
-                paymentCategoryToCreditCardNumberAssociation.get(categoryOfPayment);
+        long destinationNumber = Long.parseLong(request.getParameter("destinationNumber"));
         CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
-        CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationCreditCardNumber);
+        CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationNumber);
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
                 .setCreditCardIdSource(sourceCreditCard.getId())
                 .setCreditCardIdDestination(destinationCreditCard.getId())
@@ -59,7 +44,10 @@ public class CreatePaymentCommand implements ServletCommand{
                 .setPaymentStatus(PaymentStatus.PREPARED)
                 .build();
         if (paymentService.createPayment(payment)) {
-            creatingTransaction(moneyToPay, sourceNumber, destinationCreditCardNumber, payment);
+            creditCardService.replenishCreditCard(sourceNumber, moneyToPay * -1);
+            creditCardService.replenishCreditCard(destinationNumber, moneyToPay);
+            payment.setPaymentStatus(PaymentStatus.SENT);
+            paymentService.changeStatus(payment);
             HttpSession session = request.getSession();
             session.setAttribute("user_credit_cards",
                     creditCardService.getAllCreditCards(((User)session.getAttribute("user")).getId()));
@@ -67,12 +55,5 @@ public class CreatePaymentCommand implements ServletCommand{
         }
 
         return mainPage;
-    }
-
-    private void creatingTransaction(double moneyToPay, long sourceNumber, long destinationCreditCardNumber, Payment payment) {
-        creditCardService.replenishCreditCard(sourceNumber, moneyToPay * -1);
-        creditCardService.replenishCreditCard(destinationCreditCardNumber, moneyToPay);
-        payment.setPaymentStatus(PaymentStatus.SENT);
-        paymentService.changeStatus(payment);
     }
 }

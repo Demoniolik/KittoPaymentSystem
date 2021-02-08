@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface PaymentDao extends DAO<Payment> {
     void changeStatus(Payment payment);
-    List<Payment> getAllPaymentsByUserId(long userId);
+    List<Payment> getAllPaymentsByCreditCardNumber(long cardNumber);
     List<Payment> getAllCardsByCardNumber();
 
     List<String> getAllCategories();

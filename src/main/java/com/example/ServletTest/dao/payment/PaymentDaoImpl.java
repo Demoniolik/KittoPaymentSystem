@@ -21,7 +21,7 @@ public class PaymentDaoImpl implements PaymentDao {
             "category = ?";
     private static final String QUERY_TO_CHANGE_STATUS =
             "UPDATE payment SET status = ? WHERE id = ?";
-    private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_USER_ID =
+    private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER =
             "SELECT * FROM payment " +
                     "WHERE credit_card_id_source = ? " +
                     "OR credit_card_id_destination = ?";
@@ -111,13 +111,13 @@ public class PaymentDaoImpl implements PaymentDao {
     }
 
     @Override
-    public List<Payment> getAllPaymentsByUserId(long userId) {
+    public List<Payment> getAllPaymentsByCreditCardNumber(long cardNumber) {
         try (Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_PAYMENTS_BY_USER_ID)) {
-            statement.setLong(1, userId);
-            statement.setLong(2, userId);
+            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER)) {
+            statement.setLong(1, cardNumber);
+            statement.setLong(2, cardNumber);
             statement.execute();
-            return getPaymentsFromResultSet(statement.getResultSet(), userId);
+            return getPaymentsFromResultSet(statement.getResultSet(), cardNumber);
         } catch (SQLException exception) {
             // TODO: Throw new database exception
             logger.error(exception);
