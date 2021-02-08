@@ -8,7 +8,7 @@
     <h1 align="center">Hello ${sessionScope.get("user").getFirstName()}, ${sessionScope.get("user").getLastName()}</h1>
     <h3>List of your active cards</h3>
     <table>
-        <c:forEach items="${user_credit_cards}" var="item">
+        <c:forEach items="${userCreditCards}" var="item">
             <tr>
                 <td><c:out value="${item.getName()}" /></td>
                 <td><c:out value="${item.getNumber()}" /></td>
@@ -29,7 +29,7 @@
     <form action="${pageContext.request.contextPath}/replenishCreditCard" method="post">
         <input type="number" min="0" name="replenishMoney" placeholder="0" required>
         <select name="chosenCreditCard">
-            <c:forEach items="${user_credit_cards}" var="item">
+            <c:forEach items="${userCreditCards}" var="item">
                 <option><c:out value="${item.getNumber()}" /></option>
             </c:forEach>
         </select>
@@ -42,23 +42,14 @@
         <input type="number" name="destinationNumber" placeholder="destination" required>
         <input type="number" name="moneyToPay" placeholder="money to pay" required>
         <select name="sourceNumber">
-            <c:forEach items="${user_credit_cards}" var="item">
+            <c:forEach items="${userCreditCards}" var="item">
                 <option><c:out value="${item.getNumber()}" /></option>
             </c:forEach>
         </select>
         <button type="submit">Create transaction</button>
     </form>
 
-    <h2>All payments</h2>
-
-    <table>
-    <c:forEach items="${user_payments}" var="item">
-        <tr>
-            <td><c:out value="${item.getMoney()}" /></td>
-            <td><c:out value="${item.getDate()}" /></td>
-        </tr>
-    </c:forEach>
-    </table>
+    <a href="${pageContext.request.contextPath}/getPayments"><h2>Payments</h2></a>
 
 </body>
 </html>

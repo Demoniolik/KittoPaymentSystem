@@ -26,7 +26,7 @@ public class CreatePaymentCommand implements ServletCommand {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         // TODO: set page from properties file
-        mainPage = "WEB-INF/MainContent.jsp";
+        mainPage = "WEB-INF/payments.jsp";
     }
 
     @Override

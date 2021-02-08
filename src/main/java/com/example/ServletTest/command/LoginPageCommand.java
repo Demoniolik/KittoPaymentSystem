@@ -29,7 +29,7 @@ public class LoginPageCommand implements ServletCommand {
         if (request.getSession().getAttribute("authorized") != null
         && request.getSession().getAttribute("authorized").equals(true)) {
             HttpSession session = request.getSession();
-            session.setAttribute("user_credit_cards",
+            session.setAttribute("userCreditCards",
                     creditCardService.getAllCreditCards(((User)session.getAttribute("user")).getId()));
             resultPage = mainPage;
         } // TODO: Here probably you should check if these values are just empty string

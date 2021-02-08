@@ -9,18 +9,20 @@ public class Payment {
     private LocalDateTime date;
     private long creditCardIdSource;
     private long creditCardIdDestination;
+    private PaymentCategory paymentCategory;
 
     public Payment() {}
 
     public Payment(long id, double money, PaymentStatus paymentStatus,
                    LocalDateTime date, long creditCardIdSource,
-                   long creditCardIdDestination) {
+                   long creditCardIdDestination, PaymentCategory paymentCategory) {
         this.id = id;
         this.money = money;
         this.paymentStatus = paymentStatus;
         this.date = date;
         this.creditCardIdSource = creditCardIdSource;
         this.creditCardIdDestination = creditCardIdDestination;
+        this.paymentCategory = paymentCategory;
     }
 
     public long getId() {
@@ -69,5 +71,13 @@ public class Payment {
 
     public void setCreditCardIdDestination(long creditCardIdDestination) {
         this.creditCardIdDestination = creditCardIdDestination;
+    }
+
+    public PaymentCategory getPaymentCategory() {
+        return paymentCategory;
+    }
+
+    public void setPaymentCategory(PaymentCategory paymentCategory) {
+        this.paymentCategory = paymentCategory;
     }
 }

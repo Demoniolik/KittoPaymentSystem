@@ -10,7 +10,6 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class PaymentDaoImpl implements PaymentDao {
     private static final Logger logger = Logger.getLogger(PaymentDaoImpl.class);
@@ -18,13 +17,16 @@ public class PaymentDaoImpl implements PaymentDao {
     private static PaymentDaoImpl instance;
     private static final String QUERY_TO_CREATE_PAYMENT = "INSERT INTO payment SET money = ?, " +
             "status = ?, date = ?, credit_card_id_source = ?, " +
-            "credit_card_id_destination = ?";
+            "credit_card_id_destination = ?, " +
+            "category = ?";
     private static final String QUERY_TO_CHANGE_STATUS =
             "UPDATE payment SET status = ? WHERE id = ?";
     private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_USER_ID =
             "SELECT * FROM payment " +
                     "WHERE credit_card_id_source = ? " +
                     "OR credit_card_id_destination = ?";
+    private static final String QUERY_TO_GET_ALL_CATEGORIES =
+            "SELECT * FROM category";
 
     private PaymentDaoImpl() {
         try {
@@ -63,6 +65,7 @@ public class PaymentDaoImpl implements PaymentDao {
             statement.setString(3, payment.getDate().toString());
             statement.setLong(4, payment.getCreditCardIdSource());
             statement.setLong(5, payment.getCreditCardIdDestination());
+            statement.setLong(6, payment.getPaymentCategory().ordinal() + 1);
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
                 logger.error("Payment wasn't created");
@@ -154,5 +157,22 @@ public class PaymentDaoImpl implements PaymentDao {
     @Override
     public List<Payment> getAllCardsByCardNumber() {
         return null;
+    }
+
+    @Override
+    public List<String> getAllCategories() {
+        List<String> listOfCategories = new ArrayList<>();
+        try (Connection connection = basicConnectionPool.getConnection();
+            Statement statement = connection.createStatement()) {
+            statement.execute(QUERY_TO_GET_ALL_CATEGORIES);
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next()) {
+                listOfCategories.add(resultSet.getString("name"));
+            }
+        } catch (SQLException exception) {
+            //TODO: create database exception
+            logger.error(exception);
+        }
+        return listOfCategories;
     }
 }

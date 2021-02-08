@@ -9,6 +9,7 @@ public class PaymentBuilder {
     private LocalDateTime date;
     private long creditCardIdSource;
     private long creditCardIdDestination;
+    private PaymentCategory paymentCategory;
 
     public PaymentBuilder setId(long id) {
         this.id = id;
@@ -40,9 +41,14 @@ public class PaymentBuilder {
         return this;
     }
 
+    public PaymentBuilder setPaymentCategory(PaymentCategory paymentCategory) {
+        this.paymentCategory = paymentCategory;
+        return this;
+    }
+
     public Payment build() {
         return new Payment(id, money, paymentStatus, date, creditCardIdSource,
-                creditCardIdDestination);
+                creditCardIdDestination, paymentCategory);
     }
 
 }

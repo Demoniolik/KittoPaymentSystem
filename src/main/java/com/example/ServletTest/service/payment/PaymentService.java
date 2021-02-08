@@ -27,4 +27,9 @@ public class PaymentService {
         return paymentDao.getAllPaymentsByUserId(currentCreditCard);
     }
 
+    public List<String> getAllCategories() {
+        logger.info("Getting all categories");
+        return paymentDao.getAllCategories();
+    }
+
 }

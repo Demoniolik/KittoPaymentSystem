@@ -9,4 +9,6 @@ public interface PaymentDao extends DAO<Payment> {
     void changeStatus(Payment payment);
     List<Payment> getAllPaymentsByUserId(long userId);
     List<Payment> getAllCardsByCardNumber();
+
+    List<String> getAllCategories();
 }

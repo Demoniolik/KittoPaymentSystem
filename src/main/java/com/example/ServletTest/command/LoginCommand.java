@@ -46,9 +46,7 @@ public class LoginCommand implements ServletCommand {
                 List<CreditCard> creditCards = creditCardService.getAllCreditCards(user.getId());
                 //TODO: add all the accounts and cards to the user
                 HttpSession session = request.getSession();
-                session.setAttribute("user_credit_cards", creditCards);
-                session.setAttribute("user_payments",
-                        paymentService.getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId()));
+                session.setAttribute("userCreditCards", creditCards);
                 resultPage = mainPage;
             }else {
                 request.setAttribute("idLogged", false);
