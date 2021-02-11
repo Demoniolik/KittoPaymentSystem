@@ -5,6 +5,7 @@ import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
+import com.example.ServletTest.view.PaymentWrapper;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
@@ -15,6 +16,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LoginCommand implements ServletCommand {
@@ -48,12 +50,7 @@ public class LoginCommand implements ServletCommand {
                 putUserToSession(request, user);
                 List<CreditCard> creditCards = creditCardService.getAllCreditCards(user.getId());
                 //TODO: add all the accounts and cards to the user
-                HttpSession session = request.getSession();
-                session.setAttribute("userCreditCards", creditCards);
-                List<Payment> payments = paymentService
-                        .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId());
-                session.setAttribute("creditCardPayments", payments);
-                session.setAttribute("categories", paymentService.getAllCategories());
+                prepareDataForUser(request, creditCards);
                 resultPage = mainPage;
             }else {
                 request.setAttribute("idLogged", false);
@@ -63,9 +60,26 @@ public class LoginCommand implements ServletCommand {
         return resultPage;
     }
 
+    static void prepareDataForUser(HttpServletRequest request, List<CreditCard> creditCards) {
+        HttpSession session = request.getSession();
+        session.setAttribute("userCreditCards", creditCards);
+        List<Payment> payments = paymentService
+                .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId());
+        session.setAttribute("creditCardPayments", wrapPaymentList(payments));
+        session.setAttribute("categories", paymentService.getAllCategories());
+    }
+
     static void putUserToSession(HttpServletRequest request, User user) {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
         session.setAttribute("authorized", true);
+    }
+    static List<PaymentWrapper> wrapPaymentList(List<Payment> payments) {
+        logger.info("Wrapping payment");
+        List<PaymentWrapper> paymentWrappers = new ArrayList<>();
+        for (Payment payment : payments) {
+            paymentWrappers.add(new PaymentWrapper(payment));
+        }
+        return paymentWrappers;
     }
 }

@@ -32,6 +32,10 @@ public class UserDaoImpl implements UserDao {
     private static final String QUERY_TO_DELETE_USER = "DELETE FROM user WHERE id = ?";
     private static final String QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD = "SELECT * FROM user WHERE login = ? " +
                                                                                                 "AND password = ?";
+    private static final String QUERY_TO_GET_USER_SPECIFIED_NAME_BY_CARD_ID =
+            "SELECT CONCAT(second_name, ' ', SUBSTRING(first_name, 1, 1), '.') AS specified_name " +
+                    "FROM user " +
+                    "WHERE id IN (SELECT user_id FROM credit_card WHERE credit_card.id = ?)";
 
     private UserDaoImpl() {
         // TODO: load all the constant queries from the properties file
@@ -117,6 +121,24 @@ public class UserDaoImpl implements UserDao {
         } catch (SQLException ex) {
             // TODO: Throw custom database exception
             logger.error(ex);
+        }
+        return null;
+    }
+
+    @Override
+    public String getUserFullNameByCardId(long creditCardId) {
+        try (Connection connection = basicConnectionPool.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(QUERY_TO_GET_USER_SPECIFIED_NAME_BY_CARD_ID)) {
+            statement.setLong(1, creditCardId);
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            if (resultSet.next()) {
+                return resultSet.getString(1);
+            }
+        } catch (SQLException exception) {
+            //TODO: database exception
+            logger.error(exception);
         }
         return null;
     }

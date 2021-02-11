@@ -26,4 +26,9 @@ public class CreditCardService {
     public CreditCard getCreditCardByNumber(long cardNumber) {
         return creditCardDao.getCardByNumber(cardNumber);
     }
+
+    public CreditCard getCreditCardById(long creditCardId) {
+        logger.info("Getting credit card by credit card id");
+        return creditCardDao.get(creditCardId);
+    }
 }

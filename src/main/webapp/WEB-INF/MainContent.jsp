@@ -107,11 +107,12 @@
                     <div class="item">
                         <div class="id"># <c:out value="${item.getId()}"/></div>
                         <div class="descr">
-                            <div class="img"><img src="resources/img/content/category/shopping.svg" alt=""></div> Aliexpress
+                            <div class="img"><img src="<c:out value="${item.getCategoryImage()}"/>" alt=""></div>
+                            <c:out value="${item.getDescription()}"/>
                         </div>
-                        <div class="category">Shopping</div>
-                        <div class="card">**** 5344</div>
-                        <div class="date">07.02.2021</div>
+                        <div class="category"><c:out value="${item.getPaymentCategory()}"/></div>
+                        <div class="card">**** <span><c:out value="${item.getCreditCardDestination()}"/></span></div>
+                        <div class="date"><c:out value="${item.getDate()}"/></div>
                         <c:choose>
                             <c:when test="${item.getMoney() > 0}">
                                 <div class="amount plus"><c:out value="${item.getMoney()}" />$</div>

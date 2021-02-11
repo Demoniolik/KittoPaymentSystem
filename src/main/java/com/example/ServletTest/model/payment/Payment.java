@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Payment {
     private long id;
     private double money;
+    private String description;
     private PaymentStatus paymentStatus;
     private LocalDateTime date;
     private long creditCardIdSource;
@@ -13,11 +14,12 @@ public class Payment {
 
     public Payment() {}
 
-    public Payment(long id, double money, PaymentStatus paymentStatus,
+    public Payment(long id, double money, String description, PaymentStatus paymentStatus,
                    LocalDateTime date, long creditCardIdSource,
                    long creditCardIdDestination, PaymentCategory paymentCategory) {
         this.id = id;
         this.money = money;
+        this.description = description;
         this.paymentStatus = paymentStatus;
         this.date = date;
         this.creditCardIdSource = creditCardIdSource;
@@ -39,6 +41,14 @@ public class Payment {
 
     public void setMoney(double money) {
         this.money = money;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public PaymentStatus getPaymentStatus() {

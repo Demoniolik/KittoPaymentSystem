@@ -2,6 +2,7 @@ package com.example.ServletTest.command;
 
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
+import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentBuilder;
@@ -10,6 +11,7 @@ import com.example.ServletTest.model.payment.PaymentStatus;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
+import com.example.ServletTest.service.user.UserService;
 import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
@@ -22,12 +24,14 @@ import java.util.Map;
 
 public class CreatePaymentCommand implements ServletCommand{
     private static final Logger logger = Logger.getLogger(CreatePaymentCommand.class);
+    private static UserService userService;
     private static PaymentService paymentService;
     private static CreditCardService creditCardService;
     private String mainPage;
     private static final Map<String, Long> paymentCategoryToCreditCardNumberAssociation = new HashMap<>();
 
     public CreatePaymentCommand() {
+        userService = new UserService(UserDaoImpl.getInstance());
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
 
@@ -58,6 +62,8 @@ public class CreatePaymentCommand implements ServletCommand{
         CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
         CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationCreditCardNumber);
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
+                .setDescription(userService
+                        .getDestinationUserNameByCardId(destinationCreditCard.getId()))
                 .setCreditCardIdSource(sourceCreditCard.getId())
                 .setCreditCardIdDestination(destinationCreditCard.getId())
                 .setDate(LocalDateTime.now())

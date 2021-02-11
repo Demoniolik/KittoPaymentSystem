@@ -3,6 +3,7 @@ package com.example.ServletTest.dao.payment;
 import com.example.ServletTest.connectionpool.BasicConnectionPool;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentBuilder;
+import com.example.ServletTest.model.payment.PaymentCategory;
 import com.example.ServletTest.model.payment.PaymentStatus;
 import org.apache.log4j.Logger;
 
@@ -16,8 +17,8 @@ public class PaymentDaoImpl implements PaymentDao {
     private BasicConnectionPool basicConnectionPool;
     private static PaymentDaoImpl instance;
     private static final String QUERY_TO_CREATE_PAYMENT = "INSERT INTO payment SET money = ?, " +
-            "status = ?, date = ?, credit_card_id_source = ?, " +
-            "credit_card_id_destination = ?, " +
+            "description = ?, status = ?, date = ?, " +
+            "credit_card_id_source = ?, credit_card_id_destination = ?, " +
             "category_id = ?";
     private static final String QUERY_TO_CHANGE_STATUS =
             "UPDATE payment SET status = ? WHERE id = ?";
@@ -60,11 +61,12 @@ public class PaymentDaoImpl implements PaymentDao {
              PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_PAYMENT,
                      Statement.RETURN_GENERATED_KEYS)) {
             statement.setDouble(1, payment.getMoney());
-            statement.setLong(2, payment.getPaymentStatus().ordinal() + 1);
-            statement.setString(3, payment.getDate().toString());
-            statement.setLong(4, payment.getCreditCardIdSource());
-            statement.setLong(5, payment.getCreditCardIdDestination());
-            statement.setLong(6, payment.getPaymentCategory().ordinal() + 1);
+            statement.setString(2, payment.getDescription());
+            statement.setLong(3, payment.getPaymentStatus().ordinal() + 1);
+            statement.setString(4, payment.getDate().toString());
+            statement.setLong(5, payment.getCreditCardIdSource());
+            statement.setLong(6, payment.getCreditCardIdDestination());
+            statement.setLong(7, payment.getPaymentCategory().ordinal() + 1);
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
                 logger.error("Payment wasn't created");
@@ -130,19 +132,25 @@ public class PaymentDaoImpl implements PaymentDao {
             while (resultSet.next()) {
                 if (resultSet.getLong("credit_card_id_source") == currentCreditCard) {
                     payments.add(new PaymentBuilder()
+                            .setId(resultSet.getLong("id"))
                             .setMoney(resultSet.getDouble("money") * -1)
+                            .setDescription(resultSet.getString("description"))
                             .setPaymentStatus(PaymentStatus.valueOf(resultSet.getString("status").toUpperCase()))
                             .setDate(LocalDateTime.parse(resultSet.getString("date")))
                             .setCreditCardIdSource(resultSet.getLong("credit_card_id_source"))
                             .setCreditCardIdDestination(resultSet.getLong("credit_card_id_destination"))
+                            .setPaymentCategory(PaymentCategory.values()[resultSet.getInt("category_id") - 1])
                             .build());
                 } else {
                     payments.add(new PaymentBuilder()
+                            .setId(resultSet.getLong("id"))
                             .setMoney(resultSet.getDouble("money"))
+                            .setDescription(resultSet.getString("description"))
                             .setPaymentStatus(PaymentStatus.valueOf(resultSet.getString("status").toUpperCase()))
                             .setDate(LocalDateTime.parse(resultSet.getString("date")))
                             .setCreditCardIdSource(resultSet.getLong("credit_card_id_source"))
                             .setCreditCardIdDestination(resultSet.getLong("credit_card_id_destination"))
+                            .setPaymentCategory(PaymentCategory.values()[resultSet.getInt("category_id") - 1])
                             .build());
                 }
             }

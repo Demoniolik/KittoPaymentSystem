@@ -21,4 +21,9 @@ public class UserService {
         logger.info("Registering new user");
         return user != null && userDao.save(user).getId() != -1;
     }
+
+    public String getDestinationUserNameByCardId(long creditCardId) {
+        logger.info("Getting user's specified name by credit card that belongs to user");
+        return userDao.getUserFullNameByCardId(creditCardId);
+    }
 }

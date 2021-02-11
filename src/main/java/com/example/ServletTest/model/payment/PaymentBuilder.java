@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class PaymentBuilder {
     private long id;
     private double money;
+    private String description;
     private PaymentStatus paymentStatus;
     private LocalDateTime date;
     private long creditCardIdSource;
@@ -18,6 +19,11 @@ public class PaymentBuilder {
 
     public PaymentBuilder setMoney(double money) {
         this.money = money;
+        return this;
+    }
+
+    public PaymentBuilder setDescription(String description) {
+        this.description = description;
         return this;
     }
 
@@ -47,7 +53,7 @@ public class PaymentBuilder {
     }
 
     public Payment build() {
-        return new Payment(id, money, paymentStatus, date, creditCardIdSource,
+        return new Payment(id, money, description, paymentStatus, date, creditCardIdSource,
                 creditCardIdDestination, paymentCategory);
     }
 

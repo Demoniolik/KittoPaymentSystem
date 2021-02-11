@@ -13,7 +13,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     private static final Logger logger = Logger.getLogger(CreditCardDaoImpl.class);
     private static CreditCardDaoImpl instance;
     private BasicConnectionPool basicConnectionPool;
-    private static final String QUERY_TO_GET_CARD_BY_ID = "";
+    private static final String QUERY_TO_GET_CARD_BY_ID = "SELECT * FROM credit_card WHERE id = ?";
     private static final String QUERY_TO_GET_ALL_CARDS_BY_USER_ID =
             "SELECT * FROM credit_card WHERE user_id = ?";
     private static final String QUERY_TO_UPDATE_MONEY_STATUS_OF_CARD_BY_CARD_NUMBER =
@@ -40,6 +40,15 @@ public class CreditCardDaoImpl implements CreditCardDao {
 
     @Override
     public CreditCard get(long id) {
+        try (Connection connection = basicConnectionPool.getConnection();
+            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_CARD_BY_ID)) {
+            statement.setLong(1, id);
+            statement.execute();
+            return getCreditCardFromResultSet(statement.getResultSet());
+        } catch (SQLException exception) {
+            //TODO: create database exception
+            logger.error(exception);
+        }
         return null;
     }
 
@@ -135,7 +144,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
             statement.executeUpdate();
         } catch (SQLException | NullPointerException exception) {
             // TODO: throw new database exception
-            logger.error(exception);
+            logger.error(exception); // Money can just gone from card
             return false;
         }
         return true;

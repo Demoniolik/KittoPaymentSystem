@@ -2,6 +2,7 @@ package com.example.ServletTest.command;
 
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
+import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentBuilder;
@@ -10,6 +11,7 @@ import com.example.ServletTest.model.payment.PaymentStatus;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
+import com.example.ServletTest.service.user.UserService;
 import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
@@ -21,11 +23,13 @@ import java.util.List;
 
 public class CreateTransferCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateTransferCommand.class);
+    private UserService userService;
     private PaymentService paymentService;
     private CreditCardService creditCardService;
     private String mainPage;
 
     public CreateTransferCommand() {
+        userService = new UserService(UserDaoImpl.getInstance());
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         // TODO: set page from properties file
@@ -45,6 +49,8 @@ public class CreateTransferCommand implements ServletCommand {
         CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationNumber);
 
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
+                .setDescription(userService.
+                        getDestinationUserNameByCardId(destinationCreditCard.getId()))
                 .setCreditCardIdSource(sourceCreditCard.getId())
                 .setCreditCardIdDestination(destinationCreditCard.getId())
                 .setDate(LocalDateTime.now())
@@ -58,11 +64,9 @@ public class CreateTransferCommand implements ServletCommand {
             payment.setPaymentStatus(PaymentStatus.SENT);
             paymentService.changeStatus(payment);
             HttpSession session = request.getSession();
-            List<CreditCard> creditCards = creditCardService.getAllCreditCards(((User)session.getAttribute("user")).getId());
+            List<CreditCard> creditCards = creditCardService
+                    .getAllCreditCards(((User)session.getAttribute("user")).getId());
             session.setAttribute("user_credit_cards", creditCards);
-            List<Payment> payments = paymentService
-                    .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId());
-            session.setAttribute("creditCardPayments", payments);
             logger.info("Transaction succeeded");
         }
 
