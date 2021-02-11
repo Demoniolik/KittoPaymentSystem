@@ -3,6 +3,7 @@ package com.example.ServletTest.command;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
+import com.example.ServletTest.util.MappingProperties;
 import com.sun.istack.internal.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +17,8 @@ public class ReplenishCreditCardCommand implements ServletCommand {
 
     public ReplenishCreditCardCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
-        // TODO: load all pages form properties file
-        mainPage = "WEB-INF/MainContent.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        mainPage = properties.getProperty("mainPage");
     }
 
     @Override

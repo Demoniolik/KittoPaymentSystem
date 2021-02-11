@@ -5,6 +5,7 @@ import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
+import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,9 @@ public class PaymentPageCommand implements ServletCommand {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         // TODO: Here you need to load files from properties file
-        paymentsPage = "WEB-INF/payments.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        loginPage = properties.getProperty("loginPage");
+        paymentsPage = properties.getProperty("mainPage");
     }
 
     @Override

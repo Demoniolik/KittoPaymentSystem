@@ -32,10 +32,9 @@ public class CreditCardDaoImpl implements CreditCardDao {
     }
 
     public static CreditCardDao getInstance() {
-        if (instance != null) {
-            return instance;
+        if (instance == null) {
+            instance = new CreditCardDaoImpl();
         }
-        instance = new CreditCardDaoImpl();
         return instance;
     }
 

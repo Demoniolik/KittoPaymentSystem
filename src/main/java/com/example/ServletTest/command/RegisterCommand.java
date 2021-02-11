@@ -5,6 +5,7 @@ import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.model.user.UserBuilder;
 import com.example.ServletTest.model.user.UserType;
 import com.example.ServletTest.service.user.UserService;
+import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +18,10 @@ public class RegisterCommand implements ServletCommand {
     private static String mainPage;
 
     public RegisterCommand() {
-        // TODO: Load all the jsp pages from properties file
         userService = new UserService(UserDaoImpl.getInstance());
-        registrationPage = "registration.jsp";
-        mainPage = "WEB-INF/MainContent.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        registrationPage = properties.getProperty("registrationPage");
+        mainPage = properties.getProperty("mainPage");
     }
 
     @Override

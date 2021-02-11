@@ -1,5 +1,6 @@
 package com.example.ServletTest.command;
 
+import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +12,8 @@ public class MainPageCommand implements ServletCommand {
 
     public MainPageCommand() {
         // TODO: Here we call services to work
-        mainPage = "WEB-INF/index.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        mainPage = properties.getProperty("loginPage"); // Check this moment
     }
 
     @Override

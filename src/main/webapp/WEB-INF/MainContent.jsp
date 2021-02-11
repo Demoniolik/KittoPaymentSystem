@@ -26,41 +26,37 @@
 <body>
 <div class="container">
     <div class="grid">
+
+        <!-- Sidebar -->
         <div class="sidebar">
 
             <!-- head -->
             <div class="sidebar__head">
                 <div class="head">
-                    <div class="container-img"><img src="resources/img/content/logo.webp" alt=""></div>
+                    <div class="container-img"><img src="resources/img/content/menu/logo.webp" alt=""></div>
                     <div class="text">
-                        <div class="name">${sessionScope.get("user").getFirstName()} ${sessionScope.get("user").getLastName()} </div>
-                        <div class="specialty">${sessionScope.get("user").getUserType()}</div>
+                        <div class="name">${user.getFirstName()} ${user.getLastName()}</div>
+                        <div class="specialty">${user.getLogin()}</div>
                     </div>
                 </div>
             </div>
 
             <!-- Menu -->
             <div class="sidebar__menu">
-                <div class="title"><img src="resources/img/content/header/exchange-rates.svg" alt="">Exchange Rates</div>
+                <div class="title"><img src="resources/img/content/menu/exchange-rates.svg" alt="">Exchange Rates</div>
 
-                <a href='login.html' class="link">
-                    <div class="icon"><img src="resources/img/content/exchange-rates/dollar.svg" alt=""></div>
+                <a href='#' class="link">
+                    <div class="icon"><img src="resources/img/content/menu/dollar.svg" alt=""></div>
                     <div class="title">Dollar</div>
                 </a>
 
-                <a class="link stat">
-                    <div class="left">
-                        <div class="icon"><img src="resources/img/content/exchange-rates/euro.svg" alt=""></div>
-                        <div class="title">Euro</div>
-                    </div>
-
-                    <div class="right">
-                        <span>21</span>
-                    </div>
+                <a class="link">
+                    <div class="icon"><img src="resources/img/content/menu/euro.svg" alt=""></div>
+                    <div class="title">Euro</div>
                 </a>
 
                 <a class="link">
-                    <div class="icon"><img src="resources/img/content/exchange-rates/yen.svg" alt=""></div>
+                    <div class="icon"><img src="resources/img/content/menu/yen.svg" alt=""></div>
                     <div class="title">Yen</div>
                 </a>
 
@@ -75,23 +71,23 @@
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='100'>
-            <img src="resources/img/content/header/replenishment.svg" alt="">
-            <a href="#">Replenishment</a>
+            <img src="resources/img/content/header/card-managment.svg" alt="">
+            <a href="#">Card management</a>
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='200'>
-            <img src="resources/img/content/header/translations.svg" alt="">
-            <a href="#">Translations</a>
+            <img src="resources/img/content/header/replenishment.svg" alt="">
+            <a href="#" class="open-replenishment">Replenishment</a>
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='300'>
-            <img src="resources/img/content/header/payments.svg" alt="">
-            <a href="#">Payments</a>
+            <img src="resources/img/content/header/translations.svg" alt="">
+            <a href="#" class="open-transaction">Transactions</a>
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='400'>
-            <img src="resources/img/content/header/gg.svg" alt="">
-            <a href="#">Socials</a>
+            <img src="resources/img/content/header/payments.svg" alt="">
+            <a href="#" class="open-payments">Payments</a>
         </div>
 
         <div class="content" data-aos="fade-up" data-aos-delay='500'>
@@ -109,23 +105,149 @@
 
                 <c:forEach items="${creditCardPayments}" var="item">
                     <div class="item">
-                        <div class="id"># 01</div>
+                        <div class="id"># <c:out value="${item.getId()}"/></div>
                         <div class="descr">
                             <div class="img"><img src="resources/img/content/category/shopping.svg" alt=""></div> Aliexpress
                         </div>
                         <div class="category">Shopping</div>
                         <div class="card">**** 5344</div>
                         <div class="date">07.02.2021</div>
-                        <div class="amount plus">+ 200$</div>
+                        <c:choose>
+                            <c:when test="${item.getMoney() > 0}">
+                                <div class="amount plus"><c:out value="${item.getMoney()}" />$</div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="amount minus"><c:out value="${item.getMoney()}" />$</div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </c:forEach>
+
 
             </div>
         </div>
     </div>
 </div>
 
+<!-- popup-replenishment -->
+<div class="popup popup-replenishment">
+    <div class="close"><img src="resources/img/content/icons/close.svg" alt=""></div>
+    <div class="title">Replenishment</div>
+
+    <div class="descr">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, fuga! Enim sunt suscipit velit
+    </div>
+
+    <form action="${pageContext.request.contextPath}/replenishCreditCard" method="post">
+
+        <label for="chosenCreditCard">Select card</label>
+
+        <select name="chosenCreditCard" required id="chosenCreditCard">
+            <c:forEach items="${userCreditCards}" var="item">
+                <option><c:out value="${item.getNumber()}" /></option>
+            </c:forEach>
+        </select>
+
+        <label for="replenishMoney">Replenish money</label>
+
+        <input type="number" min="0" name="replenishMoney" placeholder="0" required id="replenishMoney">
+
+        <button type="submit">Replenish</button>
+    </form>
+
+</div>
+
+<!-- popup-transaction -->
+<div class="popup popup-transaction">
+    <div class="close"><img src="resources/img/content/icons/close.svg" alt=""></div>
+    <div class="title">Create transaction</div>
+
+    <div class="descr">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, fuga! Enim sunt suscipit velit
+    </div>
+
+    <form action="${pageContext.request.contextPath}/createTransfer" method="post">
+
+        <label for="destinationNumber">destinationNumber</label>
+        <input type="number" name="destinationNumber" placeholder="destination" required id="destinationNumber">
+
+        <label for="moneyToPay">moneyToPay</label>
+        <input type="number" name="moneyToPay" placeholder="money to pay" required id="moneyToPay">
+
+        <label for="sourceNumber">sourceNumber</label>
+        <select name="sourceNumber" id="sourceNumber">
+            <c:forEach items="${userCreditCards}" var="item">
+                <option><c:out value="${item.getNumber()}" /></option>
+            </c:forEach>
+        </select>
+
+        <button type="submit">Create transaction</button>
+
+    </form>
+
+</div>
+
+<!-- popup-payments 01 -->
+<div class="popup popup-payments">
+    <div class="close"><img src="resources/img/content/icons/close.svg" alt=""></div>
+    <div class="title">Payments</div>
+
+    <div class="descr">01 or 02</div>
+
+    <div class="select-category">
+        <a href="#" class="payments-01" id="mobile" onclick="readId(this.id)">
+            <div class="img"><img src="resources/img/content/category/mobile.svg" alt=""></div> Mobile
+        </a>
+        <a href="#" class="payments-01" id="utilities" onclick="readId(this.id)">
+            <div class="img"><img src="resources/img/content/category/utilities.svg" alt=""></div> Utilities
+        </a>
+        <a href="#" class="payments-01" id="requisite" onclick="readId(this.id)">
+            <div class="img"><img src="resources/img/content/category/requisite.svg" alt=""></div> Requisite
+        </a>
+        <a href="#" class="payments-01" id="charity" onclick="readId(this.id)">
+            <div class="img"><img src="resources/img/content/category/charity.svg" alt=""></div> Charity
+        </a>
+    </div>
+</div>
+
+<!-- popup-payments or 02 -->
+<div class="popup popup-payments-02">
+    <div class="close"><img src="resources/img/content/icons/close.svg" alt=""></div>
+    <div class="title">Payments</div>
+
+    <div class="descr">02 or 02</div>
+
+    <form action="${pageContext.request.contextPath}/createPayment" method="post" id="createPayment">
+
+        <label for="chosenCategory">category</label>
+        <select name="chosenCategory" id="chosenCategory">
+            <c:forEach items="${categories}" var="item">
+                <option>
+                    <c:out value="${item}" />
+                </option>
+            </c:forEach>
+        </select>
+
+        <label for="destination">destination</label>
+        <input type="number" min="0" name="destination" placeholder="requisite number" id="destination">
+
+        <label for="moneyToPay">moneyToPay</label>
+        <input type="number" min="0" name="moneyToPay" placeholder="0" id="moneyToPay">
+
+        <label for="sourceNumber">sourceNumber</label>
+        <select name="sourceNumber" id="sourceNumber">
+            <c:forEach items="${userCreditCards}" var="item">
+                <option>
+                    <c:out value="${item.getNumber()}" />
+                </option>
+            </c:forEach>
+        </select>
+
+        <button type="submit" id="pay_button">Pay</button>
+    </form>
+</div>
+
 <div class="bg-menu"></div>
-<script src="resources/js/app.js"></script></body>
+<script src="resources/js/app.js"></script>
+
+</body>
 
 </html>

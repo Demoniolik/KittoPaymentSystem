@@ -26,7 +26,8 @@ public class CommandManager {
         postCommands.put("/register", new RegisterCommand());
         postCommands.put("/login", new LoginCommand());
         postCommands.put("/replenishCreditCard", new ReplenishCreditCardCommand());
-        postCommands.put("/creatTransfer", new CreateTransferCommand());
+        postCommands.put("/createTransfer", new CreateTransferCommand());
+        postCommands.put("/createPayment", new CreatePaymentCommand());
 
     }
 

@@ -1,5 +1,6 @@
 package com.example.ServletTest.command;
 
+import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +12,9 @@ public class RegisterPageCommand implements ServletCommand {
     private String mainPage;
 
     public RegisterPageCommand() {
-        //TODO: Here we need to load pages from properties file
-        registrationPage = "WEB-INF/registration.jsp";
-        mainPage = "WEB-INF/MainContent.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        registrationPage = properties.getProperty("registrationPage");
+        mainPage = properties.getProperty("mainPage");
     }
 
     @Override

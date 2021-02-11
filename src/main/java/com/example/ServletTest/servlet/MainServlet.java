@@ -32,7 +32,7 @@ public class MainServlet extends HttpServlet {
         logger.info("Processing POST request");
         ServletCommand command = commandManager.getPostCommand(request);
         String loadedPage = command.execute(request, response);
-        //response.sendRedirect(request.getContextPath() + "/" + loadedPage);
-        request.getRequestDispatcher(loadedPage).forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/" + "login");
+        //request.getRequestDispatcher(loadedPage).forward(request, response);
     }
 }

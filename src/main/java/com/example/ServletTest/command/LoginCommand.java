@@ -9,6 +9,7 @@ import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
 import com.example.ServletTest.service.user.UserService;
+import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +30,9 @@ public class LoginCommand implements ServletCommand {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         // TODO: here we have to load out jsp files
-        loginPage = "index.jsp";
-        mainPage = "WEB-INF/MainContent.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        mainPage = properties.getProperty("mainPage");
+        loginPage = properties.getProperty("loginPage");
         //adminPage = "WEB-INF/admin/admin.jsp";
     }
 
@@ -49,8 +51,9 @@ public class LoginCommand implements ServletCommand {
                 HttpSession session = request.getSession();
                 session.setAttribute("userCreditCards", creditCards);
                 List<Payment> payments = paymentService
-                        .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getNumber());
+                        .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId());
                 session.setAttribute("creditCardPayments", payments);
+                session.setAttribute("categories", paymentService.getAllCategories());
                 resultPage = mainPage;
             }else {
                 request.setAttribute("idLogged", false);

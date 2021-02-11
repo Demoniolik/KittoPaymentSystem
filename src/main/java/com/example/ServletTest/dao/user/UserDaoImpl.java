@@ -44,10 +44,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     public static UserDaoImpl getInstance() {
-        if (instance != null) {
-            return instance;
+        if (instance == null) {
+            instance = new UserDaoImpl();
         }
-        instance = new UserDaoImpl();
         return instance;
     }
 

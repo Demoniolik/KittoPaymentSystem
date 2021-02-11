@@ -3,6 +3,7 @@ package com.example.ServletTest.command;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
+import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +19,9 @@ public class LoginPageCommand implements ServletCommand {
     public LoginPageCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         // TODO: Here we load jsp pages from properties file
-        loginPage = "index.jsp";
-        mainPage = "WEB-INF/MainContent.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        mainPage = properties.getProperty("mainPage");
+        loginPage = properties.getProperty("loginPage");
     }
 
     @Override

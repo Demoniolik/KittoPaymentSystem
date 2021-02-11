@@ -18,7 +18,7 @@ public class PaymentDaoImpl implements PaymentDao {
     private static final String QUERY_TO_CREATE_PAYMENT = "INSERT INTO payment SET money = ?, " +
             "status = ?, date = ?, credit_card_id_source = ?, " +
             "credit_card_id_destination = ?, " +
-            "category = ?";
+            "category_id = ?";
     private static final String QUERY_TO_CHANGE_STATUS =
             "UPDATE payment SET status = ? WHERE id = ?";
     private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER =
@@ -38,10 +38,9 @@ public class PaymentDaoImpl implements PaymentDao {
     }
 
     public static PaymentDaoImpl getInstance() {
-        if (instance != null){
-            return instance;
+        if (instance == null){
+            instance = new PaymentDaoImpl();
         }
-        instance = new PaymentDaoImpl();
         return instance;
     }
 

@@ -5,10 +5,12 @@ import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentBuilder;
+import com.example.ServletTest.model.payment.PaymentCategory;
 import com.example.ServletTest.model.payment.PaymentStatus;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
+import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +41,8 @@ public class CreatePaymentCommand implements ServletCommand{
         paymentCategoryToCreditCardNumberAssociation
                 .put("charity", 9090909090L);
         // TODO: Here you need to load data from properties file
-        mainPage = "WEB-INF/MainContent.jsp";
+        MappingProperties properties = MappingProperties.getInstance();
+        mainPage = properties.getProperty("mainPage");
     }
 
     @Override
@@ -50,6 +53,8 @@ public class CreatePaymentCommand implements ServletCommand{
         String categoryOfPayment = request.getParameter("chosenCategory");
         long destinationCreditCardNumber =
                 paymentCategoryToCreditCardNumberAssociation.get(categoryOfPayment);
+
+        System.out.println(destinationCreditCardNumber);
         CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
         CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationCreditCardNumber);
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
@@ -57,16 +62,30 @@ public class CreatePaymentCommand implements ServletCommand{
                 .setCreditCardIdDestination(destinationCreditCard.getId())
                 .setDate(LocalDateTime.now())
                 .setPaymentStatus(PaymentStatus.PREPARED)
+                .setPaymentCategory(getCategoryFromName(categoryOfPayment))
                 .build();
         if (paymentService.createPayment(payment)) {
             creatingTransaction(moneyToPay, sourceNumber, destinationCreditCardNumber, payment);
             HttpSession session = request.getSession();
             session.setAttribute("user_credit_cards",
                     creditCardService.getAllCreditCards(((User)session.getAttribute("user")).getId()));
-            logger.info("Transaction succeeded");
+            logger.info("Payment succeeded");
         }
 
         return mainPage;
+    }
+
+    private static PaymentCategory getCategoryFromName(String name) {
+        if (PaymentCategory.REPLENISHING_MOBILE_PHONE.getCategory().equals(name)) {
+            return PaymentCategory.REPLENISHING_MOBILE_PHONE;
+        } else if (PaymentCategory.REQUISITE.getCategory().equals(name)) {
+            return PaymentCategory.REQUISITE;
+        }else if (PaymentCategory.UTILITIES.getCategory().equals(name)) {
+            return PaymentCategory.UTILITIES;
+        } else if (PaymentCategory.CHARITY.getCategory().equals(name)) {
+            return PaymentCategory.CHARITY;
+        }
+        return null;
     }
 
     private void creatingTransaction(double moneyToPay, long sourceNumber, long destinationCreditCardNumber, Payment payment) {
