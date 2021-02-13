@@ -31,4 +31,9 @@ public class CreditCardService {
         logger.info("Getting credit card by credit card id");
         return creditCardDao.get(creditCardId);
     }
+
+    public List<CreditCard> getAllCreditCardsByCriteria(long userId, String sortingCriteria, String sortingOrder) {
+        logger.info("Retiriving all cards according to sorting criteria");
+        return creditCardDao.getAllCardsBySortingCriteria(userId, sortingCriteria, sortingOrder);
+    }
 }

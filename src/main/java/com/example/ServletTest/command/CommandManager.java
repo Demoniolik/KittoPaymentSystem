@@ -18,7 +18,8 @@ public class CommandManager {
         getCommands.put("/", new MainPageCommand());
         getCommands.put("/login", new LoginPageCommand());
         getCommands.put("/register", new RegisterPageCommand());
-        getCommands.put("/sortPaymentsById", new SortPayments());
+        getCommands.put("/sortPayments", new SortPayments());
+        getCommands.put("/sortCards", new SortCards());
 
 
         //POST commands

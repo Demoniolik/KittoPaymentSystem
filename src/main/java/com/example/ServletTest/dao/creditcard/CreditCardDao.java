@@ -14,4 +14,6 @@ public interface CreditCardDao extends DAO<CreditCard> {
     List<CreditCard> getAllCardOfCurrentUser(long userId);
 
     boolean replenishCreditCard(long creditCardNumber, double replenishMoney);
+
+    List<CreditCard> getAllCardsBySortingCriteria(long userId, String sortingCriteria, String sortingOrder);
 }

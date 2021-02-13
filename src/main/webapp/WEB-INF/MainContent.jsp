@@ -105,8 +105,31 @@
                     <a href="#" class="create"><img src="resources/img/content/icons/create.svg" alt=""> Create Card</a>
                 </div>
 
-                <div class="filter"><span>Sort by: </span><a href="#">Number</a><a href="#">Name</a><a
-                        href="#">amount</a>
+                <div class="filter"><span>Sort by: </span>
+                    <c:choose>
+                        <c:when test="${sortedByNumber == true}">
+                            <a href="${pageContext.request.contextPath}/sortCards?sortingCriteria=number&sortingOrder=DESC">Number</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/sortCards?sortingCriteria=number&sortingOrder=ASC">Number</a>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${sortedByName == true}">
+                            <a href="${pageContext.request.contextPath}/sortCards?sortingCriteria=name&sortingOrder=DESC">Name</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/sortCards?sortingCriteria=name&sortingOrder=ASC">Name</a>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${sortedByAmount == true}">
+                            <a href="${pageContext.request.contextPath}/sortCards?sortingCriteria=money_on_card&sortingOrder=DESC">Amount</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/sortCards?sortingCriteria=money_on_card&sortingOrder=ASC">Amount</a>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
 
@@ -160,18 +183,18 @@
                 <div class="filter"><span>Sort by: </span>
                     <c:choose>
                         <c:when test="${sorted == true}">
-                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=id&sortingOrder=DESC">ID</a>
+                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=DESC">ID</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=id&sortingOrder=ASC">ID</a>
+                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=ASC">ID</a>
                         </c:otherwise>
                     </c:choose>
                     <c:choose>
                         <c:when test="${sorted == true}">
-                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=date&sortingOrder=DESC">From new to old</a>
+                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=DESC">From new to old</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=date&sortingOrder=ASC">From old to new</a>
+                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=ASC">From old to new</a>
                         </c:otherwise>
                     </c:choose>
                 </div>

@@ -111,19 +111,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     @Override
     public List<CreditCard> getAllCardOfCurrentUser(long userId) {
         logger.info("Retriving user's credit cards");
-        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_CARDS_BY_USER_ID);) {
-            statement.setLong(1, userId);
-            statement.execute();
-            List<CreditCard> creditCards = getCreditCardsFromResultSet(statement.getResultSet());
-            System.out.println(creditCards);
-            logger.info("Users credit cards are loaded");
-            return creditCards;
-        } catch (SQLException exception) {
-            //TODO: throw new database exception
-            logger.error(exception);
-        }
-
-        return null;
+        return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_CARDS_BY_USER_ID);
     }
 
     @Override
@@ -143,6 +131,28 @@ public class CreditCardDaoImpl implements CreditCardDao {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<CreditCard> getAllCardsBySortingCriteria(long userId, String sortingCriteria, String sortingOrder) {
+        String modifiedQuery =
+                QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " ORDER BY " + sortingCriteria + " " + sortingOrder;
+        return getCreditCardsByCriteria(userId, modifiedQuery);
+    }
+
+    private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) {
+        try (PreparedStatement statement = connection.prepareStatement(sortingCriteria);) {
+            statement.setLong(1, userId);
+            statement.execute();
+            List<CreditCard> creditCards = getCreditCardsFromResultSet(statement.getResultSet());
+            System.out.println(creditCards);
+            logger.info("Users credit cards are loaded");
+            return creditCards;
+        } catch (SQLException exception) {
+            //TODO: throw new database exception
+            logger.error(exception);
+        }
+        return null;
     }
 
     private CreditCard getCreditCardFromResultSet(ResultSet resultSet) {
