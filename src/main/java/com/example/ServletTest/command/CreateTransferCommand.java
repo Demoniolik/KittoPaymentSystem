@@ -42,7 +42,7 @@ public class CreateTransferCommand implements ServletCommand {
         logger.info("Executing transfer creation command");
 
         double moneyToPay = Double.parseDouble(request.getParameter("moneyToPay"));
-        long sourceNumber = Long.parseLong(request.getParameter("sourceNumber"));
+        long sourceNumber = Long.parseLong(request.getParameter("chosenCreditCard"));
         long destinationNumber = Long.parseLong(request.getParameter("destinationNumber"));
 
         CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);

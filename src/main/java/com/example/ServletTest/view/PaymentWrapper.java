@@ -66,7 +66,7 @@ public class PaymentWrapper {
     private void setCreditCardDestination(Long creditCardDestination) {
         String creditCardAsString = creditCardDestination.toString();
         this.creditCardDestination = creditCardAsString
-                .substring(creditCardAsString.length() - 4, creditCardAsString.length());
+                .substring(creditCardAsString.length() - 4);
     }
 
     private void setDate(LocalDateTime date) {

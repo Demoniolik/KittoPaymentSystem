@@ -1,16 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
 
     <title>Bank</title>
     <meta name="description" content="description of the site">
-    <meta name="keywords" content="key 1, key 2, key 3…" />
+    <meta name="keywords" content="key 1, key 2, key 3…"/>
 
     <meta name="google" content="notranslate">
 
@@ -21,7 +21,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/blx4det.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="icon" href="favicon.svg"><link href="resources/css/app.css" rel="stylesheet"></head>
+    <link rel="icon" href="resources/favicon.svg">
+    <link href="resources/css/app.css" rel="stylesheet">
+</head>
 
 <body>
 <div class="container">
@@ -67,31 +69,96 @@
                     <div class="title">Languages: EN</div>
                 </a>
 
+                <a class="link logout">
+                    <div class="icon"><img src="resources/img/content/menu/logout.svg" alt=""></div>
+                    <div class="title">Logout</div>
+                </a>
+
             </div>
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='100'>
-            <img src="resources/img/content/header/card-managment.svg" alt="">
-            <a href="#">Card management</a>
+            <img src="resources/img/content/header/card-managment.svg" alt="" class="img">
+            <a href="#" class="open-card-management">Card management <img src="resources/img/content/header/show.svg"
+                                                                          alt=""></a>
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='200'>
-            <img src="resources/img/content/header/replenishment.svg" alt="">
+            <img src="resources/img/content/header/replenishment.svg" alt="" class="img">
             <a href="#" class="open-replenishment">Replenishment</a>
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='300'>
-            <img src="resources/img/content/header/translations.svg" alt="">
+            <img src="resources/img/content/header/translations.svg" alt="" class="img">
             <a href="#" class="open-transaction">Transactions</a>
         </div>
 
         <div class="block" data-aos="fade-up" data-aos-delay='400'>
-            <img src="resources/img/content/header/payments.svg" alt="">
+            <img src="resources/img/content/header/payments.svg" alt="" class="img">
             <a href="#" class="open-payments">Payments</a>
         </div>
 
-        <div class="content" data-aos="fade-up" data-aos-delay='500'>
-            <div class="title">Transaction history</div>
+        <div class="card-management" data-aos="fade-up" data-aos-delay='500'>
+            <div class="head">
+                <div class="left">
+                    <div class="title">Card management</div>
+                    <a href="#" class="create"><img src="resources/img/content/icons/create.svg" alt=""> Create Card</a>
+                </div>
+
+                <div class="filter"><span>Sort by: </span><a href="#">Number</a><a href="#">Name</a><a
+                        href="#">amount</a>
+                </div>
+            </div>
+
+            <c:forEach items="${userCreditCards}" var="item">
+                <div class="container-card <c:out value="${(item.isBlocked())? \"blocked\":\"\"}"/>" data-tilt=""
+                     data-tilt-max="5" data-tilt-speed="2000" data-tilt-scale="1.05">
+                    <div class="card">
+                        <div class="options"><img src="resources/img/content/icons/options.svg" alt=""></div>
+                            <%--If card is not blocked then options are available--%>
+                        <c:choose>
+                            <c:when test="${!item.isBlocked()}">
+                                <div class="popup-options">
+                                    <a href="#" class="card-rename">Rename</a>
+                                    <a href="#" class="card-block">Block</a>
+                                    <a href="#" class="card-unblock">Unblock</a>
+                                </div>
+                            </c:when>
+                        </c:choose>
+
+                        <div class="sum"><span><c:out value="${item.getMoneyOnCard()}"/></span>$</div>
+                        <div class="num">****
+                            <span>
+                                <c:out value="${item.getNumber().toString().substring(item.getNumber().toString().length() - 4)}"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="name"><c:out value="${item.getName()}"/></div>
+                </div>
+            </c:forEach>
+
+        </div>
+
+        <div class="history" data-aos="fade-up" data-aos-delay='600'>
+            <div class="head">
+                <div class="left">
+                    <div class="title">Transaction history</div>
+
+<%--                    <select name="chosenCreditCard" required id="chosenCreditCard">--%>
+<%--                    <c:forEach items="${userCreditCards}" var="item">--%>
+<%--                        <option>--%>
+<%--                            <a href="${pageContext.request.contextPath}/selectByCard?=${item.getNumber()}"><c:out value="${item.getNumber()}"/></a>--%>
+<%--                        </option>--%>
+<%--                    </c:forEach>--%>
+<%--                    </select>--%>
+
+                    <a href="#" download class="download"><img src="resources/img/content/icons/pdf.svg" alt="">Download
+                        PDF</a>
+                </div>
+
+                <div class="filter"><span>Sort by: </span><a href="#">ID</a><a href="#">From old to new</a></div>
+            </div>
 
             <div class="table overflow-table">
                 <div class="item item-head">
@@ -115,17 +182,19 @@
                         <div class="date"><c:out value="${item.getDate()}"/></div>
                         <c:choose>
                             <c:when test="${item.getMoney() > 0}">
-                                <div class="amount plus"><c:out value="${item.getMoney()}" />$</div>
+                                <div class="amount plus"><c:out value="${item.getMoney()}"/>$</div>
                             </c:when>
                             <c:otherwise>
-                                <div class="amount minus"><c:out value="${item.getMoney()}" />$</div>
+                                <div class="amount minus"><c:out value="${item.getMoney()}"/>$</div>
                             </c:otherwise>
                         </c:choose>
                     </div>
                 </c:forEach>
 
-
             </div>
+
+            <div class="view-more"><a href="#">View more <img src="resources/img/content/icons/view-more.svg"
+                                                              alt=""></a></div>
         </div>
     </div>
 </div>
@@ -144,7 +213,7 @@
 
         <select name="chosenCreditCard" required id="chosenCreditCard">
             <c:forEach items="${userCreditCards}" var="item">
-                <option><c:out value="${item.getNumber()}" /></option>
+                <option><c:out value="${item.getNumber()}"/></option>
             </c:forEach>
         </select>
 
@@ -174,9 +243,10 @@
         <input type="number" name="moneyToPay" placeholder="money to pay" required id="moneyToPay">
 
         <label for="sourceNumber">sourceNumber</label>
-        <select name="sourceNumber" id="sourceNumber">
+
+        <select name="chosenCreditCard" required id="chosenCreditCard">
             <c:forEach items="${userCreditCards}" var="item">
-                <option><c:out value="${item.getNumber()}" /></option>
+                <option><c:out value="${item.getNumber()}"/></option>
             </c:forEach>
         </select>
 
@@ -194,17 +264,21 @@
     <div class="descr">01 or 02</div>
 
     <div class="select-category">
-        <a href="#" class="payments-01" id="mobile" onclick="readId(this.id)">
-            <div class="img"><img src="resources/img/content/category/mobile.svg" alt=""></div> Mobile
+        <a href="#" class="payments-01">
+            <div class="img"><img src="resources/img/content/category/mobile.svg" alt=""></div>
+            Mobile
         </a>
-        <a href="#" class="payments-01" id="utilities" onclick="readId(this.id)">
-            <div class="img"><img src="resources/img/content/category/utilities.svg" alt=""></div> Utilities
+        <a href="#" class="payments-01">
+            <div class="img"><img src="resources/img/content/category/utilities.svg" alt=""></div>
+            Utilities
         </a>
-        <a href="#" class="payments-01" id="requisite" onclick="readId(this.id)">
-            <div class="img"><img src="resources/img/content/category/requisite.svg" alt=""></div> Requisite
+        <a href="#" class="payments-01">
+            <div class="img"><img src="resources/img/content/category/requisite.svg" alt=""></div>
+            Requisite
         </a>
-        <a href="#" class="payments-01" id="charity" onclick="readId(this.id)">
-            <div class="img"><img src="resources/img/content/category/charity.svg" alt=""></div> Charity
+        <a href="#" class="payments-01">
+            <div class="img"><img src="resources/img/content/category/charity.svg" alt=""></div>
+            Charity
         </a>
     </div>
 </div>
@@ -216,7 +290,7 @@
 
     <div class="descr">02 or 02</div>
 
-    <form action="${pageContext.request.contextPath}/createPayment" method="post" id="createPayment">
+    <form action="${pageContext.request.contextPath}/createPayment" method="post">
 
         <label for="chosenCategory">category</label>
         <select name="chosenCategory" id="chosenCategory">
@@ -237,18 +311,17 @@
         <select name="sourceNumber" id="sourceNumber">
             <c:forEach items="${userCreditCards}" var="item">
                 <option>
-                    <c:out value="${item.getNumber()}" />
+                    <c:out value="${item.getNumber()}"/>
                 </option>
             </c:forEach>
         </select>
 
-        <button type="submit" id="pay_button">Pay</button>
+        <button type="submit">Pay</button>
     </form>
 </div>
 
 <div class="bg-menu"></div>
 <script src="resources/js/app.js"></script>
-
 </body>
 
 </html>

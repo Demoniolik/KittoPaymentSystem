@@ -14,6 +14,7 @@ import java.util.List;
 
 public class UserDaoImpl implements UserDao {
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class);
+    private Connection connection;
     private static UserDaoImpl instance;
     private static BasicConnectionPool basicConnectionPool;
     private static final String QUERY_TO_CREATE_USER = "INSERT INTO user SET first_name = ?," +
@@ -41,6 +42,7 @@ public class UserDaoImpl implements UserDao {
         // TODO: load all the constant queries from the properties file
         try {
             basicConnectionPool = BasicConnectionPool.create();
+            connection = basicConnectionPool.getConnection();
         } catch (SQLException exception) {
             logger.error(exception.getMessage());
             // TODO: throw database exception
@@ -68,9 +70,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User save(User user) {
-        try {
-           Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_USER);
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_USER)) {
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getLastName());
             statement.setString(3, user.getLogin());
@@ -111,9 +111,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserByEmailAndPassword(String login, String password) {
         logger.info("Searching for user by his/her login and password");
-        try {
-            Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD);
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD);) {
             statement.setString(1, login);
             statement.setString(2, password);
             statement.execute();
@@ -127,8 +125,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public String getUserFullNameByCardId(long creditCardId) {
-        try (Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement =
+        try (PreparedStatement statement =
                     connection.prepareStatement(QUERY_TO_GET_USER_SPECIFIED_NAME_BY_CARD_ID)) {
             statement.setLong(1, creditCardId);
             statement.execute();

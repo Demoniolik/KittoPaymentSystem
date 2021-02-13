@@ -14,6 +14,7 @@ import java.util.List;
 
 public class PaymentDaoImpl implements PaymentDao {
     private static final Logger logger = Logger.getLogger(PaymentDaoImpl.class);
+    private Connection connection;
     private BasicConnectionPool basicConnectionPool;
     private static PaymentDaoImpl instance;
     private static final String QUERY_TO_CREATE_PAYMENT = "INSERT INTO payment SET money = ?, " +
@@ -32,6 +33,7 @@ public class PaymentDaoImpl implements PaymentDao {
     private PaymentDaoImpl() {
         try {
             basicConnectionPool = BasicConnectionPool.create();
+            connection = basicConnectionPool.getConnection();
         } catch (SQLException exception) {
             //TODO: throw new database exception
             logger.error(exception);
@@ -57,8 +59,7 @@ public class PaymentDaoImpl implements PaymentDao {
 
     @Override
     public Payment save(Payment payment) {
-        try (Connection connection = basicConnectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_PAYMENT,
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_PAYMENT,
                      Statement.RETURN_GENERATED_KEYS)) {
             statement.setDouble(1, payment.getMoney());
             statement.setString(2, payment.getDescription());
@@ -100,8 +101,7 @@ public class PaymentDaoImpl implements PaymentDao {
 
     @Override
     public void changeStatus(Payment payment) {
-        try (Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_CHANGE_STATUS)) {
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_CHANGE_STATUS)) {
             statement.setLong(1, payment.getPaymentStatus().ordinal() + 1);
             statement.setLong(2, payment.getId());
             statement.executeUpdate();
@@ -113,8 +113,7 @@ public class PaymentDaoImpl implements PaymentDao {
 
     @Override
     public List<Payment> getAllPaymentsByCreditCardNumber(long cardNumber) {
-        try (Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER)) {
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER)) {
             statement.setLong(1, cardNumber);
             statement.setLong(2, cardNumber);
             statement.execute();

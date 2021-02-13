@@ -11,6 +11,7 @@ import java.util.List;
 
 public class CreditCardDaoImpl implements CreditCardDao {
     private static final Logger logger = Logger.getLogger(CreditCardDaoImpl.class);
+    private Connection connection;
     private static CreditCardDaoImpl instance;
     private BasicConnectionPool basicConnectionPool;
     private static final String QUERY_TO_GET_CARD_BY_ID = "SELECT * FROM credit_card WHERE id = ?";
@@ -25,6 +26,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
         // TODO: load all the constant queries from the properties file
         try {
             basicConnectionPool = BasicConnectionPool.create();
+            connection = basicConnectionPool.getConnection();
         } catch (SQLException exception) {
             logger.error(exception.getMessage());
             // TODO: throw database exception
@@ -40,8 +42,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
 
     @Override
     public CreditCard get(long id) {
-        try (Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_CARD_BY_ID)) {
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_CARD_BY_ID)) {
             statement.setLong(1, id);
             statement.execute();
             return getCreditCardFromResultSet(statement.getResultSet());
@@ -76,9 +77,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     @Override
     public CreditCard getCardByNumber(long creditCardNumber) {
         logger.info("Getting credit card by number");
-        try {
-            Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_CREDIT_CARD_BY_NUMBER);
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_CREDIT_CARD_BY_NUMBER);) {
             statement.setLong(1, creditCardNumber);
             statement.execute();
             return getCreditCardFromResultSet(statement.getResultSet());
@@ -112,9 +111,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     @Override
     public List<CreditCard> getAllCardOfCurrentUser(long userId) {
         logger.info("Retriving user's credit cards");
-        try {
-            Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_CARDS_BY_USER_ID);
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_CARDS_BY_USER_ID);) {
             statement.setLong(1, userId);
             statement.execute();
             List<CreditCard> creditCards = getCreditCardsFromResultSet(statement.getResultSet());
@@ -135,10 +132,8 @@ public class CreditCardDaoImpl implements CreditCardDao {
         double resultOfReplenishing = getCardByNumber(creditCardNumber).getMoneyOnCard();
         logger.info("Replenishing money on card");
         resultOfReplenishing += replenishMoney;
-        try {
-            Connection connection = basicConnectionPool.getConnection();
-            PreparedStatement statement =
-                    connection.prepareStatement(QUERY_TO_UPDATE_MONEY_STATUS_OF_CARD_BY_CARD_NUMBER);
+        try (PreparedStatement statement =
+                     connection.prepareStatement(QUERY_TO_UPDATE_MONEY_STATUS_OF_CARD_BY_CARD_NUMBER);) {
             statement.setDouble(1, resultOfReplenishing);
             statement.setLong(2, creditCardNumber);
             statement.executeUpdate();

@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CreatePaymentCommand implements ServletCommand{
     private static final Logger logger = Logger.getLogger(CreatePaymentCommand.class);
@@ -28,7 +28,8 @@ public class CreatePaymentCommand implements ServletCommand{
     private static PaymentService paymentService;
     private static CreditCardService creditCardService;
     private String mainPage;
-    private static final Map<String, Long> paymentCategoryToCreditCardNumberAssociation = new HashMap<>();
+    private static final Map<String, Long> paymentCategoryToCreditCardNumberAssociation =
+            new ConcurrentHashMap<>();
 
     public CreatePaymentCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -58,7 +59,6 @@ public class CreatePaymentCommand implements ServletCommand{
         long destinationCreditCardNumber =
                 paymentCategoryToCreditCardNumberAssociation.get(categoryOfPayment);
 
-        System.out.println(destinationCreditCardNumber);
         CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
         CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationCreditCardNumber);
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
