@@ -7,8 +7,10 @@ import java.util.List;
 
 public interface PaymentDao extends DAO<Payment> {
     void changeStatus(Payment payment);
-    List<Payment> getAllPaymentsByCreditCardNumber(long cardNumber);
+    List<Payment> getAllPaymentsByCreditCardNumberId(long cardNumber);
     List<Payment> getAllCardsByCardNumber();
 
     List<String> getAllCategories();
+
+    List<Payment> getAllPaymentsByCreditCardNumberSortedByCriteria(long currentCreditCard, String sortingCriteria, String sortingOder);
 }

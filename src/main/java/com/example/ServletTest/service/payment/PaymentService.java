@@ -25,12 +25,17 @@ public class PaymentService {
 
     public List<Payment> getListOfPaymentsThatBelongToCreditCard(long currentCreditCard) {
         logger.info("Retriving all payments that belong to credit card");
-        return paymentDao.getAllPaymentsByCreditCardNumber(currentCreditCard);
+        return paymentDao.getAllPaymentsByCreditCardNumberId(currentCreditCard);
     }
 
     public List<String> getAllCategories() {
         logger.info("Getting all categories");
         return paymentDao.getAllCategories();
+    }
+
+    public List<Payment> getListOfPaymentsSortedByCriteria(long currentCreditCard, String sortingCriteria, String sortingOrder) {
+        logger.info("Retriving and sorting payments that belong to credit card");
+        return paymentDao.getAllPaymentsByCreditCardNumberSortedByCriteria(currentCreditCard, sortingCriteria, sortingOrder);
     }
 
 }

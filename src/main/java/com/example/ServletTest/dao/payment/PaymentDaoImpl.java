@@ -23,7 +23,7 @@ public class PaymentDaoImpl implements PaymentDao {
             "category_id = ?";
     private static final String QUERY_TO_CHANGE_STATUS =
             "UPDATE payment SET status = ? WHERE id = ?";
-    private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER =
+    private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID =
             "SELECT * FROM payment " +
                     "WHERE credit_card_id_source = ? " +
                     "OR credit_card_id_destination = ?";
@@ -34,6 +34,7 @@ public class PaymentDaoImpl implements PaymentDao {
         try {
             basicConnectionPool = BasicConnectionPool.create();
             connection = basicConnectionPool.getConnection();
+            connection.setAutoCommit(true);
         } catch (SQLException exception) {
             //TODO: throw new database exception
             logger.error(exception);
@@ -112,17 +113,30 @@ public class PaymentDaoImpl implements PaymentDao {
     }
 
     @Override
-    public List<Payment> getAllPaymentsByCreditCardNumber(long cardNumber) {
-        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER)) {
-            statement.setLong(1, cardNumber);
-            statement.setLong(2, cardNumber);
+    public List<Payment> getAllPaymentsByCreditCardNumberSortedByCriteria
+            (long currentCreditCard, String sortingCriteria, String sortingOrder) {
+        String query = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID
+                + " ORDER BY " + sortingCriteria + " " + sortingOrder;
+        return getPayments(currentCreditCard, query);
+    }
+
+    private List<Payment> getPayments(long currentCreditCard, String sortingCriteria) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(sortingCriteria)) {
+            statement.setLong(1, currentCreditCard);
+            statement.setLong(2, currentCreditCard);
             statement.execute();
-            return getPaymentsFromResultSet(statement.getResultSet(), cardNumber);
+            return getPaymentsFromResultSet(statement.getResultSet(), currentCreditCard);
         } catch (SQLException exception) {
             // TODO: Throw new database exception
             logger.error(exception);
         }
         return null;
+    }
+
+    public List<Payment> getAllPaymentsByCreditCardNumberId(long currentCreditCard) {
+        String query = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID + " ORDER BY date DESC";
+        return getPayments(currentCreditCard, query);
     }
 
     private List<Payment> getPaymentsFromResultSet(ResultSet resultSet, long currentCreditCard) {
@@ -181,4 +195,5 @@ public class PaymentDaoImpl implements PaymentDao {
         }
         return listOfCategories;
     }
+
 }

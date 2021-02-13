@@ -157,7 +157,24 @@
                         PDF</a>
                 </div>
 
-                <div class="filter"><span>Sort by: </span><a href="#">ID</a><a href="#">From old to new</a></div>
+                <div class="filter"><span>Sort by: </span>
+                    <c:choose>
+                        <c:when test="${sorted == true}">
+                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=id&sortingOrder=DESC">ID</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=id&sortingOrder=ASC">ID</a>
+                        </c:otherwise>
+                    </c:choose>
+                    <c:choose>
+                        <c:when test="${sorted == true}">
+                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=date&sortingOrder=DESC">From new to old</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/sortPaymentsById?sortingCriteria=date&sortingOrder=ASC">From old to new</a>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
 
             <div class="table overflow-table">
