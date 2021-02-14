@@ -20,6 +20,7 @@ public class CommandManager {
         getCommands.put("/register", new RegisterPageCommand());
         getCommands.put("/sortPayments", new SortPayments());
         getCommands.put("/sortCards", new SortCards());
+        getCommands.put("/showMorePayments", new ShowMorePayments());
 
 
         //POST commands

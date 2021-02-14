@@ -26,7 +26,14 @@ public class PaymentDaoImpl implements PaymentDao {
     private static final String QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID =
             "SELECT * FROM payment " +
                     "WHERE credit_card_id_source = ? " +
-                    "OR credit_card_id_destination = ?";
+                    "OR credit_card_id_destination = ? ";
+    private static final String COUNT_OF_PAYMENTS_ATTACHED_TO_CARD_NUMBER_ID =
+            "SELECT COUNT(*) FROM payment " +
+                    "WHERE credit_card_id_source = ? " +
+                    "OR credit_card_id_destination = ? ";
+    private static final String LIMIT_OPTION = " LIMIT ?";
+    private static final String DEFAULT_QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID
+            = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID + " ORDER BY date DESC" + LIMIT_OPTION;
     private static final String QUERY_TO_GET_ALL_CATEGORIES =
             "SELECT * FROM category";
 
@@ -116,15 +123,45 @@ public class PaymentDaoImpl implements PaymentDao {
     public List<Payment> getAllPaymentsByCreditCardNumberSortedByCriteria
             (long currentCreditCard, String sortingCriteria, String sortingOrder) {
         String query = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID
-                + " ORDER BY " + sortingCriteria + " " + sortingOrder;
-        return getPayments(currentCreditCard, query);
+                + " ORDER BY " + sortingCriteria + " " + sortingOrder + LIMIT_OPTION;
+        final int LIMIT = 10;
+        return getPayments(currentCreditCard, query, LIMIT);
     }
 
-    private List<Payment> getPayments(long currentCreditCard, String sortingCriteria) {
+    public List<Payment> getAllPaymentsByCreditCardNumberId(long currentCreditCard) {
+        final int LIMIT = 10;
+        return getPayments(currentCreditCard, DEFAULT_QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID, LIMIT);
+    }
+
+    @Override
+    public List<Payment> getAllPaymentsWithLimitOption(long currentCreditCard, int pageSize) {
+        return getPayments(currentCreditCard, DEFAULT_QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID, pageSize);
+    }
+
+    @Override
+    public int getCountOfPaymentsAttachedToCard(long currentCreditCard) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(COUNT_OF_PAYMENTS_ATTACHED_TO_CARD_NUMBER_ID)) {
+            statement.setLong(1, currentCreditCard);
+            statement.setLong(2, currentCreditCard);
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException exception) {
+            //TODO: create database exception
+            logger.error(exception);
+        }
+        return 0;
+    }
+
+    private List<Payment> getPayments(long currentCreditCard, String sortingCriteria, int limit) {
         try (PreparedStatement statement =
                      connection.prepareStatement(sortingCriteria)) {
             statement.setLong(1, currentCreditCard);
             statement.setLong(2, currentCreditCard);
+            statement.setInt(3, limit);
             statement.execute();
             return getPaymentsFromResultSet(statement.getResultSet(), currentCreditCard);
         } catch (SQLException exception) {
@@ -132,11 +169,6 @@ public class PaymentDaoImpl implements PaymentDao {
             logger.error(exception);
         }
         return null;
-    }
-
-    public List<Payment> getAllPaymentsByCreditCardNumberId(long currentCreditCard) {
-        String query = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID + " ORDER BY date DESC";
-        return getPayments(currentCreditCard, query);
     }
 
     private List<Payment> getPaymentsFromResultSet(ResultSet resultSet, long currentCreditCard) {

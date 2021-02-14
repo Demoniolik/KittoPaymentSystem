@@ -13,4 +13,8 @@ public interface PaymentDao extends DAO<Payment> {
     List<String> getAllCategories();
 
     List<Payment> getAllPaymentsByCreditCardNumberSortedByCriteria(long currentCreditCard, String sortingCriteria, String sortingOder);
+
+    List<Payment> getAllPaymentsWithLimitOption(long currentCreditCard, int pageSize);
+
+    int getCountOfPaymentsAttachedToCard(long creditCardId);
 }

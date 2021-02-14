@@ -38,4 +38,11 @@ public class PaymentService {
         return paymentDao.getAllPaymentsByCreditCardNumberSortedByCriteria(currentCreditCard, sortingCriteria, sortingOrder);
     }
 
+    public List<Payment> getAllPaymentsWithLimitOption(long currentCreditCard, int pageSize) {
+        return paymentDao.getAllPaymentsWithLimitOption(currentCreditCard ,pageSize);
+    }
+
+    public int getAmountOfCardPayments(long creditCardId) {
+        return paymentDao.getCountOfPaymentsAttachedToCard(creditCardId);
+    }
 }
