@@ -1,10 +1,13 @@
 package com.example.ServletTest.view;
 
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
+import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentCategory;
 import com.example.ServletTest.model.payment.PaymentStatus;
 import com.example.ServletTest.service.creditcard.CreditCardService;
+import com.example.ServletTest.service.user.UserService;
+import org.apache.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,21 +18,29 @@ public class PaymentWrapper {
     private String description;
     private PaymentStatus paymentStatus;
     private String date;
-    private long creditCardSource;
     private String creditCardDestination;
     private String paymentCategory;
     private String categoryImage;
     private CreditCardService creditCardService;
+    private UserService userService;
 
     public PaymentWrapper(Payment payment) {
+        //TODO: destination is a way to understand who us destination and a source
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
+        userService = new UserService(UserDaoImpl.getInstance());
         this.id = payment.getId();
         this.money = payment.getMoney();
-        this.description = payment.getDescription();
+        if (payment.getMoney() < 0) {
+            this.description = userService.getSpecifiedUserNameByCardId(payment.getCreditCardIdDestination());
+            this.setCreditCardDestination(creditCardService
+                    .getCreditCardById(payment.getCreditCardIdDestination()).getNumber());
+        } else {
+            this.description = userService.getSpecifiedUserNameByCardId(payment.getCreditCardIdSource());
+            this.setCreditCardDestination(creditCardService
+                    .getCreditCardById(payment.getCreditCardIdSource()).getNumber());
+        }
         this.paymentStatus = payment.getPaymentStatus();
         this.setDate(payment.getDate());
-        this.setCreditCardDestination(creditCardService
-                .getCreditCardById(payment.getCreditCardIdDestination()).getNumber());
         this.paymentCategory = payment.getPaymentCategory().getCategory();
         this.setCategoryImage(payment.getPaymentCategory());
     }

@@ -124,7 +124,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public String getUserFullNameByCardId(long creditCardId) {
+    public String getUserSpecifiedNameByCardId(long creditCardId) {
         try (PreparedStatement statement =
                     connection.prepareStatement(QUERY_TO_GET_USER_SPECIFIED_NAME_BY_CARD_ID)) {
             statement.setLong(1, creditCardId);

@@ -44,7 +44,6 @@ public class SortPayments implements ServletCommand {
         //TODO: Change it to the selected card
         List<Payment> payments =
                 paymentService.getListOfPaymentsSortedByCriteria(creditCards.get(0).getId(), sortingCriteria, sortingOrder);
-        System.out.println(payments);
         session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
         if (sortingOrder.equals("ASC")) {
             request.setAttribute("sorted", true);

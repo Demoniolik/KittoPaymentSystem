@@ -50,7 +50,7 @@ public class CreateTransferCommand implements ServletCommand {
 
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
                 .setDescription(userService.
-                        getDestinationUserNameByCardId(destinationCreditCard.getId()))
+                        getSpecifiedUserNameByCardId(destinationCreditCard.getId()))
                 .setCreditCardIdSource(sourceCreditCard.getId())
                 .setCreditCardIdDestination(destinationCreditCard.getId())
                 .setDate(LocalDateTime.now())

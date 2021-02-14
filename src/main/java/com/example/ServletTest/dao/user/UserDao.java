@@ -6,5 +6,5 @@ import com.example.ServletTest.model.user.User;
 public interface UserDao extends DAO<User> {
     User getUserByEmailAndPassword(String email, String password);
 
-    String getUserFullNameByCardId(long id);
+    String getUserSpecifiedNameByCardId(long id);
 }
