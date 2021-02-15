@@ -47,9 +47,18 @@ public class SortPayments implements ServletCommand {
         session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
         if (sortingOrder.equals("ASC")) {
             request.setAttribute("sorted", true);
+            session.setAttribute("sortingOrder", "ASC");
         } else {
             request.setAttribute("sorted", false);
+            session.setAttribute("sortingOrder", "DESC");
         }
+
+        if (sortingCriteria.equals("id")) {
+            session.setAttribute("sortingCriteria", "id");
+        } else {
+            session.setAttribute("sortingCriteria", "date");
+        }
+
         return mainPage;
     }
 }

@@ -14,6 +14,11 @@ public class CreditCardDaoImpl implements CreditCardDao {
     private Connection connection;
     private static CreditCardDaoImpl instance;
     private BasicConnectionPool basicConnectionPool;
+    private static final String QUERY_TO_CREATE_NEW_CARD =
+            "INSERT INTO credit_card SET " +
+                    "number = ?, name = ?, " +
+                    "money_on_card = ?, blocked = ? " +
+                    "cvc = ?, user_id = ?";
     private static final String QUERY_TO_GET_CARD_BY_ID = "SELECT * FROM credit_card WHERE id = ?";
     private static final String QUERY_TO_GET_ALL_CARDS_BY_USER_ID =
             "SELECT * FROM credit_card WHERE user_id = ?";
@@ -21,6 +26,8 @@ public class CreditCardDaoImpl implements CreditCardDao {
             "UPDATE credit_card SET money_on_card = ? WHERE number = ?";
     private static final String QUERY_TO_GET_CREDIT_CARD_BY_NUMBER =
             "SELECT * FROM credit_card WHERE number = ?";
+    private static final String QUERY_TO_BLOCK_CREDIT_CARD_BY_ID =
+            "UPDATE credit_card SET blocked = 1 WHERE id = ?";
 
     private CreditCardDaoImpl() {
         // TODO: load all the constant queries from the properties file
@@ -61,7 +68,33 @@ public class CreditCardDaoImpl implements CreditCardDao {
 
     @Override
     public CreditCard save(CreditCard creditCard) {
-        return null;
+        try (PreparedStatement statement
+                     = connection.prepareStatement(QUERY_TO_CREATE_NEW_CARD)) {
+            statement.setLong(1, creditCard.getNumber());
+            statement.setString(2, creditCard.getName());
+            statement.setDouble(3, creditCard.getMoneyOnCard());
+            statement.setBoolean(4, creditCard.isBlocked());
+            statement.setInt(5, creditCard.getCvcCode());
+            statement.setLong(6, creditCard.getUserId());
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows == 0) {
+                logger.error("Card wasn't created");
+            } else {
+                logger.info("Card creation was successful");
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        creditCard.setId(generatedKeys.getLong(1));
+                    }else {
+                        logger.error("Failed to create card, no obtained id");
+                        // TODO: here you need to throw database exception
+                    }
+                }
+            }
+        } catch (SQLException exception) {
+            // TODO: throw new database exception
+            logger.error(exception);
+        }
+        return creditCard;
     }
 
     @Override
@@ -110,7 +143,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
 
     @Override
     public List<CreditCard> getAllCardOfCurrentUser(long userId) {
-        logger.info("Retriving user's credit cards");
+        logger.info("Retrieving user's credit cards");
         return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_CARDS_BY_USER_ID);
     }
 
@@ -138,6 +171,19 @@ public class CreditCardDaoImpl implements CreditCardDao {
         String modifiedQuery =
                 QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " ORDER BY " + sortingCriteria + " " + sortingOrder;
         return getCreditCardsByCriteria(userId, modifiedQuery);
+    }
+
+    @Override
+    public void blockCardById(long cardId) {
+        try (PreparedStatement statement
+                     = connection.prepareStatement(QUERY_TO_BLOCK_CREDIT_CARD_BY_ID)) {
+            statement.setLong(1, cardId);
+            statement.executeUpdate();
+        } catch (SQLException exception) {
+            //TODO: Create database exception
+            logger.error(exception);
+        }
+        logger.info("Card is successfully blocked");
     }
 
     private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) {

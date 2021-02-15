@@ -33,7 +33,17 @@ public class CreditCardService {
     }
 
     public List<CreditCard> getAllCreditCardsByCriteria(long userId, String sortingCriteria, String sortingOrder) {
-        logger.info("Retiriving all cards according to sorting criteria");
+        logger.info("Retrieving all cards according to sorting criteria");
         return creditCardDao.getAllCardsBySortingCriteria(userId, sortingCriteria, sortingOrder);
+    }
+
+    public boolean createCreditCard(CreditCard creditCard) {
+        logger.info("Creating new credit card");
+        return creditCardDao.save(creditCard) != null && creditCard.getId() != 0;
+    }
+
+    public void blockCreditCardById(long cardId) {
+        logger.info("Blocking credit card");
+        creditCardDao.blockCardById(cardId);
     }
 }

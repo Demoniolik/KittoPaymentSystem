@@ -143,8 +143,7 @@
                             <c:when test="${!item.isBlocked()}">
                                 <div class="popup-options">
                                     <a href="#" class="card-rename">Rename</a>
-                                    <a href="#" class="card-block">Block</a>
-                                    <a href="#" class="card-unblock">Unblock</a>
+                                    <a href="${pageContext.request.contextPath}/blockCreditCard?cardId=${item.getId()}" class="card-block">Block</a>
                                 </div>
                             </c:when>
                         </c:choose>
@@ -168,13 +167,13 @@
                 <div class="left">
                     <div class="title">Transaction history</div>
 
-<%--                    <select name="chosenCreditCard" required id="chosenCreditCard">--%>
-<%--                    <c:forEach items="${userCreditCards}" var="item">--%>
-<%--                        <option>--%>
-<%--                            <a href="${pageContext.request.contextPath}/selectByCard?=${item.getNumber()}"><c:out value="${item.getNumber()}"/></a>--%>
-<%--                        </option>--%>
-<%--                    </c:forEach>--%>
-<%--                    </select>--%>
+                    <%--                    <select name="chosenCreditCard" required id="chosenCreditCard">--%>
+                    <%--                    <c:forEach items="${userCreditCards}" var="item">--%>
+                    <%--                        <option>--%>
+                    <%--                            <a href="${pageContext.request.contextPath}/selectByCard?=${item.getNumber()}"><c:out value="${item.getNumber()}"/></a>--%>
+                    <%--                        </option>--%>
+                    <%--                    </c:forEach>--%>
+                    <%--                    </select>--%>
 
                     <a href="#" download class="download"><img src="resources/img/content/icons/pdf.svg" alt="">Download
                         PDF</a>
@@ -183,7 +182,7 @@
                 <div class="filter"><span>Sort by: </span>
                     <c:choose>
                         <c:when test="${sorted == true}">
-                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=DESC">ID</a>
+                            <a id="sortingPaymentsByIdDESC" href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=DESC">ID</a>
                         </c:when>
                         <c:otherwise>
                             <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=ASC">ID</a>
@@ -191,10 +190,12 @@
                     </c:choose>
                     <c:choose>
                         <c:when test="${sorted == true}">
-                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=DESC">From new to old</a>
+                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=DESC">From
+                                new to old</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=ASC">From old to new</a>
+                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=ASC">From
+                                old to new</a>
                         </c:otherwise>
                     </c:choose>
                 </div>
@@ -350,7 +351,7 @@
         <select name="chosenCategory" id="chosenCategory">
             <c:forEach items="${categories}" var="item">
                 <option>
-                    <c:out value="${item}" />
+                    <c:out value="${item}"/>
                 </option>
             </c:forEach>
         </select>
@@ -374,8 +375,35 @@
     </form>
 </div>
 
+<%--<div class="popup popup-creating-card">--%>
+<%--    <div class="close"><img src="resources/img/content/icons/close.svg" alt=""></div>--%>
+<%--    <div class="title">Create card</div>--%>
+
+<%--    <div class="descr">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, fuga! Enim sunt suscipit velit--%>
+<%--    </div>--%>
+
+<%--    <form action="${pageContext.request.contextPath}/creatingNewCreditCard" method="post">--%>
+
+<%--        <label for="cardNumber">destinationNumber</label>--%>
+<%--        <input type="number" name="cardNumber" placeholder="card number" required id="cardNumber">--%>
+
+<%--        <label for="cardName">moneyToPay</label>--%>
+<%--        <input type="text" name="cardName" placeholder="money to pay" required id="cardName">--%>
+
+<%--        <button type="submit">Create card</button>--%>
+
+<%--    </form>--%>
+
+<%--</div>--%>
+
 <div class="bg-menu"></div>
 <script src="resources/js/app.js"></script>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.slim.js"
+        integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM="
+        crossorigin="anonymous">
+</script>
+
 </body>
 
 </html>

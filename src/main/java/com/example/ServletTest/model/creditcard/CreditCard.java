@@ -1,5 +1,7 @@
 package com.example.ServletTest.model.creditcard;
 
+import java.security.SecureRandom;
+
 public class CreditCard {
     private long id;
     private long number;
@@ -78,4 +80,5 @@ public class CreditCard {
     public void setUserId(long userId) {
         this.userId = userId;
     }
+
 }

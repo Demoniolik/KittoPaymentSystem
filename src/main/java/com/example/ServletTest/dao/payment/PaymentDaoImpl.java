@@ -139,6 +139,14 @@ public class PaymentDaoImpl implements PaymentDao {
     }
 
     @Override
+    public List<Payment> getAllPaymentsSortedWithLimitOption(long currentCreditCard, int pageSize,
+                                                       String sortingCriteria, String sortingOrder) {
+        String query = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID + "ORDER BY " + sortingCriteria + " " +
+                sortingOrder + LIMIT_OPTION;
+        return getPayments(currentCreditCard, query, pageSize);
+    }
+
+    @Override
     public int getCountOfPaymentsAttachedToCard(long currentCreditCard) {
         try (PreparedStatement statement =
                      connection.prepareStatement(COUNT_OF_PAYMENTS_ATTACHED_TO_CARD_NUMBER_ID)) {
