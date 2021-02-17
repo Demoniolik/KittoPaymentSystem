@@ -49,20 +49,23 @@ public class LoginCommand implements ServletCommand {
             if (user != null) {
                 putUserToSession(request, user);
                 List<CreditCard> creditCards = creditCardService.getAllCreditCards(user.getId());
+                List<CreditCard> creditCardsWithPagination =
+                        creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(user.getId());
                 //TODO: add all the accounts and cards to the user
-                prepareDataForUser(request, creditCards);
+                prepareDataForUser(request, creditCards, creditCardsWithPagination);
                 resultPage = mainPage;
             }else {
                 request.setAttribute("idLogged", false);
             }
-
         }
         return resultPage;
     }
 
-    static void prepareDataForUser(HttpServletRequest request, List<CreditCard> creditCards) {
+    static void prepareDataForUser(HttpServletRequest request, List<CreditCard> creditCards,
+                                   List<CreditCard> creditCardWithPagination) {
         HttpSession session = request.getSession();
         session.setAttribute("userCreditCards", creditCards);
+        session.setAttribute("userCreditCardsWithPagination", creditCardWithPagination);
         List<Payment> payments = paymentService
                 .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId());
         session.setAttribute("creditCardPayments", wrapPaymentList(payments));

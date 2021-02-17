@@ -28,6 +28,10 @@ public class CreditCardDaoImpl implements CreditCardDao {
             "SELECT * FROM credit_card WHERE number = ?";
     private static final String QUERY_TO_BLOCK_CREDIT_CARD_BY_ID =
             "UPDATE credit_card SET blocked = 1 WHERE id = ?";
+    private static final String QUERY_TO_GET_COUNT_OF_CARD_THAT_BELONG_TO_USER =
+            "SELECT COUNT(*) FROM credit_card WHERE user_id = ?";
+    private static final String LIMIT_OPTION =
+            "LIMIT ? OFFSET ?";
 
     private CreditCardDaoImpl() {
         // TODO: load all the constant queries from the properties file
@@ -37,6 +41,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
         } catch (SQLException exception) {
             logger.error(exception.getMessage());
             // TODO: throw database exception
+            logger.error(exception);
         }
     }
 
@@ -167,13 +172,6 @@ public class CreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public List<CreditCard> getAllCardsBySortingCriteria(long userId, String sortingCriteria, String sortingOrder) {
-        String modifiedQuery =
-                QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " ORDER BY " + sortingCriteria + " " + sortingOrder;
-        return getCreditCardsByCriteria(userId, modifiedQuery);
-    }
-
-    @Override
     public void blockCardById(long cardId) {
         try (PreparedStatement statement
                      = connection.prepareStatement(QUERY_TO_BLOCK_CREDIT_CARD_BY_ID)) {
@@ -186,9 +184,59 @@ public class CreditCardDaoImpl implements CreditCardDao {
         logger.info("Card is successfully blocked");
     }
 
-    private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) {
-        try (PreparedStatement statement = connection.prepareStatement(sortingCriteria);) {
+    @Override
+    public int getCountOfCardsThatBelongToUSer(long userId) {
+        try (PreparedStatement statement
+                     = connection.prepareStatement(QUERY_TO_GET_COUNT_OF_CARD_THAT_BELONG_TO_USER)) {
             statement.setLong(1, userId);
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        } catch (SQLException exception) {
+            //TODO: Create database exception
+            logger.error(exception);
+        }
+        return 0;
+    }
+
+    @Override
+    public List<CreditCard> getAllSortedCardsThatBelongToUserWithLimit(long userId, String sortingCriteria,
+                                                                       String sortingOrder, int page, int pageSize) {
+        String query = QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " ORDER BY " + sortingCriteria
+                + " " + sortingOrder + " " + LIMIT_OPTION;
+        return getCreditCardsByCriteriaWithLimit(userId, query, page, pageSize);
+    }
+
+    @Override
+    public List<CreditCard> getAllCreditCardThatBelongToUserWithDefaultLimit(long userId) {
+        String query = QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " " + LIMIT_OPTION;
+        final int DEFAULT_PAGE_SIZE = 4;
+        final int DEFAULT_PAGE = 1;
+        return getCreditCardsByCriteriaWithLimit(userId, query,DEFAULT_PAGE, DEFAULT_PAGE_SIZE);
+    }
+
+    private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) {
+        try (PreparedStatement statement = connection.prepareStatement(sortingCriteria)) {
+            statement.setLong(1, userId);
+            statement.execute();
+            List<CreditCard> creditCards = getCreditCardsFromResultSet(statement.getResultSet());
+            System.out.println(creditCards);
+            logger.info("Users credit cards are loaded");
+            return creditCards;
+        } catch (SQLException exception) {
+            //TODO: throw new database exception
+            logger.error(exception);
+        }
+        return null;
+    }
+
+    private List<CreditCard> getCreditCardsByCriteriaWithLimit(long userId, String sortingCriteria, int page, int pageSize) {
+        try (PreparedStatement statement = connection.prepareStatement(sortingCriteria)) {
+            statement.setLong(1, userId);
+            statement.setInt(2, pageSize);
+            statement.setInt(3, pageSize * (page - 1));
             statement.execute();
             List<CreditCard> creditCards = getCreditCardsFromResultSet(statement.getResultSet());
             System.out.println(creditCards);
@@ -218,7 +266,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     private CreditCard buildCreditCardFromResultSet(ResultSet resultSet) throws SQLException {
         logger.info("Building credit card object");
         return new CreditCardBuilder()
-                .setId(resultSet.getLong("id"))
+                .setId(resultSet.getInt("id"))
                 .setNumber(resultSet.getLong("number"))
                 .setName(resultSet.getString("name"))
                 .setMoneyOnCard(resultSet.getDouble("money_on_card"))

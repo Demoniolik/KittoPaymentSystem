@@ -33,9 +33,9 @@ public class ShowMorePayments implements ServletCommand {
 
         int pageSize;
         if (pageSizeParam.equals("")) {
-            pageSize = 11; // Start in future will be 15
+            pageSize = 15;
         } else {
-           pageSize = Integer.parseInt(pageSizeParam) + 1;
+           pageSize = Integer.parseInt(pageSizeParam) + 5;
         }
 
         //TODO: here you also need to add selector of card with witch you work

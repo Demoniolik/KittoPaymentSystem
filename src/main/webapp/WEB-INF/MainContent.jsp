@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="util" tagdir="/WEB-INF/tags" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -133,7 +135,7 @@
                 </div>
             </div>
 
-            <c:forEach items="${userCreditCards}" var="item">
+            <c:forEach items="${userCreditCardsWithPagination}" var="item">
                 <div class="container-card <c:out value="${(item.isBlocked())? \"blocked\":\"\"}"/>" data-tilt=""
                      data-tilt-max="5" data-tilt-speed="2000" data-tilt-scale="1.05">
                     <div class="card">
@@ -160,6 +162,9 @@
                 </div>
             </c:forEach>
 
+            <util:cardNavigation path="${pageContext.request.contextPath}/cardPagination"
+                                 maxPage="${maxPage}" page="${page}" pageSize="${pageSize}"/>
+
         </div>
 
         <div class="history" data-aos="fade-up" data-aos-delay='600'>
@@ -185,7 +190,7 @@
                             <a id="sortingPaymentsByIdDESC" href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=DESC">ID</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=ASC">ID</a>
+                            <a id="sortingPaymentsByIdASC" href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=ASC">ID</a>
                         </c:otherwise>
                     </c:choose>
                     <c:choose>
@@ -398,10 +403,7 @@
 
 <div class="bg-menu"></div>
 <script src="resources/js/app.js"></script>
-<script
-        src="https://code.jquery.com/jquery-3.5.1.slim.js"
-        integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM="
-        crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
 </script>
 
 </body>

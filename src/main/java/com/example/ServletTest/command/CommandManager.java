@@ -22,6 +22,7 @@ public class CommandManager {
         getCommands.put("/sortCards", new SortCards());
         getCommands.put("/showMorePayments", new ShowMorePayments());
         getCommands.put("/blockCreditCard", new BlockCreditCard()); // This is better to be a post method
+        getCommands.put("/cardPagination", new CardPagination());
 
 
         //POST commands

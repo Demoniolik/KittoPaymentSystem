@@ -32,9 +32,8 @@ public class CreditCardService {
         return creditCardDao.get(creditCardId);
     }
 
-    public List<CreditCard> getAllCreditCardsByCriteria(long userId, String sortingCriteria, String sortingOrder) {
-        logger.info("Retrieving all cards according to sorting criteria");
-        return creditCardDao.getAllCardsBySortingCriteria(userId, sortingCriteria, sortingOrder);
+    public List<CreditCard> getAllCreditCardsThatBelongToUserWithDefaultLimit(long userId) {
+        return creditCardDao.getAllCreditCardThatBelongToUserWithDefaultLimit(userId);
     }
 
     public boolean createCreditCard(CreditCard creditCard) {
@@ -45,5 +44,14 @@ public class CreditCardService {
     public void blockCreditCardById(long cardId) {
         logger.info("Blocking credit card");
         creditCardDao.blockCardById(cardId);
+    }
+
+    public int getCountOfCardsThatBelongToUser(long userId) {
+        return creditCardDao.getCountOfCardsThatBelongToUSer(userId);
+    }
+
+    public List<CreditCard> getAllCreditCardsByCriteriaWithLimit(long userId, String sortingCriteria,
+                                                                 String sortingOrder, int page, int pageSize) {
+        return creditCardDao.getAllSortedCardsThatBelongToUserWithLimit(userId, sortingCriteria, sortingOrder, page, pageSize);
     }
 }

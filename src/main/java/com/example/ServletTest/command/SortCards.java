@@ -42,9 +42,24 @@ public class SortCards implements ServletCommand {
         }
         HttpSession session = request.getSession();
         long currentUserId = ((User)session.getAttribute("user")).getId();
+        String pageSizeParam = (String) session.getAttribute("pageSize");
+        String pageParam = (String) session.getAttribute("page");
+
+        int pageSize;
+        int page;
+
+        if (pageSizeParam == null || pageParam == null) {
+            pageSize = 4;
+            page = 1;
+        } else {
+            pageSize = Integer.parseInt(pageSizeParam);
+            page = Integer.parseInt(pageParam);
+        }
+
         List<CreditCard> creditCards =
-                creditCardService.getAllCreditCardsByCriteria(currentUserId ,sortingCriteria, sortingOrder);
-        session.setAttribute("userCreditCards", creditCards);
+                creditCardService
+                        .getAllCreditCardsByCriteriaWithLimit(currentUserId ,sortingCriteria, sortingOrder, page, pageSize);
+        session.setAttribute("userCreditCardsWithPagination", creditCards);
         //TODO: Refactor it
         if (sortingCriteria.equals("number") && sortingOrder.equals("ASC")) {
             request.setAttribute("sortedByNumber", true);
@@ -59,6 +74,8 @@ public class SortCards implements ServletCommand {
         } else {
             request.setAttribute("sortedByAmount", false);
         }
+        session.setAttribute("sortingCriteria", sortingCriteria);
+        session.setAttribute("sortingOrder", sortingOrder);
         return mainPage;
     }
 }

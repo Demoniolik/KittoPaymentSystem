@@ -39,9 +39,12 @@ public class LoginPageCommand implements ServletCommand {
         if (request.getSession().getAttribute("authorized") != null
         && request.getSession().getAttribute("authorized").equals(true)) {
             HttpSession session = request.getSession();
-            List<CreditCard> creditCards = creditCardService.getAllCreditCards(((User)session
-                    .getAttribute("user")).getId());
-            prepareDataForUser(request, creditCards);
+            long userId = ((User)session.getAttribute("user")).getId();
+            List<CreditCard> creditCards = creditCardService.getAllCreditCards(userId);
+            List<CreditCard> creditCardsView =
+                    creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(userId);
+
+            prepareDataForUser(request, creditCards, creditCardsView);
             resultPage = mainPage;
         } // TODO: Here probably you should check if these values are just empty string
         else if (request.getParameter("login") == null || request.getParameter("password") == null) {
