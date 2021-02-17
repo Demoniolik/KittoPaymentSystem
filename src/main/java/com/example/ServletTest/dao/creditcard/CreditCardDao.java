@@ -17,10 +17,12 @@ public interface CreditCardDao extends DAO<CreditCard> {
 
     void blockCardById(long cardId);
 
-    int getCountOfCardsThatBelongToUSer(long userId);
+    int getCountOfCardsThatBelongToUser(long userId);
 
     List<CreditCard> getAllSortedCardsThatBelongToUserWithLimit(long userId, String sortingCriteria,
                                                                 String sortingOrder, int page, int pageSize);
 
     List<CreditCard> getAllCreditCardThatBelongToUserWithDefaultLimit(long userId);
+
+    List<CreditCard> getAllBlockedCreditCardsByUserId(long userId);
 }

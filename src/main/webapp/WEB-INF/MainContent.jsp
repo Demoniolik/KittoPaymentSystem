@@ -37,11 +37,13 @@
             <!-- head -->
             <div class="sidebar__head">
                 <div class="head">
-                    <div class="container-img"><img src="resources/img/content/menu/logo.webp" alt=""></div>
-                    <div class="text">
-                        <div class="name">${user.getFirstName()} ${user.getLastName()}</div>
-                        <div class="specialty">${user.getLogin()}</div>
-                    </div>
+                    <a href="${pageContext.request.contextPath}/goToPersonalCabinet">
+                        <div class="container-img"><img src="resources/img/content/menu/logo.webp" alt=""></div>
+                        <div class="text">
+                            <div class="name">${user.getFirstName()} ${user.getLastName()}</div>
+                            <div class="specialty">${user.getLogin()}</div>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -104,6 +106,8 @@
             <div class="head">
                 <div class="left">
                     <div class="title">Card management</div>
+
+                    <%--Here you need to add link to reffer to pop up window--%>
                     <a href="#" class="create"><img src="resources/img/content/icons/create.svg" alt=""> Create Card</a>
                 </div>
 

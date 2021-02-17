@@ -23,6 +23,7 @@ public class CommandManager {
         getCommands.put("/showMorePayments", new ShowMorePayments());
         getCommands.put("/blockCreditCard", new BlockCreditCard()); // This is better to be a post method
         getCommands.put("/cardPagination", new CardPagination());
+        getCommands.put("/goToPersonalCabinet", new GoToPersonalCabinet());
 
 
         //POST commands
@@ -33,6 +34,7 @@ public class CommandManager {
         postCommands.put("/createTransfer", new CreateTransferCommand());
         postCommands.put("/createPayment", new CreatePaymentCommand());
         postCommands.put("/creatingNewCreditCard", new CreateCreditCard());
+        postCommands.put("/changeUserData", new ChangeUserData());
 
     }
 

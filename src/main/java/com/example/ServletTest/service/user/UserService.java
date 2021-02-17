@@ -26,4 +26,9 @@ public class UserService {
         logger.info("Getting user's specified name by credit card that belongs to user");
         return userDao.getUserSpecifiedNameByCardId(creditCardId);
     }
+
+    public void updateUserData(User user) {
+        logger.info("Changing data about user");
+        userDao.updateUserData(user);
+    }
 }

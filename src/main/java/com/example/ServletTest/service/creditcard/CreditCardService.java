@@ -47,11 +47,18 @@ public class CreditCardService {
     }
 
     public int getCountOfCardsThatBelongToUser(long userId) {
-        return creditCardDao.getCountOfCardsThatBelongToUSer(userId);
+        logger.info("Getting all cards that belong to user");
+        return creditCardDao.getCountOfCardsThatBelongToUser(userId);
     }
 
     public List<CreditCard> getAllCreditCardsByCriteriaWithLimit(long userId, String sortingCriteria,
                                                                  String sortingOrder, int page, int pageSize) {
+        logger.info("Retrieving all credit cards with sorting criteria + pagination");
         return creditCardDao.getAllSortedCardsThatBelongToUserWithLimit(userId, sortingCriteria, sortingOrder, page, pageSize);
+    }
+
+    public List<CreditCard> getAllBlockedCreditCardsThatBelongToUser(long userId) {
+        logger.info("Retrieving all blocked credit cards that belong to user");
+        return creditCardDao.getAllBlockedCreditCardsByUserId(userId);
     }
 }

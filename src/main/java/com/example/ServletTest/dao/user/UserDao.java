@@ -7,4 +7,6 @@ public interface UserDao extends DAO<User> {
     User getUserByEmailAndPassword(String email, String password);
 
     String getUserSpecifiedNameByCardId(long id);
+
+    void updateUserData(User user);
 }

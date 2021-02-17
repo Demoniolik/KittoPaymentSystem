@@ -32,6 +32,8 @@ public class CreditCardDaoImpl implements CreditCardDao {
             "SELECT COUNT(*) FROM credit_card WHERE user_id = ?";
     private static final String LIMIT_OPTION =
             "LIMIT ? OFFSET ?";
+    private static final String QUERY_TO_GET_ALL_BLOCKED_CARDS_BY_USER_ID =
+            "SELECT * FROM credit_card WHERE user_id = ? AND blocked = 1";
 
     private CreditCardDaoImpl() {
         // TODO: load all the constant queries from the properties file
@@ -185,7 +187,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public int getCountOfCardsThatBelongToUSer(long userId) {
+    public int getCountOfCardsThatBelongToUser(long userId) {
         try (PreparedStatement statement
                      = connection.prepareStatement(QUERY_TO_GET_COUNT_OF_CARD_THAT_BELONG_TO_USER)) {
             statement.setLong(1, userId);
@@ -215,6 +217,11 @@ public class CreditCardDaoImpl implements CreditCardDao {
         final int DEFAULT_PAGE_SIZE = 4;
         final int DEFAULT_PAGE = 1;
         return getCreditCardsByCriteriaWithLimit(userId, query,DEFAULT_PAGE, DEFAULT_PAGE_SIZE);
+    }
+
+    @Override
+    public List<CreditCard> getAllBlockedCreditCardsByUserId(long userId) {
+        return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_BLOCKED_CARDS_BY_USER_ID);
     }
 
     private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) {

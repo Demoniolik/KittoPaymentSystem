@@ -25,11 +25,10 @@ public class UserDaoImpl implements UserDao {
             "user_type_id = ?";
     private static final String QUERY_TO_GET_ALL_USERS = "SELECT * FROM user";
     private static final String QUERY_TO_GET_USER = "SELECT * FROM user WHERE id = ?";
-    private static final String QUERY_TO_UPDATE_USER = "UPDATE user WHERE id = ?" +
-                                                        "SET id = ?, first_name = ?," +
-                                                        "second_name = ?, login = ?," +
-                                                        "password = ?, blocked = ?" +
-                                                        "user_type_id = ?";
+    private static final String QUERY_TO_UPDATE_USER = "UPDATE user " +
+                                                        "SET first_name = ?, " +
+                                                        "second_name = ?, login = ?, " +
+                                                        "password = ? WHERE id = ?";
     private static final String QUERY_TO_DELETE_USER = "DELETE FROM user WHERE id = ?";
     private static final String QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD = "SELECT * FROM user WHERE login = ? " +
                                                                                                 "AND password = ?";
@@ -138,6 +137,23 @@ public class UserDaoImpl implements UserDao {
             logger.error(exception);
         }
         return null;
+    }
+
+    @Override
+    public void updateUserData(User user) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(QUERY_TO_UPDATE_USER)) {
+            statement.setString(1, user.getFirstName());
+            statement.setString(2, user.getLastName());
+            statement.setString(3, user.getLogin());
+            statement.setString(4, user.getPassword());
+            statement.setLong(5, user.getId());
+            statement.executeUpdate();
+            logger.info("User data has been successfully changed");
+        } catch (SQLException exception) {
+            //TODO: here you need to throw database exception
+            logger.info(exception);
+        }
     }
 
     private User getUserFromResultSet(ResultSet resultSet) {

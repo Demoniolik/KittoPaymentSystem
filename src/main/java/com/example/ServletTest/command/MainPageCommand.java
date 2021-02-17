@@ -13,11 +13,12 @@ public class MainPageCommand implements ServletCommand {
     public MainPageCommand() {
         // TODO: Here we call services to work
         MappingProperties properties = MappingProperties.getInstance();
-        mainPage = properties.getProperty("loginPage"); // Check this moment
+        mainPage = properties.getProperty("mainPage"); // Check this moment
     }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
+        // TODO: after login or registering you come here and go to the main page
         return mainPage;
     }
 }
