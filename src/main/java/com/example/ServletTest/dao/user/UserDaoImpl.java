@@ -6,10 +6,7 @@ import com.example.ServletTest.model.user.UserBuilder;
 import com.example.ServletTest.model.user.UserType;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +21,12 @@ public class UserDaoImpl implements UserDao {
             "password = ?," +
             "blocked = ?," +
             "user_type_id = ?";
-    private static final String QUERY_TO_GET_ALL_USERS = "SELECT * FROM user";
+    private static final String QUERY_TO_GET_ALL_USERS = "SELECT * FROM user WHERE user_type_id != 2";
     private static final String QUERY_TO_GET_USER = "SELECT * FROM user WHERE id = ?";
     private static final String QUERY_TO_UPDATE_USER = "UPDATE user " +
                                                         "SET first_name = ?, " +
                                                         "second_name = ?, login = ?, " +
-                                                        "password = ? WHERE id = ?";
+                                                        "password = ?, blocked = ? WHERE id = ?";
     private static final String QUERY_TO_DELETE_USER = "DELETE FROM user WHERE id = ?";
     private static final String QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD = "SELECT * FROM user WHERE login = ? " +
                                                                                                 "AND password = ?";
@@ -58,6 +55,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User get(long id) {
+        try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_USER)) {
+            statement.setLong(1, id);
+            statement.execute();
+            return getUserFromResultSet(statement.getResultSet());
+        } catch (SQLException exception) {
+            //TODO: create database exception
+            logger.error(exception);
+        }
         return null;
     }
 
@@ -65,9 +70,9 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAll() {
-        try (PreparedStatement statement =
-                     connection.prepareStatement(QUERY_TO_GET_ALL_USERS)) {
-            statement.execute();
+        try (Statement statement =
+                     connection.createStatement()) {
+            statement.execute(QUERY_TO_GET_ALL_USERS);
             return getUsersFromResultSet(statement.getResultSet());
         } catch (SQLException exception) {
             //TODO: Create database exception
@@ -156,7 +161,8 @@ public class UserDaoImpl implements UserDao {
             statement.setString(2, user.getLastName());
             statement.setString(3, user.getLogin());
             statement.setString(4, user.getPassword());
-            statement.setLong(5, user.getId());
+            statement.setBoolean(5, user.isBlocked());
+            statement.setLong(6, user.getId());
             statement.executeUpdate();
             logger.info("User data has been successfully changed");
         } catch (SQLException exception) {
@@ -166,24 +172,28 @@ public class UserDaoImpl implements UserDao {
     }
 
     private User getUserFromResultSet(ResultSet resultSet) {
-        User user = null;
         try {
             if (resultSet.next()) {
-                user = new UserBuilder()
-                        .setId(resultSet.getLong("id"))
-                        .setFirstName(resultSet.getString("first_name"))
-                        .setLastName(resultSet.getString("second_name"))
-                        .setLogin(resultSet.getString("login"))
-                        .setPassword(resultSet.getString("password"))
-                        .setBlocked(resultSet.getBoolean("blocked"))
-                        .setUserType(UserType.values()[resultSet.getInt("user_type_id") - 1])
-                        .build();
-                logger.info("User was found and packed in object");
+                return buildUserFromResultSet(resultSet);
             }
         } catch (SQLException exception) {
-            logger.error(exception.getMessage());
+            logger.error(exception);
             // TODO: throw database exception
         }
+        return null;
+    }
+
+    private User buildUserFromResultSet(ResultSet resultSet) throws SQLException {
+        User user = new UserBuilder()
+                .setId(resultSet.getLong("id"))
+                .setFirstName(resultSet.getString("first_name"))
+                .setLastName(resultSet.getString("second_name"))
+                .setLogin(resultSet.getString("login"))
+                .setPassword(resultSet.getString("password"))
+                .setBlocked(resultSet.getBoolean("blocked"))
+                .setUserType(UserType.values()[resultSet.getInt("user_type_id") - 1])
+                .build();
+        logger.info("User was found and packed in object");
         return user;
     }
 
@@ -191,7 +201,7 @@ public class UserDaoImpl implements UserDao {
         List<User> users = new ArrayList<>();
         try {
             while (resultSet.next()) {
-                users.add(getUserFromResultSet(resultSet));
+                users.add(buildUserFromResultSet(resultSet));
                 logger.info("User was found and packed in object");
             }
         } catch (SQLException exception) {

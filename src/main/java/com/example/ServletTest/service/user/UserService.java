@@ -38,4 +38,9 @@ public class UserService {
         logger.info("Retrieving all users from database");
         return userDao.getAll();
     }
+
+    public User getUserById(long userId) {
+        logger.info("Retrieving user by id");
+        return userDao.get(userId);
+    }
 }

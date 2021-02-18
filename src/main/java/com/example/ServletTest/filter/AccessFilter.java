@@ -18,8 +18,9 @@ public class AccessFilter implements Filter {
         String role = (String) request.getSession().getAttribute("role");
         if (role != null && role.equals("admin")) {
             filterChain.doFilter(servletRequest, servletResponse);
+        } else {
+            request.getRequestDispatcher("index.jsp").forward(servletRequest, servletResponse);
         }
-        request.getRequestDispatcher("index.jsp").forward(servletRequest, servletResponse);
     }
 
     @Override

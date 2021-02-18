@@ -1,5 +1,6 @@
 package com.example.ServletTest.command;
 
+import com.example.ServletTest.command.admin.ChangeUserStatus;
 import com.example.ServletTest.command.admin.GoToAdminPage;
 import org.apache.log4j.Logger;
 
@@ -29,6 +30,7 @@ public class CommandManager {
 
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());
+        getCommands.put("/admin/changeUserStatus", new ChangeUserStatus());
 
         //POST commands
         logger.info("POST commands are loaded");
