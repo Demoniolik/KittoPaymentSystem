@@ -73,7 +73,7 @@
                     <div class="title">Languages: EN</div>
                 </a>
 
-                <a class="link logout">
+                <a href="${pageContext.request.contextPath}/logout" class="link logout">
                     <div class="icon"><img src="resources/img/content/menu/logout.svg" alt=""></div>
                     <div class="title">Logout</div>
                 </a>

@@ -27,6 +27,7 @@ public class CommandManager {
         getCommands.put("/blockCreditCard", new BlockCreditCard()); // This is better to be a post method
         getCommands.put("/cardPagination", new CardPagination());
         getCommands.put("/goToPersonalCabinet", new GoToPersonalCabinet());
+        getCommands.put("/logout", new LogoutCommand());
 
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());
