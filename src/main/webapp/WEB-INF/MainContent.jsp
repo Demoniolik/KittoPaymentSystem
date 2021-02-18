@@ -245,14 +245,14 @@
 
             <div class="view-more">
                 <c:choose>
-                    <c:when test="${maxPageSize != null && maxPageSize == pageSize}">
-                        <a href="${pageContext.request.contextPath}/showMorePayments?limit=9">
+                    <c:when test="${maxPaymentPageSize != null && maxPaymentPageSize <= paymentPageSize}">
+                        <a href="${pageContext.request.contextPath}/showMorePayments?limit=5">
                             View less
                             <img src="resources/img/content/icons/view-more.svg" alt="">
                         </a>
                     </c:when>
                     <c:otherwise>
-                        <a href="${pageContext.request.contextPath}/showMorePayments?limit=${pageSize}">
+                        <a href="${pageContext.request.contextPath}/showMorePayments?limit=${paymentPageSize}">
                             View more
                             <img src="resources/img/content/icons/view-more.svg" alt="">
                         </a>

@@ -31,11 +31,11 @@ public class ShowMorePayments implements ServletCommand {
         String sortingCriteria = (String) session.getAttribute("sortingCriteria");
         String sortingOrder = (String) session.getAttribute("sortingOrder");
 
-        int pageSize;
+        int paymentPageSize;
         if (pageSizeParam.equals("")) {
-            pageSize = 15;
+            paymentPageSize = 15;
         } else {
-           pageSize = Integer.parseInt(pageSizeParam) + 5;
+           paymentPageSize = Integer.parseInt(pageSizeParam) + 5;
         }
 
         //TODO: here you also need to add selector of card with witch you work
@@ -43,14 +43,14 @@ public class ShowMorePayments implements ServletCommand {
         List<Payment> payments;
 
         if (sortingCriteria == null || sortingOrder == null) {
-            payments = paymentService.getAllPaymentsWithLimitOption(creditCards.get(0).getId(), pageSize);
+            payments = paymentService.getAllPaymentsWithLimitOption(creditCards.get(0).getId(), paymentPageSize);
         } else {
-            payments = paymentService.getAllPaymentsSortedWithLimitOption(creditCards.get(0).getId(), pageSize,
+            payments = paymentService.getAllPaymentsSortedWithLimitOption(creditCards.get(0).getId(), paymentPageSize,
                     sortingCriteria, sortingOrder);
         }
 
-        request.setAttribute("pageSize", pageSize);
-        request.setAttribute("maxPageSize", paymentService.getAmountOfCardPayments(creditCards.get(0).getId()));
+        request.setAttribute("paymentPageSize", paymentPageSize);
+        request.setAttribute("maxPaymentPageSize", paymentService.getAmountOfCardPayments(creditCards.get(0).getId()));
 
         session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
 

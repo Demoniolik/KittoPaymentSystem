@@ -22,6 +22,8 @@ public class CreditCardDaoImpl implements CreditCardDao {
     private static final String QUERY_TO_GET_CARD_BY_ID = "SELECT * FROM credit_card WHERE id = ?";
     private static final String QUERY_TO_GET_ALL_CARDS_BY_USER_ID =
             "SELECT * FROM credit_card WHERE user_id = ?";
+    private static final String QUERY_TO_GET_ALL_UNBLOCKED_CARDS =
+            QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " AND blocked = 0";
     private static final String QUERY_TO_UPDATE_MONEY_STATUS_OF_CARD_BY_CARD_NUMBER =
             "UPDATE credit_card SET money_on_card = ? WHERE number = ?";
     private static final String QUERY_TO_GET_CREDIT_CARD_BY_NUMBER =
@@ -151,7 +153,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     @Override
     public List<CreditCard> getAllCardOfCurrentUser(long userId) {
         logger.info("Retrieving user's credit cards");
-        return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_CARDS_BY_USER_ID);
+        return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_UNBLOCKED_CARDS);
     }
 
     @Override

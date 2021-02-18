@@ -27,6 +27,7 @@ public class CreateTransferCommand implements ServletCommand {
     private PaymentService paymentService;
     private CreditCardService creditCardService;
     private String mainPage;
+    private String errorPage;
 
     public CreateTransferCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -35,6 +36,7 @@ public class CreateTransferCommand implements ServletCommand {
         // TODO: set page from properties file
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
+        errorPage = properties.getProperty("errorPage");
     }
 
     @Override
@@ -47,6 +49,12 @@ public class CreateTransferCommand implements ServletCommand {
 
         CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
         CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationNumber);
+        //TODO: here we need to check if destination card exists if not throw error page
+
+        if (destinationCreditCard == null) {
+            logger.error("Destination card was not found");
+            return errorPage;
+        }
 
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)
                 .setDescription(userService.

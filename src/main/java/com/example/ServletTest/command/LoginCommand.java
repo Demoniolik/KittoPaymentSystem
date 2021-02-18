@@ -69,7 +69,9 @@ public class LoginCommand implements ServletCommand {
         List<Payment> payments = paymentService
                 .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId());
         session.setAttribute("creditCardPayments", wrapPaymentList(payments));
-        session.setAttribute("categories", paymentService.getAllCategories());
+        List<String> paymentCategories = paymentService.getAllCategories();
+        paymentCategories.remove(0);
+        session.setAttribute("categories", paymentCategories);
     }
 
     static void putUserToSession(HttpServletRequest request, User user) {
