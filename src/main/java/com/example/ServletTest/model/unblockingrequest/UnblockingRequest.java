@@ -2,41 +2,38 @@ package com.example.ServletTest.model.unblockingrequest;
 
 public class UnblockingRequest {
     private long id;
+    private String description;
     private long creditCardId;
-    private long creditCardUserId;
 
     public UnblockingRequest() {}
 
-    public UnblockingRequest(long id, long creditCardId, long creditCardUserId) {
+    public UnblockingRequest(long id, String description, long creditCardId) {
         this.id = id;
         this.creditCardId = creditCardId;
-        this.creditCardUserId = creditCardUserId;
     }
 
     public long getId() {
         return id;
     }
 
-    public UnblockingRequest setId(long id) {
+    public void setId(long id) {
         this.id = id;
-        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public long getCreditCardId() {
         return creditCardId;
     }
 
-    public UnblockingRequest setCreditCardId(long creditCardId) {
+    public void setCreditCardId(long creditCardId) {
         this.creditCardId = creditCardId;
-        return this;
     }
 
-    public long getCreditCardUserId() {
-        return creditCardUserId;
-    }
-
-    public UnblockingRequest setCreditCardUserId(long creditCardUserId) {
-        this.creditCardUserId = creditCardUserId;
-        return this;
-    }
 }

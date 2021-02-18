@@ -26,8 +26,8 @@
             <button type="submit">Confirm changes</button>
         </form>
 
-        <form action="${pageContext.request.contextPath}/unblockRequest">
-            <select name="userBlockedCards">
+        <form action="${pageContext.request.contextPath}/createUnblockRequest" method="post">
+            <select name="chosenCard">
                 <c:forEach items="${userBlockedCreditCards}" var="item">
                     <option>
                         <c:out value="${item.getNumber()}"/>

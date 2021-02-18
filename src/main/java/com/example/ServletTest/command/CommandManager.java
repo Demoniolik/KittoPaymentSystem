@@ -35,6 +35,7 @@ public class CommandManager {
         postCommands.put("/createPayment", new CreatePaymentCommand());
         postCommands.put("/creatingNewCreditCard", new CreateCreditCard());
         postCommands.put("/changeUserData", new ChangeUserData());
+        postCommands.put("/createUnblockRequest", new CreateUnblockRequest());
 
     }
 
