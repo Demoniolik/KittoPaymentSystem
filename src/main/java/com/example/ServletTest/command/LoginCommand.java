@@ -1,10 +1,12 @@
 package com.example.ServletTest.command;
 
+import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
+import com.example.ServletTest.model.user.UserType;
 import com.example.ServletTest.view.PaymentWrapper;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -26,6 +28,7 @@ public class LoginCommand implements ServletCommand {
     private static PaymentService paymentService;
     private static String loginPage;
     private static String mainPage;
+    private static String adminPage;
 
     public LoginCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -35,7 +38,7 @@ public class LoginCommand implements ServletCommand {
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
         loginPage = properties.getProperty("loginPage");
-        //adminPage = "WEB-INF/admin/admin.jsp";
+        adminPage = properties.getProperty("adminPage");
     }
 
     @Override
@@ -46,6 +49,11 @@ public class LoginCommand implements ServletCommand {
         String password = request.getParameter("password");
         if (login != null && password != null) {
             User user = userService.getUserByCredentials(login, password);
+            if (user != null && user.getUserType() == UserType.ADMIN) {
+                logger.info("Redirecting to admin page");
+                putAdminToSession(request, user);
+                return new GoToAdminPage().execute(request, response);
+            }
             if (user != null) {
                 putUserToSession(request, user);
                 List<CreditCard> creditCards = creditCardService.getAllCreditCards(user.getId());
@@ -77,6 +85,12 @@ public class LoginCommand implements ServletCommand {
     static void putUserToSession(HttpServletRequest request, User user) {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
+        session.setAttribute("authorized", true);
+    }
+    static void putAdminToSession(HttpServletRequest request, User user) {
+        HttpSession session = request.getSession();
+        session.setAttribute("user", user);
+        session.setAttribute("role", "admin");
         session.setAttribute("authorized", true);
     }
     static List<PaymentWrapper> wrapPaymentList(List<Payment> payments) {

@@ -191,19 +191,19 @@
                 <div class="filter"><span>Sort by: </span>
                     <c:choose>
                         <c:when test="${sorted == true}">
-                            <a id="sortingPaymentsByIdDESC" href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=DESC">ID</a>
+                            <a id="sortingPaymentsByIdDESC" href="${pageContext.request.contextPath}/sortPayments?paymentSortingCriteria=id&paymentSortingOrder=DESC">ID</a>
                         </c:when>
                         <c:otherwise>
-                            <a id="sortingPaymentsByIdASC" href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=id&sortingOrder=ASC">ID</a>
+                            <a id="sortingPaymentsByIdASC" href="${pageContext.request.contextPath}/sortPayments?paymentSortingCriteria=id&paymentSortingOrder=ASC">ID</a>
                         </c:otherwise>
                     </c:choose>
                     <c:choose>
                         <c:when test="${sorted == true}">
-                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=DESC">From
+                            <a href="${pageContext.request.contextPath}/sortPayments?paymentSortingCriteria=date&paymentSortingOrder=DESC">From
                                 new to old</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/sortPayments?sortingCriteria=date&sortingOrder=ASC">From
+                            <a href="${pageContext.request.contextPath}/sortPayments?paymentSortingCriteria=date&paymentSortingOrder=ASC">From
                                 old to new</a>
                         </c:otherwise>
                     </c:choose>

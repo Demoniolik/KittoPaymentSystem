@@ -4,6 +4,8 @@ import com.example.ServletTest.dao.user.UserDao;
 import com.example.ServletTest.model.user.User;
 import org.apache.log4j.Logger;
 
+import java.util.List;
+
 public class UserService {
     private static final Logger logger = Logger.getLogger(UserService.class);
     private UserDao userDao;
@@ -30,5 +32,10 @@ public class UserService {
     public void updateUserData(User user) {
         logger.info("Changing data about user");
         userDao.updateUserData(user);
+    }
+
+    public List<User> getAllUsers() {
+        logger.info("Retrieving all users from database");
+        return userDao.getAll();
     }
 }

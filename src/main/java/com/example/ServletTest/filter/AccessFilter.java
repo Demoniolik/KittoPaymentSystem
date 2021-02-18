@@ -16,7 +16,7 @@ public class AccessFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String role = (String) request.getSession().getAttribute("role");
-        if (role.equals("admin")) {
+        if (role != null && role.equals("admin")) {
             filterChain.doFilter(servletRequest, servletResponse);
         }
         request.getRequestDispatcher("index.jsp").forward(servletRequest, servletResponse);

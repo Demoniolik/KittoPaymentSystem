@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
@@ -64,6 +65,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAll() {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(QUERY_TO_GET_ALL_USERS)) {
+            statement.execute();
+            return getUsersFromResultSet(statement.getResultSet());
+        } catch (SQLException exception) {
+            //TODO: Create database exception
+            logger.info(exception);
+        }
         return null;
     }
 
@@ -176,5 +185,19 @@ public class UserDaoImpl implements UserDao {
             // TODO: throw database exception
         }
         return user;
+    }
+
+    private List<User> getUsersFromResultSet(ResultSet resultSet) {
+        List<User> users = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                users.add(getUserFromResultSet(resultSet));
+                logger.info("User was found and packed in object");
+            }
+        } catch (SQLException exception) {
+            logger.error(exception.getMessage());
+            // TODO: throw database exception
+        }
+        return users;
     }
 }

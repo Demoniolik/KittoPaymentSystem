@@ -1,5 +1,6 @@
 package com.example.ServletTest.command;
 
+import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
@@ -36,10 +37,16 @@ public class LoginPageCommand implements ServletCommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing login page command");
         String resultPage = loginPage;
-        if (request.getSession().getAttribute("authorized") != null
-        && request.getSession().getAttribute("authorized").equals(true)) {
-            HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
+        if (session.getAttribute("authorized") != null
+        && session.getAttribute("authorized").equals(true)) {
+            if (session.getAttribute("role") != null &&
+            session.getAttribute("role").equals("admin")) {
+                return new GoToAdminPage().execute(request, response);
+            }
+
             long userId = ((User)session.getAttribute("user")).getId();
+
             List<CreditCard> creditCards = creditCardService.getAllCreditCards(userId);
             List<CreditCard> creditCardsView =
                     creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(userId);

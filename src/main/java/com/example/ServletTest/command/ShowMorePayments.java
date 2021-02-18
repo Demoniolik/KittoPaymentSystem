@@ -28,8 +28,8 @@ public class ShowMorePayments implements ServletCommand {
         logger.info("Executing showing more payments command");
         String pageSizeParam = request.getParameter("limit");
         HttpSession session = request.getSession();
-        String sortingCriteria = (String) session.getAttribute("sortingCriteria");
-        String sortingOrder = (String) session.getAttribute("sortingOrder");
+        String sortingCriteria = (String) session.getAttribute("paymentSortingCriteria");
+        String sortingOrder = (String) session.getAttribute("paymentSortingOrder");
 
         int paymentPageSize;
         if (pageSizeParam.equals("")) {

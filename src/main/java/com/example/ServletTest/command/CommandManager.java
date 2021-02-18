@@ -1,5 +1,6 @@
 package com.example.ServletTest.command;
 
+import com.example.ServletTest.command.admin.GoToAdminPage;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ public class CommandManager {
         logger.info("GET commands are loaded");
         getCommands = new HashMap<>();
         postCommands = new HashMap<>();
+
         // GET commands
         getCommands.put("/", new MainPageCommand());
         getCommands.put("/login", new LoginPageCommand());
@@ -25,6 +27,8 @@ public class CommandManager {
         getCommands.put("/cardPagination", new CardPagination());
         getCommands.put("/goToPersonalCabinet", new GoToPersonalCabinet());
 
+        //GET commands for admin
+        getCommands.put("/admin", new GoToAdminPage());
 
         //POST commands
         logger.info("POST commands are loaded");

@@ -30,8 +30,8 @@ public class SortPayments implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing sorting payments by id command");
-        String sortingCriteria = request.getParameter("sortingCriteria");
-        String sortingOrder = request.getParameter("sortingOrder");
+        String sortingCriteria = request.getParameter("paymentSortingCriteria");
+        String sortingOrder = request.getParameter("paymentSortingOrder");
         Pattern pattern = Pattern.compile("\\b.{0,4}\\b");
         Matcher matcher = pattern.matcher(sortingCriteria);
         Matcher matcher2 = pattern.matcher(sortingOrder);
@@ -54,9 +54,9 @@ public class SortPayments implements ServletCommand {
         }
 
         if (sortingCriteria.equals("id")) {
-            session.setAttribute("sortingCriteria", "id");
+            session.setAttribute("paymentSortingCriteria", "id");
         } else {
-            session.setAttribute("sortingCriteria", "date");
+            session.setAttribute("paymentSortingCriteria", "date");
         }
 
         return mainPage;
