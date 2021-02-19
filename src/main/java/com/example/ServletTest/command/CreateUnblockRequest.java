@@ -40,6 +40,7 @@ public class CreateUnblockRequest implements ServletCommand {
         unblockingRequest.setCreditCardId(creditCardService
                 .getCreditCardByNumber(cardNumber).getId());
         unblockingRequest.setDescription(descriptionParam);
+        unblockingRequest.setRequestStatus(UnblockingRequest.RequestStatus.NOT_APPROVED);
 
         if (unblockRequestService.createUnblockRequest(unblockingRequest)) {
             return personalCabinetPage;

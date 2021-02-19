@@ -41,9 +41,9 @@ public class CreditCardService {
         return creditCardDao.save(creditCard) != null && creditCard.getId() != 0;
     }
 
-    public void blockCreditCardById(long cardId) {
-        logger.info("Blocking credit card");
-        creditCardDao.blockCardById(cardId);
+    public void changeBlockingStatusCreditCardById(long cardId, int option) {
+        logger.info("changing blocking status of credit card");
+        creditCardDao.changeBlockStatusCardById(cardId, option);
     }
 
     public int getCountOfCardsThatBelongToUser(long userId) {

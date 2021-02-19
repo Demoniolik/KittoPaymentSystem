@@ -28,8 +28,8 @@ public class CreditCardDaoImpl implements CreditCardDao {
             "UPDATE credit_card SET money_on_card = ? WHERE number = ?";
     private static final String QUERY_TO_GET_CREDIT_CARD_BY_NUMBER =
             "SELECT * FROM credit_card WHERE number = ?";
-    private static final String QUERY_TO_BLOCK_CREDIT_CARD_BY_ID =
-            "UPDATE credit_card SET blocked = 1 WHERE id = ?";
+    private static final String QUERY_TO_CHANGE_BLOCKING_STATUS_OF_CREDIT_CARD_BY_ID =
+            "UPDATE credit_card SET blocked = ? WHERE id = ?";
     private static final String QUERY_TO_GET_COUNT_OF_CARD_THAT_BELONG_TO_USER =
             "SELECT COUNT(*) FROM credit_card WHERE user_id = ?";
     private static final String LIMIT_OPTION =
@@ -176,10 +176,11 @@ public class CreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public void blockCardById(long cardId) {
+    public void changeBlockStatusCardById(long cardId, int option) {
         try (PreparedStatement statement
-                     = connection.prepareStatement(QUERY_TO_BLOCK_CREDIT_CARD_BY_ID)) {
-            statement.setLong(1, cardId);
+                     = connection.prepareStatement(QUERY_TO_CHANGE_BLOCKING_STATUS_OF_CREDIT_CARD_BY_ID)) {
+            statement.setInt(1, option);
+            statement.setLong(2, cardId);
             statement.executeUpdate();
         } catch (SQLException exception) {
             //TODO: Create database exception

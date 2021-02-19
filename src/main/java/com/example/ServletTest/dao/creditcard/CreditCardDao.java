@@ -15,7 +15,7 @@ public interface CreditCardDao extends DAO<CreditCard> {
 
     boolean replenishCreditCard(long creditCardNumber, double replenishMoney);
 
-    void blockCardById(long cardId);
+    void changeBlockStatusCardById(long cardId, int option);
 
     int getCountOfCardsThatBelongToUser(long userId);
 

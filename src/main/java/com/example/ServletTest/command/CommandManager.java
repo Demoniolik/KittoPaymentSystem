@@ -2,6 +2,7 @@ package com.example.ServletTest.command;
 
 import com.example.ServletTest.command.admin.ChangeUserStatus;
 import com.example.ServletTest.command.admin.GoToAdminPage;
+import com.example.ServletTest.command.admin.UnblockUserCard;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ public class CommandManager {
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());
         getCommands.put("/admin/changeUserStatus", new ChangeUserStatus());
+        getCommands.put("/admin/unblockUserCard", new UnblockUserCard());
 
         //POST commands
         logger.info("POST commands are loaded");

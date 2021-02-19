@@ -4,12 +4,14 @@ public class UnblockingRequest {
     private long id;
     private String description;
     private long creditCardId;
+    private RequestStatus requestStatus;
 
     public UnblockingRequest() {}
 
-    public UnblockingRequest(long id, String description, long creditCardId) {
+    public UnblockingRequest(long id, String description, long creditCardId, RequestStatus requestStatus) {
         this.id = id;
         this.creditCardId = creditCardId;
+        this.requestStatus = requestStatus;
     }
 
     public long getId() {
@@ -34,6 +36,18 @@ public class UnblockingRequest {
 
     public void setCreditCardId(long creditCardId) {
         this.creditCardId = creditCardId;
+    }
+
+    public RequestStatus getRequestStatus() {
+        return requestStatus;
+    }
+
+    public void setRequestStatus(RequestStatus requestStatus) {
+        this.requestStatus = requestStatus;
+    }
+
+    public enum RequestStatus {
+        NOT_APPROVED, APPROVED
     }
 
 }
