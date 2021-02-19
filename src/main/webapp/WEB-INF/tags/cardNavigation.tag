@@ -6,20 +6,22 @@
 <%@ attribute name="pageSize" type="java.lang.Integer" required="true" %>
 <%@ attribute name="maxPage" type="java.lang.Integer" required="true" %>
 
-<c:choose>
-    <c:when test="${page == null || page == 1}">
-        Previous
-    </c:when>
-    <c:otherwise>
-        <a href="${path}?pageSize=${pageSize}&page=${page-1}">Previous</a>
-    </c:otherwise>
-</c:choose>
+<div class="slider-card">
+    <c:choose>
+        <c:when test="${page == null || page == 1}">
+            <div class="slider-arrow disabled"><img src="resources/img/content/icons/left-arrow.svg" alt=""></div>
+        </c:when>
+        <c:otherwise>
+            <a href="${path}?pageSize=${pageSize}&page=${page-1}" class="slider-arrow"><img src="resources/img/content/icons/left-arrow.svg" alt=""></a>
+        </c:otherwise>
+    </c:choose>
 
-<c:choose>
-    <c:when test="${page != null && page == maxPage}">
-        Next
-    </c:when>
-    <c:otherwise>
-        <a href="${path}?pageSize=${pageSize}&page=${page+1}">Next</a>
-    </c:otherwise>
-</c:choose>
+    <c:choose>
+        <c:when test="${page != null && page >= maxPage}">
+            <div class="slider-arrow disabled"><img src="resources/img/content/icons/right-arrow.svg" alt=""></div>
+        </c:when>
+        <c:otherwise>
+            <a href="${path}?pageSize=${pageSize}&page=${page+1}" class="slider-arrow"><img src="resources/img/content/icons/right-arrow.svg" alt=""></a>
+        </c:otherwise>
+    </c:choose>
+</div>

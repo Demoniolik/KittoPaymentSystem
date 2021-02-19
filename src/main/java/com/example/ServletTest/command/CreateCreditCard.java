@@ -19,11 +19,13 @@ public class CreateCreditCard implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateCreditCard.class);
     private CreditCardService creditCardService;
     private String mainPage;
+    private String errorPage;
 
     public CreateCreditCard() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
+        errorPage = properties.getProperty("errorPageCardAlreadyExists");
     }
 
     @Override
@@ -31,6 +33,11 @@ public class CreateCreditCard implements ServletCommand {
         logger.info("Executing creating credit card command");
         String cardName = request.getParameter("cardName");
         String cardNumber = request.getParameter("cardNumber");
+        long cardNumberValue = Long.parseLong(cardNumber);
+        if (creditCardService.getCreditCardByNumber(cardNumberValue) != null) {
+            return errorPage;
+        }
+
         HttpSession session = request.getSession();
         long userId = ((User)session.getAttribute("user")).getId();
 

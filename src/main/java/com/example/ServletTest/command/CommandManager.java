@@ -29,6 +29,7 @@ public class CommandManager {
         getCommands.put("/cardPagination", new CardPagination());
         getCommands.put("/goToPersonalCabinet", new GoToPersonalCabinet());
         getCommands.put("/logout", new LogoutCommand());
+        getCommands.put("/preparePdfFile", new PreparePdfFile());
 
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());

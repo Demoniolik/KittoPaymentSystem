@@ -27,7 +27,8 @@ public class CreateTransferCommand implements ServletCommand {
     private PaymentService paymentService;
     private CreditCardService creditCardService;
     private String mainPage;
-    private String errorPage;
+    private String errorPageCardDoesNotExist;
+    private String errorPageCardIsBlocked;
 
     public CreateTransferCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -36,7 +37,8 @@ public class CreateTransferCommand implements ServletCommand {
         // TODO: set page from properties file
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
-        errorPage = properties.getProperty("errorPage");
+        errorPageCardDoesNotExist = properties.getProperty("errorPageDestinationCardDoesNotExist");
+        errorPageCardIsBlocked = properties.getProperty("errorPageDestinationCardIsBlocked");
     }
 
     @Override
@@ -53,7 +55,10 @@ public class CreateTransferCommand implements ServletCommand {
 
         if (destinationCreditCard == null) {
             logger.error("Destination card was not found");
-            return errorPage;
+            return errorPageCardDoesNotExist;
+        } else if (destinationCreditCard.isBlocked()) {
+            logger.error("destination card is blocked");
+            return errorPageCardIsBlocked;
         }
 
         Payment payment = new PaymentBuilder().setMoney(moneyToPay)

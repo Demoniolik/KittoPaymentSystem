@@ -108,7 +108,7 @@
                     <div class="title">Card management</div>
 
                     <%--Here you need to add link to reffer to pop up window--%>
-                    <a href="#" class="create open-create"><img src="resources/img/content/icons/create.svg" alt=""> Create Card</a>
+                    <a href="" class="create open-create"><img src="resources/img/content/icons/create.svg" alt=""> Create Card</a>
                 </div>
 
                 <div class="filter"><span>Sort by: </span>
@@ -139,35 +139,39 @@
                 </div>
             </div>
 
-            <c:forEach items="${userCreditCardsWithPagination}" var="item">
-                <div class="container-card <c:out value="${(item.isBlocked())? \"blocked\":\"\"}"/>" data-tilt=""
-                     data-tilt-max="5" data-tilt-speed="2000" data-tilt-scale="1.05">
-                    <div class="card">
-                        <div class="options"><img src="resources/img/content/icons/options.svg" alt=""></div>
-                            <%--If card is not blocked then options are available--%>
-                        <c:choose>
-                            <c:when test="${!item.isBlocked()}">
-                                <div class="popup-options">
-                                    <a href="#" class="card-rename">Rename</a>
-                                    <a href="${pageContext.request.contextPath}/blockCreditCard?cardId=${item.getId()}" class="card-block">Block</a>
-                                </div>
-                            </c:when>
-                        </c:choose>
+            <div class="slider">
+                <div class="cards">
+                    <c:forEach items="${userCreditCardsWithPagination}" var="item">
+                        <div class="container-card <c:out value="${(item.isBlocked())? \"blocked\":\"\"}"/>" data-tilt=""
+                             data-tilt-max="5" data-tilt-speed="2000" data-tilt-scale="1.05">
+                            <div class="card">
+                                <div class="options"><img src="resources/img/content/icons/options.svg" alt=""></div>
+                                    <%--If card is not blocked then options are available--%>
+                                <c:choose>
+                                    <c:when test="${!item.isBlocked()}">
+                                        <div class="popup-options">
+                                            <a href="#" class="card-rename">Rename</a>
+                                            <a href="${pageContext.request.contextPath}/blockCreditCard?cardId=${item.getId()}" class="card-block">Block</a>
+                                        </div>
+                                    </c:when>
+                                </c:choose>
 
-                        <div class="sum"><span><c:out value="${item.getMoneyOnCard()}"/></span>$</div>
-                        <div class="num">****
-                            <span>
+                                <div class="sum"><span><c:out value="${item.getMoneyOnCard()}"/></span>$</div>
+                                <div class="num">****
+                                    <span>
                                 <c:out value="${item.getNumber().toString().substring(item.getNumber().toString().length() - 4)}"/>
                             </span>
+                                </div>
+                            </div>
+
+                            <div class="name"><c:out value="${item.getName()}"/></div>
                         </div>
-                    </div>
-
-                    <div class="name"><c:out value="${item.getName()}"/></div>
+                    </c:forEach>
                 </div>
-            </c:forEach>
 
-            <util:cardNavigation path="${pageContext.request.contextPath}/cardPagination"
-                                 maxPage="${maxPage}" page="${page}" pageSize="${pageSize}"/>
+                <util:cardNavigation path="${pageContext.request.contextPath}/cardPagination"
+                                     maxPage="${maxPage}" page="${page}" pageSize="${pageSize}"/>
+            </div>
 
         </div>
 
@@ -184,8 +188,17 @@
                     <%--                    </c:forEach>--%>
                     <%--                    </select>--%>
 
-                    <a href="#" download class="download"><img src="resources/img/content/icons/pdf.svg" alt="">Download
-                        PDF</a>
+
+                    <c:choose>
+                        <c:when test="${prepared != null && prepared}">
+                            <a href="${fileName}" download class="download"><img src="resources/img/content/icons/pdf.svg" alt="">Download PDF</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/preparePdfFile" class="download"><img src="resources/img/content/icons/pdf.svg">Prepare PDF</a>
+                        </c:otherwise>
+                    </c:choose>
+
+
                 </div>
 
                 <div class="filter"><span>Sort by: </span>
@@ -393,11 +406,11 @@
 
     <form action="${pageContext.request.contextPath}/creatingNewCreditCard" method="post">
 
-        <label for="cardNumber">destinationNumber</label>
+        <label for="cardNumber">Card number</label>
         <input type="number" name="cardNumber" placeholder="card number" required id="cardNumber">
 
-        <label for="cardName">moneyToPay</label>
-        <input type="text" name="cardName" placeholder="money to pay" required id="cardName">
+        <label for="cardName">Card name</label>
+        <input type="text" name="cardName" placeholder="card name" required id="cardName">
 
         <button type="submit">Create card</button>
 
@@ -416,6 +429,7 @@
         $('.popup.popup-creating-card').toggleClass('show');
         $('.bg-menu').toggleClass('show');
     });
+
 </script>
 
 </body>

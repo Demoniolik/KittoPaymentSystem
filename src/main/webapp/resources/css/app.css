@@ -1129,3 +1129,68 @@ a.view-less img {
 .popup.popup-payments .descr, .popup.popup-payments-02 .descr {
   text-align: center;
 }
+
+.slider-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.slider-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slider-arrow {
+  padding: 2px;
+  border-radius: 5px;
+  background: #000;
+  color: #000;
+  -webkit-transition: 0.2s ease-out;
+  transition: 0.2s ease-out;
+  text-decoration: none;
+  margin: 5px 0;
+}
+
+.slider-arrow:hover {
+  background: #2d2d2d;
+}
+
+.slider-arrow.disabled {
+  background: grey;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+}
+
+.slider .cards {
+  margin-right: 16px;
+}
+
+.form .personal-cabinet{
+  width: 30vw;
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.form form .personal-cabinet {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+.form .personal-cabinet form .title {
+  font-size: 24px;
+  line-height: 32px;
+  color: #000000;
+  margin-bottom: 16px;
+  font-weight: bold;
+}

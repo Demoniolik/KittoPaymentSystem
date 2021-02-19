@@ -17,7 +17,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     private static final String QUERY_TO_CREATE_NEW_CARD =
             "INSERT INTO credit_card SET " +
                     "number = ?, name = ?, " +
-                    "money_on_card = ?, blocked = ? " +
+                    "money_on_card = ?, blocked = ?, " +
                     "cvc = ?, user_id = ?";
     private static final String QUERY_TO_GET_CARD_BY_ID = "SELECT * FROM credit_card WHERE id = ?";
     private static final String QUERY_TO_GET_ALL_CARDS_BY_USER_ID =
