@@ -108,7 +108,7 @@
                     <div class="title">Card management</div>
 
                     <%--Here you need to add link to reffer to pop up window--%>
-                    <a href="#" class="create"><img src="resources/img/content/icons/create.svg" alt=""> Create Card</a>
+                    <a href="#" class="create open-create"><img src="resources/img/content/icons/create.svg" alt=""> Create Card</a>
                 </div>
 
                 <div class="filter"><span>Sort by: </span>
@@ -246,7 +246,7 @@
             <div class="view-more">
                 <c:choose>
                     <c:when test="${maxPaymentPageSize != null && maxPaymentPageSize <= paymentPageSize}">
-                        <a href="${pageContext.request.contextPath}/showMorePayments?limit=5">
+                        <a href="${pageContext.request.contextPath}/showMorePayments?limit=5" class="view-less">
                             View less
                             <img src="resources/img/content/icons/view-more.svg" alt="">
                         </a>
@@ -384,30 +384,38 @@
     </form>
 </div>
 
-<%--<div class="popup popup-creating-card">--%>
-<%--    <div class="close"><img src="resources/img/content/icons/close.svg" alt=""></div>--%>
-<%--    <div class="title">Create card</div>--%>
+<div class="popup popup-creating-card">
+    <div class="close"><img src="resources/img/content/icons/close.svg" alt=""></div>
+    <div class="title">Create card</div>
 
-<%--    <div class="descr">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, fuga! Enim sunt suscipit velit--%>
-<%--    </div>--%>
+    <div class="descr">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae, fuga! Enim sunt suscipit velit
+    </div>
 
-<%--    <form action="${pageContext.request.contextPath}/creatingNewCreditCard" method="post">--%>
+    <form action="${pageContext.request.contextPath}/creatingNewCreditCard" method="post">
 
-<%--        <label for="cardNumber">destinationNumber</label>--%>
-<%--        <input type="number" name="cardNumber" placeholder="card number" required id="cardNumber">--%>
+        <label for="cardNumber">destinationNumber</label>
+        <input type="number" name="cardNumber" placeholder="card number" required id="cardNumber">
 
-<%--        <label for="cardName">moneyToPay</label>--%>
-<%--        <input type="text" name="cardName" placeholder="money to pay" required id="cardName">--%>
+        <label for="cardName">moneyToPay</label>
+        <input type="text" name="cardName" placeholder="money to pay" required id="cardName">
 
-<%--        <button type="submit">Create card</button>--%>
+        <button type="submit">Create card</button>
 
-<%--    </form>--%>
+    </form>
 
-<%--</div>--%>
+</div>
 
 <div class="bg-menu"></div>
 <script src="resources/js/app.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+</script>
+
+<script>
+    $('a.open-create').click(function (e) {
+        e.preventDefault();
+        $('.popup.popup-creating-card').toggleClass('show');
+        $('.bg-menu').toggleClass('show');
+    });
 </script>
 
 </body>

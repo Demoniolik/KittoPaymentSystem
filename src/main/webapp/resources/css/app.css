@@ -218,6 +218,10 @@ input {
   background: #EDF1FA;
   border-radius: 15px;
 }
+.sidebar__head .head a {
+  display: flex;
+  align-items: center;
+}
 .sidebar__head .head .container-img {
   width: 42px;
   height: 42px;
@@ -947,6 +951,11 @@ form button:hover {
       -ms-flex-pack: center;
           justify-content: center;
 }
+
+a.view-less img {
+  transform: rotate( 180deg );
+}
+
 .history .view-more a {
   display: -webkit-box;
   display: -ms-flexbox;
