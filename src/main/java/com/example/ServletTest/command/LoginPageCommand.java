@@ -47,7 +47,7 @@ public class LoginPageCommand implements ServletCommand {
 
             long userId = ((User)session.getAttribute("user")).getId();
 
-            List<CreditCard> creditCards = creditCardService.getAllCreditCards(userId);
+            List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(userId);
             List<CreditCard> creditCardsView =
                     creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(userId);
 

@@ -36,7 +36,7 @@ public class ReplenishCreditCardCommand implements ServletCommand {
         HttpSession session = request.getSession();
         long userId = ((User)session.getAttribute("user")).getId();
         session.setAttribute("user_credit_cards",
-                creditCardService.getAllCreditCards(userId));
+                creditCardService.getAllUnblockedCreditCards(userId));
         return mainPage;
     }
 }

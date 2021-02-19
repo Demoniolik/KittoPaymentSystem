@@ -36,6 +36,8 @@ public class CreditCardDaoImpl implements CreditCardDao {
             "LIMIT ? OFFSET ?";
     private static final String QUERY_TO_GET_ALL_BLOCKED_CARDS_BY_USER_ID =
             "SELECT * FROM credit_card WHERE user_id = ? AND blocked = 1";
+    private static final String QUERY_TO_BLOCK_ALL_USER_CARDS_BY_USER_ID =
+            "UPDATE credit_card SET blocked = 1 WHERE user_id = ?";
 
     private CreditCardDaoImpl() {
         // TODO: load all the constant queries from the properties file
@@ -151,7 +153,7 @@ public class CreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public List<CreditCard> getAllCardOfCurrentUser(long userId) {
+    public List<CreditCard> getAllUnblockedCardsOfCurrentUser(long userId) {
         logger.info("Retrieving user's credit cards");
         return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_UNBLOCKED_CARDS);
     }
@@ -225,6 +227,18 @@ public class CreditCardDaoImpl implements CreditCardDao {
     @Override
     public List<CreditCard> getAllBlockedCreditCardsByUserId(long userId) {
         return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_BLOCKED_CARDS_BY_USER_ID);
+    }
+
+    @Override
+    public void blockAllUserCards(long userId) {
+        try (PreparedStatement statement =
+                     connection.prepareStatement(QUERY_TO_BLOCK_ALL_USER_CARDS_BY_USER_ID)) {
+            statement.setLong(1, userId);
+            statement.executeUpdate();
+        } catch (SQLException exception) {
+            //TODO: create database exception
+            logger.error(exception);
+        }
     }
 
     private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) {

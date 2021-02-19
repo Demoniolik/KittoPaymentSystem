@@ -56,7 +56,7 @@ public class LoginCommand implements ServletCommand {
             }
             if (user != null) {
                 putUserToSession(request, user);
-                List<CreditCard> creditCards = creditCardService.getAllCreditCards(user.getId());
+                List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(user.getId());
                 List<CreditCard> creditCardsWithPagination =
                         creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(user.getId());
                 //TODO: add all the accounts and cards to the user
@@ -75,7 +75,7 @@ public class LoginCommand implements ServletCommand {
         session.setAttribute("userCreditCards", creditCards);
         session.setAttribute("userCreditCardsWithPagination", creditCardWithPagination);
         List<Payment> payments = paymentService
-                .getListOfPaymentsThatBelongToCreditCard(creditCards.get(0).getId());
+                .getListOfPaymentsThatBelongToCreditCard(creditCardWithPagination.get(0).getId());
         session.setAttribute("creditCardPayments", wrapPaymentList(payments));
         List<String> paymentCategories = paymentService.getAllCategories();
         paymentCategories.remove(0);

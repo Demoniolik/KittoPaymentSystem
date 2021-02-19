@@ -74,7 +74,7 @@ public class CreatePaymentCommand implements ServletCommand{
             creatingTransaction(moneyToPay, sourceNumber, destinationCreditCardNumber, payment);
             HttpSession session = request.getSession();
             session.setAttribute("user_credit_cards",
-                    creditCardService.getAllCreditCards(((User)session.getAttribute("user")).getId()));
+                    creditCardService.getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId()));
             logger.info("Payment succeeded");
         }
 

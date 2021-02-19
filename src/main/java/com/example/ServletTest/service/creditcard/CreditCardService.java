@@ -14,8 +14,8 @@ public class CreditCardService {
         this.creditCardDao = creditCardDao;
     }
 
-    public List<CreditCard> getAllCreditCards(long userId) {
-        return creditCardDao.getAllCardOfCurrentUser(userId);
+    public List<CreditCard> getAllUnblockedCreditCards(long userId) {
+        return creditCardDao.getAllUnblockedCardsOfCurrentUser(userId);
     }
 
     public boolean replenishCreditCard(long creditCardNumber, double replenishMoney) {
@@ -60,5 +60,10 @@ public class CreditCardService {
     public List<CreditCard> getAllBlockedCreditCardsThatBelongToUser(long userId) {
         logger.info("Retrieving all blocked credit cards that belong to user");
         return creditCardDao.getAllBlockedCreditCardsByUserId(userId);
+    }
+
+    public void blockAllUserCards(long id) {
+        logger.info("Blocking all user cards");
+        creditCardDao.blockAllUserCards(id);
     }
 }

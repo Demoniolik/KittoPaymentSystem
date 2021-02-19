@@ -43,7 +43,7 @@ public class CreateCreditCard implements ServletCommand {
                 .build();
 
         if (creditCardService.createCreditCard(creditCard)) {
-            List<CreditCard> creditCards = creditCardService.getAllCreditCards(userId);
+            List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(userId);
             session.setAttribute("userCreditCards", creditCards);
         }
 

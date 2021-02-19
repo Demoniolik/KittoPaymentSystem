@@ -1,8 +1,10 @@
 package com.example.ServletTest.command.admin;
 
 import com.example.ServletTest.command.ServletCommand;
+import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.user.User;
+import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.user.UserService;
 import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
@@ -15,10 +17,12 @@ import java.util.List;
 public class ChangeUserStatus implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ChangeUserStatus.class);
     private UserService userService;
+    private CreditCardService creditCardService;
     private String adminPage;
 
     public ChangeUserStatus() {
         userService = new UserService(UserDaoImpl.getInstance());
+        creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         adminPage = properties.getProperty("adminPage");
     }
@@ -36,6 +40,7 @@ public class ChangeUserStatus implements ServletCommand {
             user.setBlocked(true);
         }
         userService.updateUserData(user);
+        creditCardService.blockAllUserCards(user.getId());
         HttpSession session = request.getSession();
         List<User> allUsers = userService.getAllUsers();
         session.setAttribute("allUsers", allUsers);

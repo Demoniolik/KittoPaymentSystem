@@ -73,7 +73,7 @@ public class CreateTransferCommand implements ServletCommand {
             paymentService.changeStatus(payment);
             HttpSession session = request.getSession();
             List<CreditCard> creditCards = creditCardService
-                    .getAllCreditCards(((User)session.getAttribute("user")).getId());
+                    .getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId());
             session.setAttribute("user_credit_cards", creditCards);
             logger.info("Transaction succeeded");
         }
