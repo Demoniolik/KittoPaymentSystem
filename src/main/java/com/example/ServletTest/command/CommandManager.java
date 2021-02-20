@@ -19,7 +19,7 @@ public class CommandManager {
         postCommands = new HashMap<>();
 
         // GET commands
-        getCommands.put("/", new MainPageCommand());
+        getCommands.put("/changeLocale", new ChangeLocaleCommand());
         getCommands.put("/login", new LoginPageCommand());
         getCommands.put("/register", new RegisterPageCommand());
         getCommands.put("/sortPayments", new SortPayments());
