@@ -4,6 +4,8 @@ import com.example.ServletTest.command.admin.ChangeUserStatus;
 import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.command.admin.UnblockUserCard;
 import com.example.ServletTest.command.getcommands.*;
+import com.example.ServletTest.command.getcommands.errorpages.GetCardIsBlockedErrorPage;
+import com.example.ServletTest.command.getcommands.errorpages.GetCardNotFoundErrorPage;
 import com.example.ServletTest.command.postcommands.*;
 import org.apache.log4j.Logger;
 
@@ -33,6 +35,10 @@ public class CommandManager {
         getCommands.put("/logout", new LogoutCommand());
         getCommands.put("/preparePdfFile", new PreparePdfFile());
         getCommands.put("/selectPaymentsByCards", new SelectPaymentsByCard());
+
+        //GET command for errors
+        getCommands.put("/getCardNotFoundErrorPage", new GetCardNotFoundErrorPage());
+        getCommands.put("/getCardIsBlockedErrorPage", new GetCardIsBlockedErrorPage());
 
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());

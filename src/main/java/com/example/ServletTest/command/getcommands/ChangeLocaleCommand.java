@@ -12,14 +12,12 @@ public class ChangeLocaleCommand implements ServletCommand {
     private String mainPage;
 
     public ChangeLocaleCommand() {
-        // TODO: Here we call services to work
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage"); // Check this moment
     }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        // TODO: after login or registering you come here and go to the main page
         logger.info("Executing main page command");
 
         if(request.getParameter("locale") != null) {

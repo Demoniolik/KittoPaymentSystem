@@ -19,7 +19,7 @@ public class ReplenishCreditCardCommand implements ServletCommand {
     public ReplenishCreditCardCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
-        mainPage = properties.getProperty("mainPage");
+        mainPage = properties.getProperty("mainPagePost");
     }
 
     @Override

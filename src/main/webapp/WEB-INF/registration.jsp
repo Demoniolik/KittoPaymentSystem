@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="icon" href="../favicon.svg"><link href="resources/css/app.css" rel="stylesheet"></head>
+    <link rel="icon" href="resources/favicon.svg"><link href="resources/css/app.css" rel="stylesheet"></head>
 
 <body>
 <div class="form">

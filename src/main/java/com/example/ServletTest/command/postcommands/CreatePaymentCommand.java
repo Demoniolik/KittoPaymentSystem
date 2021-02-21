@@ -48,7 +48,7 @@ public class CreatePaymentCommand implements ServletCommand {
                 .put("charity", 9090909090L);
         // TODO: Here you need to load data from properties file
         MappingProperties properties = MappingProperties.getInstance();
-        mainPage = properties.getProperty("mainPage");
+        mainPage = properties.getProperty("mainPagePost");
     }
 
     @Override

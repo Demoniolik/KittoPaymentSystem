@@ -21,8 +21,8 @@ public class RegisterCommand implements ServletCommand {
     public RegisterCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
-        registrationPage = properties.getProperty("registrationPage");
-        mainPage = properties.getProperty("mainPage");
+        registrationPage = properties.getProperty("registrationPagePost");
+        mainPage = properties.getProperty("mainPagePost");
     }
 
     @Override

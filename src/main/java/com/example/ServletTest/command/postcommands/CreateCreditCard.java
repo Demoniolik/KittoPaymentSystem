@@ -25,8 +25,8 @@ public class CreateCreditCard implements ServletCommand {
     public CreateCreditCard() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
-        mainPage = properties.getProperty("mainPage");
-        errorPage = properties.getProperty("errorPageCardAlreadyExists");
+        mainPage = properties.getProperty("mainPagePost");
+        errorPage = properties.getProperty("errorPageCardAlreadyExistsPost");
     }
 
     @Override

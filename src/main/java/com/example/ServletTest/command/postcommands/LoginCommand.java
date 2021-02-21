@@ -35,11 +35,11 @@ public class LoginCommand implements ServletCommand {
         userService = new UserService(UserDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
-        // TODO: here we have to load out jsp files
+
         MappingProperties properties = MappingProperties.getInstance();
-        mainPage = properties.getProperty("mainPage");
-        loginPage = properties.getProperty("loginPage");
-        adminPage = properties.getProperty("adminPage");
+        mainPage = properties.getProperty("mainPagePost");
+        loginPage = properties.getProperty("loginPagePost");
+        adminPage = properties.getProperty("adminPagePost");
     }
 
     @Override
@@ -53,14 +53,14 @@ public class LoginCommand implements ServletCommand {
             if (user != null && user.getUserType() == UserType.ADMIN) {
                 logger.info("Redirecting to admin page");
                 putAdminToSession(request, user);
-                return new GoToAdminPage().execute(request, response);
+                return adminPage;
             }
             if (user != null) {
                 putUserToSession(request, user);
                 List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(user.getId());
                 List<CreditCard> creditCardsWithPagination =
                         creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(user.getId());
-                //TODO: add all the accounts and cards to the user
+
                 prepareDataForUser(request, creditCards, creditCardsWithPagination);
                 resultPage = mainPage;
             }else {

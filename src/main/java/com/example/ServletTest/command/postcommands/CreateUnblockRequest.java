@@ -23,7 +23,7 @@ public class CreateUnblockRequest implements ServletCommand {
         unblockRequestService = new UnblockRequestService(UnblockRequestDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
-        personalCabinetPage = properties.getProperty("personalCabinetPage");
+        personalCabinetPage = properties.getProperty("personalCabinetPagePost");
         //errorPage = properties.getProperty("errorPage");
     }
 

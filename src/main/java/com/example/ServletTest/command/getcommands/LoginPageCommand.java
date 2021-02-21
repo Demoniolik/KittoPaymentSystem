@@ -24,14 +24,16 @@ public class LoginPageCommand implements ServletCommand {
     private PaymentService paymentService;
     private static String loginPage;
     private static String mainPage;
+    private String adminPage;
 
     public LoginPageCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
-        // TODO: Here we load jsp pages from properties file
+
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
         loginPage = properties.getProperty("loginPage");
+        adminPage = properties.getProperty("adminPage");
     }
 
     @Override
@@ -43,7 +45,7 @@ public class LoginPageCommand implements ServletCommand {
         && session.getAttribute("authorized").equals(true)) {
             if (session.getAttribute("role") != null &&
             session.getAttribute("role").equals("admin")) {
-                return new GoToAdminPage().execute(request, response);
+                return adminPage;
             }
 
             long userId = ((User)session.getAttribute("user")).getId();

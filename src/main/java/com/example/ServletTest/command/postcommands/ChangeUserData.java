@@ -19,7 +19,7 @@ public class ChangeUserData implements ServletCommand {
     public ChangeUserData() {
         userService = new UserService(UserDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
-        personalCabinetPage = properties.getProperty("personalCabinetPage");
+        personalCabinetPage = properties.getProperty("personalCabinetPagePost");
     }
 
     @Override

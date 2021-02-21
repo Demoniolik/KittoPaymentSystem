@@ -31,8 +31,8 @@ public class MainServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("Processing POST request");
         ServletCommand command = commandManager.getPostCommand(request);
-        String loadedPage = command.execute(request, response);
-        response.sendRedirect(request.getContextPath() + "/" + "login");
+        String loadedMapping = command.execute(request, response);
+        response.sendRedirect(request.getContextPath() + loadedMapping);
         //request.getRequestDispatcher(loadedPage).forward(request, response);
     }
 }

@@ -37,7 +37,7 @@ public class GoToPersonalCabinet implements ServletCommand {
         boolean isLogged = (boolean) session.getAttribute("authorized");
         if (isLogged) {
             long userId = ((User)session.getAttribute("user")).getId();
-            //TODO: load blocked cards of user
+
             List<CreditCard> userBlockedCards = creditCardService.getAllBlockedCreditCardsThatBelongToUser(userId);
             session.setAttribute("userBlockedCreditCards", userBlockedCards);
             return personalCabinetPage;
