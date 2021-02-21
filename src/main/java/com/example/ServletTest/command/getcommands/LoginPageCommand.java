@@ -1,5 +1,6 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.getcommands;
 
+import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
-import static com.example.ServletTest.command.LoginCommand.prepareDataForUser;
+import static com.example.ServletTest.command.postcommands.LoginCommand.prepareDataForUser;
 
 public class LoginPageCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(LoginPageCommand.class);

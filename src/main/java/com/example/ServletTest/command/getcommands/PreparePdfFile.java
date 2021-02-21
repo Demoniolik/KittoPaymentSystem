@@ -1,5 +1,7 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.getcommands;
 
+import com.example.ServletTest.command.ServletCommand;
+import com.example.ServletTest.command.postcommands.LoginCommand;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.model.generetingpdf.GeneratePdfFile;
 import com.example.ServletTest.model.payment.Payment;
@@ -9,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 public class PreparePdfFile implements ServletCommand {

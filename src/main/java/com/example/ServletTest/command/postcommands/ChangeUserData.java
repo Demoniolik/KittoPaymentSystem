@@ -1,5 +1,6 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.postcommands;
 
+import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.user.UserDaoImpl;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.user.UserService;

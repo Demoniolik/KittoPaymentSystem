@@ -1,5 +1,6 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.getcommands;
 
+import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.user.User;

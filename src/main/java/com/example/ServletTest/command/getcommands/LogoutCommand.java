@@ -1,5 +1,6 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.getcommands;
 
+import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
 

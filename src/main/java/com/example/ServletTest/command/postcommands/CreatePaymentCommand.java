@@ -1,5 +1,6 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.postcommands;
 
+import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
@@ -22,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CreatePaymentCommand implements ServletCommand{
+public class CreatePaymentCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreatePaymentCommand.class);
     private static UserService userService;
     private static PaymentService paymentService;

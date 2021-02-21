@@ -237,13 +237,17 @@
                         <fmt:message key="transaction_history" bundle="${bundle}"/>
                     </div>
 
-                    <%--                    <select name="chosenCreditCard" required id="chosenCreditCard">--%>
-                    <%--                    <c:forEach items="${userCreditCards}" var="item">--%>
-                    <%--                        <option>--%>
-                    <%--                            <a href="${pageContext.request.contextPath}/selectByCard?=${item.getNumber()}"><c:out value="${item.getNumber()}"/></a>--%>
-                    <%--                        </option>--%>
-                    <%--                    </c:forEach>--%>
-                    <%--                    </select>--%>
+                    <form action="${pageContext.request.contextPath}/selectPaymentsByCards" method="get">
+                        <select name="actualCardForSelectingPayments" required id="chosenCreditCard" onchange="this.form.submit()">
+                            <option value=""></option>
+                            <c:forEach items="${userCreditCards}" var="item">
+                                <option>
+                                    <a href=""><c:out
+                                            value="${item.getNumber()}"/></a>
+                                </option>
+                            </c:forEach>
+                        </select>
+                    </form>
 
 
                     <c:choose>

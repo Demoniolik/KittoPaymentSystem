@@ -1,8 +1,12 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.getcommands;
 
+import com.example.ServletTest.command.ServletCommand;
+import com.example.ServletTest.command.postcommands.LoginCommand;
+import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
+import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.payment.PaymentService;
 import com.example.ServletTest.util.MappingProperties;
 import org.apache.log4j.Logger;
@@ -14,12 +18,13 @@ import java.util.List;
 
 public class ShowMorePayments implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ShowMorePayments.class);
-    private PaymentService paymentService;
-    private String mainPage;
+    private final PaymentService paymentService;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
 
     public ShowMorePayments() {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
-
+        creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
     }
@@ -38,12 +43,18 @@ public class ShowMorePayments implements ServletCommand {
            paymentPageSize = Integer.parseInt(pageSizeParam) + 5;
         }
 
-        //TODO: here you also need to add selector of card with witch you work
         List<CreditCard> creditCards = (List<CreditCard>) request.getSession().getAttribute("userCreditCards");
         List<Payment> payments;
+        Long actualCardForSelectingPayments = (Long) session.getAttribute("actualCardForSelectingPayments");
+        if (actualCardForSelectingPayments == null) {
+            actualCardForSelectingPayments = creditCards.get(0).getNumber();
+        }
 
         if (sortingCriteria == null || sortingOrder == null) {
-            payments = paymentService.getAllPaymentsWithLimitOption(creditCards.get(0).getId(), paymentPageSize);
+            payments = paymentService
+                    .getAllPaymentsWithLimitOption(creditCardService.getCreditCardByNumber(
+                            actualCardForSelectingPayments).getId(), paymentPageSize
+                    );
         } else {
             payments = paymentService.getAllPaymentsSortedWithLimitOption(creditCards.get(0).getId(), paymentPageSize,
                     sortingCriteria, sortingOrder);

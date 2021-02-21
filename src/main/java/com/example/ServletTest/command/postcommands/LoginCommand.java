@@ -1,5 +1,6 @@
-package com.example.ServletTest.command;
+package com.example.ServletTest.command.postcommands;
 
+import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
@@ -69,7 +70,7 @@ public class LoginCommand implements ServletCommand {
         return resultPage;
     }
 
-    static void prepareDataForUser(HttpServletRequest request, List<CreditCard> creditCards,
+    public static void prepareDataForUser(HttpServletRequest request, List<CreditCard> creditCards,
                                    List<CreditCard> creditCardWithPagination) {
         HttpSession session = request.getSession();
         session.setAttribute("userCreditCards", creditCards);
@@ -82,18 +83,18 @@ public class LoginCommand implements ServletCommand {
         session.setAttribute("categories", paymentCategories);
     }
 
-    static void putUserToSession(HttpServletRequest request, User user) {
+    public static void putUserToSession(HttpServletRequest request, User user) {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
         session.setAttribute("authorized", true);
     }
-    static void putAdminToSession(HttpServletRequest request, User user) {
+    public static void putAdminToSession(HttpServletRequest request, User user) {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
         session.setAttribute("role", "admin");
         session.setAttribute("authorized", true);
     }
-    static List<PaymentWrapper> wrapPaymentList(List<Payment> payments) {
+    public static List<PaymentWrapper> wrapPaymentList(List<Payment> payments) {
         logger.info("Wrapping payment");
         List<PaymentWrapper> paymentWrappers = new ArrayList<>();
         for (Payment payment : payments) {

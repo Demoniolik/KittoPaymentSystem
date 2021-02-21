@@ -3,6 +3,8 @@ package com.example.ServletTest.command;
 import com.example.ServletTest.command.admin.ChangeUserStatus;
 import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.command.admin.UnblockUserCard;
+import com.example.ServletTest.command.getcommands.*;
+import com.example.ServletTest.command.postcommands.*;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,7 @@ public class CommandManager {
         getCommands.put("/goToPersonalCabinet", new GoToPersonalCabinet());
         getCommands.put("/logout", new LogoutCommand());
         getCommands.put("/preparePdfFile", new PreparePdfFile());
+        getCommands.put("/selectPaymentsByCards", new SelectPaymentsByCard());
 
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());
