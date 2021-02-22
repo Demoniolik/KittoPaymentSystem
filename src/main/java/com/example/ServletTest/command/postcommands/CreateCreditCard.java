@@ -34,7 +34,9 @@ public class CreateCreditCard implements ServletCommand {
         logger.info("Executing creating credit card command");
         String cardName = request.getParameter("cardName");
         String cardNumber = request.getParameter("cardNumber");
+
         long cardNumberValue = Long.parseLong(cardNumber);
+
         if (creditCardService.getCreditCardByNumber(cardNumberValue) != null) {
             return errorPage;
         }

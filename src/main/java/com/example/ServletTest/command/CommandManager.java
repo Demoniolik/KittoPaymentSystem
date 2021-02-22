@@ -4,6 +4,7 @@ import com.example.ServletTest.command.admin.ChangeUserStatus;
 import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.command.admin.UnblockUserCard;
 import com.example.ServletTest.command.getcommands.*;
+import com.example.ServletTest.command.getcommands.errorpages.GetCardAlreadyExistsErrorPage;
 import com.example.ServletTest.command.getcommands.errorpages.GetCardIsBlockedErrorPage;
 import com.example.ServletTest.command.getcommands.errorpages.GetCardNotFoundErrorPage;
 import com.example.ServletTest.command.postcommands.*;
@@ -39,6 +40,7 @@ public class CommandManager {
         //GET command for errors
         getCommands.put("/getCardNotFoundErrorPage", new GetCardNotFoundErrorPage());
         getCommands.put("/getCardIsBlockedErrorPage", new GetCardIsBlockedErrorPage());
+        getCommands.put("/getCardAlreadyExistsErrorPage", new GetCardAlreadyExistsErrorPage());
 
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());

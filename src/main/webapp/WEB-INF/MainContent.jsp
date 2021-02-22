@@ -494,10 +494,10 @@
     <form action="${pageContext.request.contextPath}/creatingNewCreditCard" method="post">
 
         <label for="cardNumber"><fmt:message key="card_number" bundle="${bundle}"/></label>
-        <input type="number" name="cardNumber" placeholder="<fmt:message key="card_name_placeholder" bundle="${bundle}"/>" required id="cardNumber">
+        <input type="number" name="cardNumber" placeholder="<fmt:message key="card_number_placeholder" bundle="${bundle}"/>" required id="cardNumber">
 
         <label for="cardName"><fmt:message key="card_name" bundle="${bundle}"/></label>
-        <input type="text" name="cardName" placeholder="<fmt:message key="card_number_placeholder" bundle="${bundle}"/>" required id="cardName">
+        <input type="text" name="cardName" placeholder="<fmt:message key="card_name_placeholder" bundle="${bundle}"/>" required id="cardName">
 
         <button type="submit"><fmt:message key="create_card_button" bundle="${bundle}"/></button>
 
