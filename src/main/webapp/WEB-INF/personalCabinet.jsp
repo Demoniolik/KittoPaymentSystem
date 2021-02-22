@@ -62,43 +62,48 @@
 
             </div>
         </div>
+
         <div class="personal_cabinet_container">
-            <div class="form personal-cabinet">
-                <form action="${pageContext.request.contextPath}/changeUserData" method="post">
+            <div class="title">Personal cabinet</div>
+            <div class="form-container">
+                <div class="personal-cabinet">
+                    <div class="form-title">Personal data</div>
+                    <form action="${pageContext.request.contextPath}/changeUserData" method="post">
 
-                    <label for="userName">First name</label>
-                    <input type="text" name="firstName" placeholder="${user.getFirstName()}" id="userName">
+                        <label for="userName">First name</label>
+                        <input type="text" name="firstName" placeholder="${user.getFirstName()}" id="userName">
 
-                    <label for="userLastName">Last name</label>
-                    <input type="text" name="lastName" placeholder="${user.getLastName()}" id="userLastName">
+                        <label for="userLastName">Last name</label>
+                        <input type="text" name="lastName" placeholder="${user.getLastName()}" id="userLastName">
 
-                    <label for="login">Login</label>
-                    <input type="text" name="login" placeholder="${user.getLogin()}" id="login">
+                        <label for="login">Login</label>
+                        <input type="text" name="login" placeholder="${user.getLogin()}" id="login">
 
-                    <label for="password">Password</label>
-                    <input type="password" minlength="8" name="password" placeholder="password" id="password">
+                        <label for="password">Password</label>
+                        <input type="password" minlength="8" name="password" placeholder="password" id="password">
 
-                    <label for="confirmPassword">Confirm password</label>
-                    <input type="text" name="confirmPassword" placeholder="0" id="confirmPassword">
+                        <label for="confirmPassword">Confirm password</label>
+                        <input type="text" name="confirmPassword" placeholder="0" id="confirmPassword">
 
-                    <button type="submit">Confirm changes</button>
-                </form>
-            </div>
-
-            <div class="form personal-cabinet">
-                <form action="${pageContext.request.contextPath}/createUnblockRequest" method="post">
-                    <select name="chosenCard">
-                        <c:forEach items="${userBlockedCreditCards}" var="item">
-                            <option>
-                                <c:out value="${item.getNumber()}"/>
-                            </option>
-                        </c:forEach>
-                    </select>
-                    <br>
-                    <textarea name="reasonDescription" cols="30" rows="10"></textarea>
-                    <br>
-                    <button type="submit">Send unblock request</button>
-                </form>
+                        <button type="submit">Confirm changes</button>
+                    </form>
+                </div>
+                <div class="personal-cabinet">
+                    <div class="form-title">Unblocking request</div>
+                    <form action="${pageContext.request.contextPath}/createUnblockRequest" method="post">
+                        <select name="chosenCard">
+                            <c:forEach items="${userBlockedCreditCards}" var="item">
+                                <option>
+                                    <c:out value="${item.getNumber()}"/>
+                                </option>
+                            </c:forEach>
+                        </select>
+                        <br>
+                        <textarea name="reasonDescription" cols="30" rows="10"></textarea>
+                        <br>
+                        <button type="submit">Send unblock request</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -1,10 +1,12 @@
 package com.example.ServletTest.dao.user;
 
 import com.example.ServletTest.connectionpool.BasicConnectionPool;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.model.user.UserBuilder;
 import com.example.ServletTest.model.user.UserType;
 import org.apache.log4j.Logger;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -42,7 +44,6 @@ public class UserDaoImpl implements UserDao {
             connection = basicConnectionPool.getConnection();
         } catch (SQLException exception) {
             logger.error(exception.getMessage());
-            // TODO: throw database exception
         }
     }
 
@@ -54,35 +55,33 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User get(long id) {
+    public User get(long id) throws DatabaseException {
         try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_USER)) {
             statement.setLong(1, id);
             statement.execute();
             return getUserFromResultSet(statement.getResultSet());
         } catch (SQLException exception) {
-            //TODO: create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
 
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAll() throws DatabaseException {
         try (Statement statement =
                      connection.createStatement()) {
             statement.execute(QUERY_TO_GET_ALL_USERS);
             return getUsersFromResultSet(statement.getResultSet());
         } catch (SQLException exception) {
-            //TODO: Create database exception
             logger.info(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
     @Override
-    public User save(User user) {
+    public User save(User user) throws DatabaseException {
         try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_USER)) {
             statement.setString(1, user.getFirstName());
             statement.setString(2, user.getLastName());
@@ -100,29 +99,29 @@ public class UserDaoImpl implements UserDao {
                         user.setId(generatedKeys.getLong(1));
                     }else {
                         logger.error("Failed to create user, no obtained id");
-                        // TODO: here you need to throw database exception
+                        throw new DatabaseException("Failed to create user, no obtained id");
                     }
                 }
             }
-        } catch (SQLException exception) {
+        } catch (SQLException | DatabaseException exception) {
             logger.error(exception.getMessage());
-            // TODO: throw database exception
+            throw new DatabaseException(exception.getMessage());
         }
         return user;
     }
 
     @Override
     public void update(User o, String[] params) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void delete(User o) {
-
+        throw new NotImplementedException();
     }
 
     @Override
-    public User getUserByEmailAndPassword(String login, String password) {
+    public User getUserByEmailAndPassword(String login, String password) throws DatabaseException {
         logger.info("Searching for user by his/her login and password");
         try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_USER_BY_EMAIL_AND_PASSWORD);) {
             statement.setString(1, login);
@@ -130,14 +129,13 @@ public class UserDaoImpl implements UserDao {
             statement.execute();
             return getUserFromResultSet(statement.getResultSet());
         } catch (SQLException ex) {
-            // TODO: Throw custom database exception
             logger.error(ex);
+            throw new DatabaseException(ex.getMessage());
         }
-        return null;
     }
 
     @Override
-    public String getUserSpecifiedNameByCardId(long creditCardId) {
+    public String getUserSpecifiedNameByCardId(long creditCardId) throws DatabaseException {
         try (PreparedStatement statement =
                     connection.prepareStatement(QUERY_TO_GET_USER_SPECIFIED_NAME_BY_CARD_ID)) {
             statement.setLong(1, creditCardId);
@@ -147,8 +145,8 @@ public class UserDaoImpl implements UserDao {
                 return resultSet.getString(1);
             }
         } catch (SQLException exception) {
-            //TODO: database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return null;
     }

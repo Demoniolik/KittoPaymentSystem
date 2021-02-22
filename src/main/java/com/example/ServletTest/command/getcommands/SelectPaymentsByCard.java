@@ -4,6 +4,7 @@ import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.command.postcommands.LoginCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -21,12 +22,14 @@ public class SelectPaymentsByCard implements ServletCommand {
     private PaymentService paymentService;
     private CreditCardService creditCardService;
     private String mainPage;
+    private String errorPage;
 
     public SelectPaymentsByCard() {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
+        errorPage = properties.getProperty("errorPageDatabase");
     }
 
     @Override
@@ -37,15 +40,29 @@ public class SelectPaymentsByCard implements ServletCommand {
         HttpSession session = request.getSession();
         String sortingCriteria = (String) session.getAttribute("paymentSortingCriteria");
         String sortingOrder = (String) session.getAttribute("paymentSortingOrder");
-        CreditCard card = creditCardService.getCreditCardByNumber(chosenCard);
+        CreditCard card = null;
+        try {
+            card = creditCardService.getCreditCardByNumber(chosenCard);
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         if (sortingCriteria == null) {
             sortingCriteria = "id";
             sortingOrder = "DESC";
         }
         List<Payment> payments =
-                paymentService.getListOfPaymentsSortedByCriteria(card.getId(), sortingCriteria, sortingOrder);
+                null;
+        try {
+            payments = paymentService.getListOfPaymentsSortedByCriteria(card.getId(), sortingCriteria, sortingOrder);
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
 
-        session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
+        try {
+            session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         session.setAttribute("actualCardForSelectingPayments", chosenCard);
         return mainPage;
     }

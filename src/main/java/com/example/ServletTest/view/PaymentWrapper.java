@@ -2,6 +2,7 @@ package com.example.ServletTest.view;
 
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentCategory;
 import com.example.ServletTest.model.payment.PaymentStatus;
@@ -24,10 +25,10 @@ public class PaymentWrapper {
     private CreditCardService creditCardService;
     private UserService userService;
 
-    public PaymentWrapper(Payment payment) {
-        //TODO: destination is a way to understand who us destination and a source
+    public PaymentWrapper(Payment payment) throws DatabaseException {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         userService = new UserService(UserDaoImpl.getInstance());
+
         this.id = payment.getId();
         this.money = payment.getMoney();
         if (payment.getMoney() < 0) {

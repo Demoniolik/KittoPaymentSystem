@@ -1,11 +1,13 @@
 package com.example.ServletTest.dao.payment;
 
 import com.example.ServletTest.connectionpool.BasicConnectionPool;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentBuilder;
 import com.example.ServletTest.model.payment.PaymentCategory;
 import com.example.ServletTest.model.payment.PaymentStatus;
 import org.apache.log4j.Logger;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -43,7 +45,6 @@ public class PaymentDaoImpl implements PaymentDao {
             connection = basicConnectionPool.getConnection();
             connection.setAutoCommit(true);
         } catch (SQLException exception) {
-            //TODO: throw new database exception
             logger.error(exception);
         }
     }
@@ -57,16 +58,16 @@ public class PaymentDaoImpl implements PaymentDao {
 
     @Override
     public Payment get(long id) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public List<Payment> getAll() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
-    public Payment save(Payment payment) {
+    public Payment save(Payment payment) throws DatabaseException {
         try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_CREATE_PAYMENT,
                      Statement.RETURN_GENERATED_KEYS)) {
             statement.setDouble(1, payment.getMoney());
@@ -86,68 +87,68 @@ public class PaymentDaoImpl implements PaymentDao {
                         payment.setId(generatedKeys.getLong(1));
                     }else {
                         logger.error("Failed to create payment, no obtained id");
-                        // TODO: here you need to throw database exception
+                        throw new DatabaseException("Failed to create payments, no obtained id");
                     }
                 }
             }
-        } catch (SQLException exception) {
-            // TODO: throw new database exception
+        } catch (SQLException | DatabaseException exception) {
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return payment;
     }
 
     @Override
     public void update(Payment payment, String[] params) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void delete(Payment payment) {
-
+        throw new NotImplementedException();
     }
 
     @Override
-    public void changeStatus(Payment payment) {
+    public void changeStatus(Payment payment) throws DatabaseException {
         try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_CHANGE_STATUS)) {
             statement.setLong(1, payment.getPaymentStatus().ordinal() + 1);
             statement.setLong(2, payment.getId());
             statement.executeUpdate();
         } catch (SQLException exception) {
-            //TODO: throw new database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
     }
 
     @Override
     public List<Payment> getAllPaymentsByCreditCardNumberSortedByCriteria
-            (long currentCreditCard, String sortingCriteria, String sortingOrder) {
+            (long currentCreditCard, String sortingCriteria, String sortingOrder) throws DatabaseException {
         String query = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID
                 + " ORDER BY " + sortingCriteria + " " + sortingOrder + LIMIT_OPTION;
         final int LIMIT = 10;
         return getPayments(currentCreditCard, query, LIMIT);
     }
 
-    public List<Payment> getAllPaymentsByCreditCardNumberId(long currentCreditCard) {
+    public List<Payment> getAllPaymentsByCreditCardNumberId(long currentCreditCard) throws DatabaseException {
         final int LIMIT = 10;
         return getPayments(currentCreditCard, DEFAULT_QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID, LIMIT);
     }
 
     @Override
-    public List<Payment> getAllPaymentsWithLimitOption(long currentCreditCard, int pageSize) {
+    public List<Payment> getAllPaymentsWithLimitOption(long currentCreditCard, int pageSize) throws DatabaseException {
         return getPayments(currentCreditCard, DEFAULT_QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID, pageSize);
     }
 
     @Override
     public List<Payment> getAllPaymentsSortedWithLimitOption(long currentCreditCard, int pageSize,
-                                                       String sortingCriteria, String sortingOrder) {
+                                                       String sortingCriteria, String sortingOrder) throws DatabaseException {
         String query = QUERY_TO_GET_ALL_PAYMENTS_BY_CARD_NUMBER_ID + "ORDER BY " + sortingCriteria + " " +
                 sortingOrder + LIMIT_OPTION;
         return getPayments(currentCreditCard, query, pageSize);
     }
 
     @Override
-    public int getCountOfPaymentsAttachedToCard(long currentCreditCard) {
+    public int getCountOfPaymentsAttachedToCard(long currentCreditCard) throws DatabaseException {
         try (PreparedStatement statement =
                      connection.prepareStatement(COUNT_OF_PAYMENTS_ATTACHED_TO_CARD_NUMBER_ID)) {
             statement.setLong(1, currentCreditCard);
@@ -158,13 +159,13 @@ public class PaymentDaoImpl implements PaymentDao {
                 return resultSet.getInt(1);
             }
         } catch (SQLException exception) {
-            //TODO: create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return 0;
     }
 
-    private List<Payment> getPayments(long currentCreditCard, String sortingCriteria, int limit) {
+    private List<Payment> getPayments(long currentCreditCard, String sortingCriteria, int limit) throws DatabaseException {
         try (PreparedStatement statement =
                      connection.prepareStatement(sortingCriteria)) {
             statement.setLong(1, currentCreditCard);
@@ -173,13 +174,12 @@ public class PaymentDaoImpl implements PaymentDao {
             statement.execute();
             return getPaymentsFromResultSet(statement.getResultSet(), currentCreditCard);
         } catch (SQLException exception) {
-            // TODO: Throw new database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
-    private List<Payment> getPaymentsFromResultSet(ResultSet resultSet, long currentCreditCard) {
+    private List<Payment> getPaymentsFromResultSet(ResultSet resultSet, long currentCreditCard) throws DatabaseException {
         List<Payment> payments = new ArrayList<>();
         try {
             while (resultSet.next()) {
@@ -208,19 +208,19 @@ public class PaymentDaoImpl implements PaymentDao {
                 }
             }
         } catch (SQLException exception) {
-            //TODO: database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return payments;
     }
 
     @Override
     public List<Payment> getAllCardsByCardNumber() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
-    public List<String> getAllCategories() {
+    public List<String> getAllCategories() throws DatabaseException {
         List<String> listOfCategories = new ArrayList<>();
         try (Connection connection = basicConnectionPool.getConnection();
             Statement statement = connection.createStatement()) {
@@ -230,8 +230,8 @@ public class PaymentDaoImpl implements PaymentDao {
                 listOfCategories.add(resultSet.getString("name"));
             }
         } catch (SQLException exception) {
-            //TODO: create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return listOfCategories;
     }

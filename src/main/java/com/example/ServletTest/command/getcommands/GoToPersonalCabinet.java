@@ -3,6 +3,7 @@ package com.example.ServletTest.command.getcommands;
 import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -27,7 +28,7 @@ public class GoToPersonalCabinet implements ServletCommand {
         userService = new UserService(UserDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         personalCabinetPage = properties.getProperty("personalCabinetPage");
-        //errorPage = properties.getProperty("userErrorPage");
+        errorPage = properties.getProperty("errorPageDatabase");
     }
 
     @Override
@@ -38,11 +39,16 @@ public class GoToPersonalCabinet implements ServletCommand {
         if (isLogged) {
             long userId = ((User)session.getAttribute("user")).getId();
 
-            List<CreditCard> userBlockedCards = creditCardService.getAllBlockedCreditCardsThatBelongToUser(userId);
+            List<CreditCard> userBlockedCards = null;
+            try {
+                userBlockedCards = creditCardService.getAllBlockedCreditCardsThatBelongToUser(userId);
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
             session.setAttribute("userBlockedCreditCards", userBlockedCards);
             return personalCabinetPage;
         }
-
+        //TODO: authorization error
         return errorPage;
     }
 }

@@ -2,6 +2,7 @@ package com.example.ServletTest.command.postcommands;
 
 import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.creditcard.CreditCardBuilder;
 import com.example.ServletTest.model.creditcard.cvccodegenerator.CvcCodeGenerator;
@@ -37,7 +38,11 @@ public class CreateCreditCard implements ServletCommand {
 
         long cardNumberValue = Long.parseLong(cardNumber);
 
-        if (creditCardService.getCreditCardByNumber(cardNumberValue) != null) {
+        try {
+            if (creditCardService.getCreditCardByNumber(cardNumberValue) != null) {
+                return errorPage;
+            }
+        } catch (DatabaseException e) {
             return errorPage;
         }
 
@@ -52,9 +57,13 @@ public class CreateCreditCard implements ServletCommand {
                 .setCvcCode(new CvcCodeGenerator(new SecureRandom()).getCvcCode()) // Tricky moment
                 .build();
 
-        if (creditCardService.createCreditCard(creditCard)) {
-            List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(userId);
-            session.setAttribute("userCreditCards", creditCards);
+        try {
+            if (creditCardService.createCreditCard(creditCard)) {
+                List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(userId);
+                session.setAttribute("userCreditCards", creditCards);
+            }
+        } catch (DatabaseException e) {
+            return errorPage;
         }
 
         return mainPage;

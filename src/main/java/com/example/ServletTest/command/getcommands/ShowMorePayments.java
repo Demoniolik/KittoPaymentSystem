@@ -4,6 +4,7 @@ import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.command.postcommands.LoginCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -21,12 +22,14 @@ public class ShowMorePayments implements ServletCommand {
     private final PaymentService paymentService;
     private final CreditCardService creditCardService;
     private final String mainPage;
+    private final String errorPage;
 
     public ShowMorePayments() {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
+        errorPage = properties.getProperty("errorPageDatabase");
     }
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -51,19 +54,35 @@ public class ShowMorePayments implements ServletCommand {
         }
 
         if (sortingCriteria == null || sortingOrder == null) {
-            payments = paymentService
-                    .getAllPaymentsWithLimitOption(creditCardService.getCreditCardByNumber(
-                            actualCardForSelectingPayments).getId(), paymentPageSize
-                    );
+            try {
+                payments = paymentService
+                        .getAllPaymentsWithLimitOption(creditCardService.getCreditCardByNumber(
+                                actualCardForSelectingPayments).getId(), paymentPageSize
+                        );
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
         } else {
-            payments = paymentService.getAllPaymentsSortedWithLimitOption(creditCards.get(0).getId(), paymentPageSize,
-                    sortingCriteria, sortingOrder);
+            try {
+                payments = paymentService.getAllPaymentsSortedWithLimitOption(creditCards.get(0).getId(), paymentPageSize,
+                        sortingCriteria, sortingOrder);
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
         }
 
         request.setAttribute("paymentPageSize", paymentPageSize);
-        request.setAttribute("maxPaymentPageSize", paymentService.getAmountOfCardPayments(creditCards.get(0).getId()));
+        try {
+            request.setAttribute("maxPaymentPageSize", paymentService.getAmountOfCardPayments(creditCards.get(0).getId()));
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
 
-        session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
+        try {
+            session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
 
         return mainPage;
     }

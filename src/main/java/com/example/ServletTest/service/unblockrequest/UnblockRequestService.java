@@ -1,6 +1,7 @@
 package com.example.ServletTest.service.unblockrequest;
 
 import com.example.ServletTest.dao.unblockrequest.UnblockRequestDao;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.unblockingrequest.UnblockingRequest;
 import org.apache.log4j.Logger;
 
@@ -16,15 +17,20 @@ public class UnblockRequestService {
 
     public boolean createUnblockRequest(UnblockingRequest unblockingRequest) {
         logger.info("Creating unblocking request");
-        return unblockRequestDao.save(unblockingRequest).getId() != 0;
+        try {
+            return unblockRequestDao.save(unblockingRequest).getId() != 0;
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public List<UnblockingRequest> getUnapprovedUnblockingRequests() {
+    public List<UnblockingRequest> getUnapprovedUnblockingRequests() throws DatabaseException {
         logger.info("Retrieving all unblocking and not approved request");
         return unblockRequestDao.getAllUnapprovedRequests();
     }
 
-    public void changeUnblockingRequestStatus(long cardId, UnblockingRequest.RequestStatus status) {
+    public void changeUnblockingRequestStatus(long cardId, UnblockingRequest.RequestStatus status) throws DatabaseException {
         logger.info("Changing status of unblocking request");
         unblockRequestDao.changeUnblockingRequestStatus(cardId, status);
     }

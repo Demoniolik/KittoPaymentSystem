@@ -4,6 +4,7 @@ import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentBuilder;
@@ -29,6 +30,7 @@ public class CreatePaymentCommand implements ServletCommand {
     private static PaymentService paymentService;
     private static CreditCardService creditCardService;
     private String mainPage;
+    private String errorPage;
     private static final Map<String, Long> paymentCategoryToCreditCardNumberAssociation =
             new ConcurrentHashMap<>();
 
@@ -46,9 +48,10 @@ public class CreatePaymentCommand implements ServletCommand {
                 .put("utilities", 1010101010L);
         paymentCategoryToCreditCardNumberAssociation
                 .put("charity", 9090909090L);
-        // TODO: Here you need to load data from properties file
+
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPagePost");
+        errorPage = properties.getProperty("errorPageDatabasePost");
     }
 
     @Override
@@ -60,22 +63,45 @@ public class CreatePaymentCommand implements ServletCommand {
         long destinationCreditCardNumber =
                 paymentCategoryToCreditCardNumberAssociation.get(categoryOfPayment);
 
-        CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
-        CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationCreditCardNumber);
-        Payment payment = new PaymentBuilder().setMoney(moneyToPay)
-                .setDescription(userService
-                        .getSpecifiedUserNameByCardId(destinationCreditCard.getId()))
-                .setCreditCardIdSource(sourceCreditCard.getId())
-                .setCreditCardIdDestination(destinationCreditCard.getId())
-                .setDate(LocalDateTime.now())
-                .setPaymentStatus(PaymentStatus.PREPARED)
-                .setPaymentCategory(getCategoryFromName(categoryOfPayment))
-                .build();
+        CreditCard sourceCreditCard = null;
+        try {
+            sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
+        CreditCard destinationCreditCard = null;
+        try {
+            destinationCreditCard = creditCardService.getCreditCardByNumber(destinationCreditCardNumber);
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
+        Payment payment = null;
+        try {
+            payment = new PaymentBuilder().setMoney(moneyToPay)
+                    .setDescription(userService
+                            .getSpecifiedUserNameByCardId(destinationCreditCard.getId()))
+                    .setCreditCardIdSource(sourceCreditCard.getId())
+                    .setCreditCardIdDestination(destinationCreditCard.getId())
+                    .setDate(LocalDateTime.now())
+                    .setPaymentStatus(PaymentStatus.PREPARED)
+                    .setPaymentCategory(getCategoryFromName(categoryOfPayment))
+                    .build();
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         if (paymentService.createPayment(payment)) {
-            creatingTransaction(moneyToPay, sourceNumber, destinationCreditCardNumber, payment);
+            try {
+                creatingTransaction(moneyToPay, sourceNumber, destinationCreditCardNumber, payment);
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
             HttpSession session = request.getSession();
-            session.setAttribute("user_credit_cards",
-                    creditCardService.getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId()));
+            try {
+                session.setAttribute("user_credit_cards",
+                        creditCardService.getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId()));
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
             logger.info("Payment succeeded");
         }
 
@@ -95,7 +121,8 @@ public class CreatePaymentCommand implements ServletCommand {
         return null;
     }
 
-    private void creatingTransaction(double moneyToPay, long sourceNumber, long destinationCreditCardNumber, Payment payment) {
+    private void creatingTransaction(double moneyToPay, long sourceNumber, long destinationCreditCardNumber, Payment payment)
+            throws DatabaseException {
         creditCardService.replenishCreditCard(sourceNumber, moneyToPay * -1);
         creditCardService.replenishCreditCard(destinationCreditCardNumber, moneyToPay);
         payment.setPaymentStatus(PaymentStatus.SENT);

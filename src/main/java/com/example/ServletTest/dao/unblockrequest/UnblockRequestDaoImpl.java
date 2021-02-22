@@ -1,8 +1,10 @@
 package com.example.ServletTest.dao.unblockrequest;
 
 import com.example.ServletTest.connectionpool.BasicConnectionPool;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.unblockingrequest.UnblockingRequest;
 import org.apache.log4j.Logger;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ public class UnblockRequestDaoImpl implements UnblockRequestDao {
             connection = basicConnectionPool.getConnection();
             connection.setAutoCommit(true);
         } catch (SQLException exception) {
-            //TODO: throw new database exception
             logger.error(exception);
         }
     }
@@ -45,16 +46,16 @@ public class UnblockRequestDaoImpl implements UnblockRequestDao {
 
     @Override
     public UnblockingRequest get(long id) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public List<UnblockingRequest> getAll() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
-    public UnblockingRequest save(UnblockingRequest unblockingRequest) {
+    public UnblockingRequest save(UnblockingRequest unblockingRequest) throws DatabaseException {
         try (PreparedStatement statement =
                      connection.prepareStatement(QUERY_TO_CREATE_UNBLOCKING_REQUEST,
                              Statement.RETURN_GENERATED_KEYS)) {
@@ -71,49 +72,49 @@ public class UnblockRequestDaoImpl implements UnblockRequestDao {
                         unblockingRequest.setId(generatedKeys.getLong(1));
                     }else {
                         logger.error("Failed to create payment, no obtained id");
-                        // TODO: here you need to throw database exception
+                        throw new DatabaseException("Failed to create payment, no obtained id");
                     }
                 }
             }
-        } catch (SQLException exception) {
-            //TODO: create database exception that holds of error
+        } catch (SQLException | DatabaseException exception) {
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return unblockingRequest;
     }
 
     @Override
     public void update(UnblockingRequest unblockingRequest, String[] params) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void delete(UnblockingRequest unblockingRequest) {
-
+        throw new NotImplementedException();
     }
 
     @Override
-    public List<UnblockingRequest> getAllUnapprovedRequests() {
+    public List<UnblockingRequest> getAllUnapprovedRequests() throws DatabaseException {
         try (Statement statement = connection.createStatement()) {
             statement.execute(QUERY_TO_GET_ALL_UNAPPROVED_REQUESTS);
             return getUnblockingRequestsFromResultSet(statement.getResultSet());
         } catch (SQLException exception) {
-            //TODO: create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
     @Override
-    public void changeUnblockingRequestStatus(long cardId, UnblockingRequest.RequestStatus status) {
+    public void changeUnblockingRequestStatus(long cardId, UnblockingRequest.RequestStatus status)
+            throws DatabaseException {
         try (PreparedStatement statement =
                      connection.prepareStatement(QUERY_TO_UPDATE_UNBLOCKING_REQUEST_STATUS)) {
             statement.setInt(1, status.ordinal());
             statement.setLong(2, cardId);
             statement.executeUpdate();
         } catch (SQLException exception) {
-            //TODO: create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
     }
 

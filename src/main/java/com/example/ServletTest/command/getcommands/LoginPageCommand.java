@@ -4,6 +4,7 @@ import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -25,6 +26,7 @@ public class LoginPageCommand implements ServletCommand {
     private static String loginPage;
     private static String mainPage;
     private String adminPage;
+    private String errorPage;
 
     public LoginPageCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
@@ -34,6 +36,7 @@ public class LoginPageCommand implements ServletCommand {
         mainPage = properties.getProperty("mainPage");
         loginPage = properties.getProperty("loginPage");
         adminPage = properties.getProperty("adminPage");
+        errorPage = properties.getProperty("errorPageDatabase");
     }
 
     @Override
@@ -50,13 +53,27 @@ public class LoginPageCommand implements ServletCommand {
 
             long userId = ((User)session.getAttribute("user")).getId();
 
-            List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(userId);
+            List<CreditCard> creditCards = null;
+            try {
+                creditCards = creditCardService.getAllUnblockedCreditCards(userId);
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
             List<CreditCard> creditCardsView =
-                    creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(userId);
+                    null;
+            try {
+                creditCardsView = creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(userId);
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
 
-            prepareDataForUser(request, creditCards, creditCardsView);
+            try {
+                prepareDataForUser(request, creditCards, creditCardsView);
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
             resultPage = mainPage;
-        } // TODO: Here probably you should check if these values are just empty string
+        }
         else if (request.getParameter("login") == null || request.getParameter("password") == null) {
             logger.info("Returning to login page");
             resultPage = loginPage;

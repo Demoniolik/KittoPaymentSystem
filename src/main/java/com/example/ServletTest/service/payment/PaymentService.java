@@ -1,6 +1,7 @@
 package com.example.ServletTest.service.payment;
 
 import com.example.ServletTest.dao.payment.PaymentDao;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.payment.Payment;
 import org.apache.log4j.Logger;
 
@@ -16,38 +17,47 @@ public class PaymentService {
 
     public boolean createPayment(Payment payment) {
         logger.info("Creating new payment");
-        return payment != null && paymentDao.save(payment).getId() != 0;
+        try {
+            return payment != null && paymentDao.save(payment).getId() != 0;
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public void changeStatus(Payment payment) {
+    public void changeStatus(Payment payment) throws DatabaseException {
+        logger.info("Changing status of payment");
         paymentDao.changeStatus(payment);
     }
 
-    public List<Payment> getListOfPaymentsThatBelongToCreditCard(long currentCreditCard) {
+    public List<Payment> getListOfPaymentsThatBelongToCreditCard(long currentCreditCard) throws DatabaseException {
         logger.info("Retrieving all payments that belong to credit card");
         return paymentDao.getAllPaymentsByCreditCardNumberId(currentCreditCard);
     }
 
-    public List<String> getAllCategories() {
+    public List<String> getAllCategories() throws DatabaseException {
         logger.info("Getting all categories");
         return paymentDao.getAllCategories();
     }
 
-    public List<Payment> getListOfPaymentsSortedByCriteria(long currentCreditCard, String sortingCriteria, String sortingOrder) {
+    public List<Payment> getListOfPaymentsSortedByCriteria(long currentCreditCard, String sortingCriteria, String sortingOrder) throws DatabaseException {
         logger.info("Retrieving and sorting payments that belong to credit card");
         return paymentDao.getAllPaymentsByCreditCardNumberSortedByCriteria(currentCreditCard, sortingCriteria, sortingOrder);
     }
 
-    public List<Payment> getAllPaymentsWithLimitOption(long currentCreditCard, int pageSize) {
+    public List<Payment> getAllPaymentsWithLimitOption(long currentCreditCard, int pageSize) throws DatabaseException {
+        logger.info("Getting all payments with limit option");
         return paymentDao.getAllPaymentsWithLimitOption(currentCreditCard ,pageSize);
     }
 
     public List<Payment> getAllPaymentsSortedWithLimitOption(long currentCreditCard, int pageSize,
-                                                             String sortingCriteria, String sortingOrder) {
+                                                             String sortingCriteria, String sortingOrder) throws DatabaseException {
+        logger.info("Getting all payments with limit option and sorting criteria plus order");
         return paymentDao.getAllPaymentsSortedWithLimitOption(currentCreditCard, pageSize, sortingCriteria, sortingOrder);
     }
 
-    public int getAmountOfCardPayments(long creditCardId) {
+    public int getAmountOfCardPayments(long creditCardId) throws DatabaseException {
+        logger.info("Getting amount of payments that belong to card");
         return paymentDao.getCountOfPaymentsAttachedToCard(creditCardId);
     }
 }

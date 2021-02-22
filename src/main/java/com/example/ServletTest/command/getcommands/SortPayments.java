@@ -4,6 +4,7 @@ import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.command.postcommands.LoginCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -30,7 +31,7 @@ public class SortPayments implements ServletCommand {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
-        errorPage = properties.getProperty("errorPage");
+        errorPage = properties.getProperty("errorPageDatabase");
     }
 
     @Override
@@ -52,18 +53,30 @@ public class SortPayments implements ServletCommand {
         Long actualCardForSelectingPayments = (Long) session.getAttribute("actualCardForSelectingPayments");
 
         if (actualCardForSelectingPayments == null) {
-            payments =
-                    paymentService.getListOfPaymentsSortedByCriteria(creditCards.get(0).getId(), sortingCriteria, sortingOrder);
+            try {
+                payments =
+                        paymentService.getListOfPaymentsSortedByCriteria(creditCards.get(0).getId(), sortingCriteria, sortingOrder);
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
         } else {
-            payments = paymentService
-                    .getListOfPaymentsSortedByCriteria(
-                            creditCardService.getCreditCardByNumber(actualCardForSelectingPayments).getId(),
-                            sortingCriteria,
-                            sortingOrder
-                    );
+            try {
+                payments = paymentService
+                        .getListOfPaymentsSortedByCriteria(
+                                creditCardService.getCreditCardByNumber(actualCardForSelectingPayments).getId(),
+                                sortingCriteria,
+                                sortingOrder
+                        );
+            } catch (DatabaseException e) {
+                return errorPage;
+            }
         }
 
-        session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
+        try {
+            session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         if (sortingOrder.equals("ASC")) {
             request.setAttribute("sorted", true);
             session.setAttribute("paymentSortingOrder", "ASC");

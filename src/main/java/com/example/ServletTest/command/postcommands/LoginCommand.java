@@ -5,6 +5,7 @@ import com.example.ServletTest.command.admin.GoToAdminPage;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.user.UserType;
@@ -30,6 +31,7 @@ public class LoginCommand implements ServletCommand {
     private static String loginPage;
     private static String mainPage;
     private static String adminPage;
+    private String errorPage;
 
     public LoginCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -40,6 +42,7 @@ public class LoginCommand implements ServletCommand {
         mainPage = properties.getProperty("mainPagePost");
         loginPage = properties.getProperty("loginPagePost");
         adminPage = properties.getProperty("adminPagePost");
+        errorPage = properties.getProperty("errorPageDatabasePost");
     }
 
     @Override
@@ -49,7 +52,12 @@ public class LoginCommand implements ServletCommand {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
         if (login != null && password != null) {
-            User user = userService.getUserByCredentials(login, password);
+            User user = null;
+            try {
+                user = userService.getUserByCredentials(login, password);
+            } catch (DatabaseException e) {
+               return errorPage;
+            }
             if (user != null && user.getUserType() == UserType.ADMIN) {
                 logger.info("Redirecting to admin page");
                 putAdminToSession(request, user);
@@ -57,11 +65,25 @@ public class LoginCommand implements ServletCommand {
             }
             if (user != null) {
                 putUserToSession(request, user);
-                List<CreditCard> creditCards = creditCardService.getAllUnblockedCreditCards(user.getId());
+                List<CreditCard> creditCards = null;
+                try {
+                    creditCards = creditCardService.getAllUnblockedCreditCards(user.getId());
+                } catch (DatabaseException e) {
+                    return errorPage;
+                }
                 List<CreditCard> creditCardsWithPagination =
-                        creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(user.getId());
+                        null;
+                try {
+                    creditCardsWithPagination = creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(user.getId());
+                } catch (DatabaseException e) {
+                    return errorPage;
+                }
 
-                prepareDataForUser(request, creditCards, creditCardsWithPagination);
+                try {
+                    prepareDataForUser(request, creditCards, creditCardsWithPagination);
+                } catch (DatabaseException e) {
+                    return errorPage;
+                }
                 resultPage = mainPage;
             }else {
                 request.setAttribute("idLogged", false);
@@ -71,7 +93,7 @@ public class LoginCommand implements ServletCommand {
     }
 
     public static void prepareDataForUser(HttpServletRequest request, List<CreditCard> creditCards,
-                                   List<CreditCard> creditCardWithPagination) {
+                                   List<CreditCard> creditCardWithPagination) throws DatabaseException {
         HttpSession session = request.getSession();
         session.setAttribute("userCreditCards", creditCards);
         session.setAttribute("userCreditCardsWithPagination", creditCardWithPagination);
@@ -94,7 +116,7 @@ public class LoginCommand implements ServletCommand {
         session.setAttribute("role", "admin");
         session.setAttribute("authorized", true);
     }
-    public static List<PaymentWrapper> wrapPaymentList(List<Payment> payments) {
+    public static List<PaymentWrapper> wrapPaymentList(List<Payment> payments) throws DatabaseException {
         logger.info("Wrapping payment");
         List<PaymentWrapper> paymentWrappers = new ArrayList<>();
         for (Payment payment : payments) {

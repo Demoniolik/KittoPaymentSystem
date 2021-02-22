@@ -3,6 +3,7 @@ package com.example.ServletTest.command.postcommands;
 import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.unblockrequest.UnblockRequestDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.unblockingrequest.UnblockingRequest;
 import com.example.ServletTest.service.creditcard.CreditCardService;
 import com.example.ServletTest.service.unblockrequest.UnblockRequestService;
@@ -24,7 +25,7 @@ public class CreateUnblockRequest implements ServletCommand {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
         personalCabinetPage = properties.getProperty("personalCabinetPagePost");
-        //errorPage = properties.getProperty("errorPage");
+        errorPage = properties.getProperty("errorPageDatabasePost");
     }
 
 
@@ -38,8 +39,12 @@ public class CreateUnblockRequest implements ServletCommand {
 
         UnblockingRequest unblockingRequest
                 = new UnblockingRequest();
-        unblockingRequest.setCreditCardId(creditCardService
-                .getCreditCardByNumber(cardNumber).getId());
+        try {
+            unblockingRequest.setCreditCardId(creditCardService
+                    .getCreditCardByNumber(cardNumber).getId());
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         unblockingRequest.setDescription(descriptionParam);
         unblockingRequest.setRequestStatus(UnblockingRequest.RequestStatus.NOT_APPROVED);
 

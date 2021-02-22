@@ -2,6 +2,7 @@ package com.example.ServletTest.command.getcommands;
 
 import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -58,8 +59,13 @@ public class SortCards implements ServletCommand {
         }
 
         List<CreditCard> creditCards =
-                creditCardService
-                        .getAllCreditCardsByCriteriaWithLimit(currentUserId ,sortingCriteria, sortingOrder, page, pageSize);
+                null;
+        try {
+            creditCards = creditCardService
+                    .getAllCreditCardsByCriteriaWithLimit(currentUserId ,sortingCriteria, sortingOrder, page, pageSize);
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         session.setAttribute("userCreditCardsWithPagination", creditCards);
         //TODO: Refactor it
         if (sortingCriteria.equals("number") && sortingOrder.equals("ASC")) {

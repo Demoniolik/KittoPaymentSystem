@@ -4,6 +4,7 @@ import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
 import com.example.ServletTest.dao.payment.PaymentDaoImpl;
 import com.example.ServletTest.dao.user.UserDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.payment.Payment;
 import com.example.ServletTest.model.payment.PaymentBuilder;
@@ -30,6 +31,7 @@ public class CreateTransferCommand implements ServletCommand {
     private String mainPage;
     private String errorPageCardDoesNotExist;
     private String errorPageCardIsBlocked;
+    private String errorPageDatabase;
 
     public CreateTransferCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -40,6 +42,7 @@ public class CreateTransferCommand implements ServletCommand {
         mainPage = properties.getProperty("mainPagePost");
         errorPageCardDoesNotExist = properties.getProperty("errorPageDestinationCardIsNotFoundPost");
         errorPageCardIsBlocked = properties.getProperty("errorPageDestinationCardIsBlockedPost");
+        errorPageDatabase = properties.getProperty("errorPageDatabasePost");
     }
 
     @Override
@@ -50,8 +53,18 @@ public class CreateTransferCommand implements ServletCommand {
         long sourceNumber = Long.parseLong(request.getParameter("chosenCreditCard"));
         long destinationNumber = Long.parseLong(request.getParameter("destinationNumber"));
 
-        CreditCard sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
-        CreditCard destinationCreditCard = creditCardService.getCreditCardByNumber(destinationNumber);
+        CreditCard sourceCreditCard = null;
+        try {
+            sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
+        } catch (DatabaseException e) {
+            return errorPageDatabase;
+        }
+        CreditCard destinationCreditCard = null;
+        try {
+            destinationCreditCard = creditCardService.getCreditCardByNumber(destinationNumber);
+        } catch (DatabaseException e) {
+            return errorPageDatabase;
+        }
 
         if (destinationCreditCard == null) {
             logger.error("Destination card was not found");
@@ -61,24 +74,46 @@ public class CreateTransferCommand implements ServletCommand {
             return errorPageCardIsBlocked;
         }
 
-        Payment payment = new PaymentBuilder().setMoney(moneyToPay)
-                .setDescription(userService.
-                        getSpecifiedUserNameByCardId(destinationCreditCard.getId()))
-                .setCreditCardIdSource(sourceCreditCard.getId())
-                .setCreditCardIdDestination(destinationCreditCard.getId())
-                .setDate(LocalDateTime.now())
-                .setPaymentStatus(PaymentStatus.PREPARED)
-                .setPaymentCategory(PaymentCategory.TRANSFER_TO_CARD)
-                .build();
+        Payment payment = null;
+        try {
+            payment = new PaymentBuilder().setMoney(moneyToPay)
+                    .setDescription(userService.
+                            getSpecifiedUserNameByCardId(destinationCreditCard.getId()))
+                    .setCreditCardIdSource(sourceCreditCard.getId())
+                    .setCreditCardIdDestination(destinationCreditCard.getId())
+                    .setDate(LocalDateTime.now())
+                    .setPaymentStatus(PaymentStatus.PREPARED)
+                    .setPaymentCategory(PaymentCategory.TRANSFER_TO_CARD)
+                    .build();
+        } catch (DatabaseException e) {
+            return errorPageDatabase;
+        }
 
         if (paymentService.createPayment(payment)) {
-            creditCardService.replenishCreditCard(sourceNumber, moneyToPay * -1);
-            creditCardService.replenishCreditCard(destinationNumber, moneyToPay);
+            try {
+                creditCardService.replenishCreditCard(sourceNumber, moneyToPay * -1);
+            } catch (DatabaseException e) {
+                return errorPageDatabase;
+            }
+            try {
+                creditCardService.replenishCreditCard(destinationNumber, moneyToPay);
+            } catch (DatabaseException e) {
+                return errorPageDatabase;
+            }
             payment.setPaymentStatus(PaymentStatus.SENT);
-            paymentService.changeStatus(payment);
+            try {
+                paymentService.changeStatus(payment);
+            } catch (DatabaseException e) {
+                return errorPageDatabase;
+            }
             HttpSession session = request.getSession();
-            List<CreditCard> creditCards = creditCardService
-                    .getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId());
+            List<CreditCard> creditCards = null;
+            try {
+                creditCards = creditCardService
+                        .getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId());
+            } catch (DatabaseException e) {
+                return errorPageDatabase;
+            }
             session.setAttribute("user_credit_cards", creditCards);
             logger.info("Transaction succeeded");
         }

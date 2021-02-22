@@ -1196,15 +1196,49 @@ a.view-less img {
 }
 
 
-.grid .grid-cabinet {
-  grid-row: 1/5;
-  grid-column: 2/5;
-}
+.grid.grid-cabinet {
 
-.grid .grid-cabinet .form {
-  margin: 0 auto;
 }
 
 .selecting-card {
   margin-top: 12px;
 }
+
+.personal_cabinet_container {
+  width: 100%;
+  background: white;
+  padding: 32px;
+  grid-row: 1/5;
+  grid-column: 2/5;
+  box-shadow: 0px 0px 15px 0px #dadada;
+  border-radius: 15px;
+}
+
+.personal_cabinet_container .title {
+  font-size: 24px;
+  margin-bottom: 32px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.personal_cabinet_container .form-container {
+  display: flex;
+
+}
+
+
+.form-container .personal-cabinet {
+  width: 350px;
+}
+
+.form-container .personal-cabinet:first-child {
+  margin-right: 64px;
+}
+
+.form-container .personal-cabinet .form-title {
+  font-size: 18px;
+  line-height: 32px;
+  color: #000000;
+  margin-bottom: 16px;
+}
+

@@ -1,9 +1,11 @@
 package com.example.ServletTest.dao.creditcard;
 
 import com.example.ServletTest.connectionpool.BasicConnectionPool;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.creditcard.CreditCardBuilder;
 import org.apache.log4j.Logger;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -46,7 +48,6 @@ public class CreditCardDaoImpl implements CreditCardDao {
             connection = basicConnectionPool.getConnection();
         } catch (SQLException exception) {
             logger.error(exception.getMessage());
-            // TODO: throw database exception
             logger.error(exception);
         }
     }
@@ -59,26 +60,24 @@ public class CreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public CreditCard get(long id) {
+    public CreditCard get(long id) throws DatabaseException {
         try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_CARD_BY_ID)) {
             statement.setLong(1, id);
             statement.execute();
             return getCreditCardFromResultSet(statement.getResultSet());
         } catch (SQLException exception) {
-            //TODO: create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
     @Override
     public List<CreditCard> getAll() {
-
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
-    public CreditCard save(CreditCard creditCard) {
+    public CreditCard save(CreditCard creditCard) throws DatabaseException {
         try (PreparedStatement statement
                      = connection.prepareStatement(QUERY_TO_CREATE_NEW_CARD)) {
             statement.setLong(1, creditCard.getNumber());
@@ -97,69 +96,49 @@ public class CreditCardDaoImpl implements CreditCardDao {
                         creditCard.setId(generatedKeys.getLong(1));
                     }else {
                         logger.error("Failed to create card, no obtained id");
-                        // TODO: here you need to throw database exception
+                        throw new DatabaseException("Failed to create card, no obtained id");
                     }
                 }
             }
-        } catch (SQLException exception) {
-            // TODO: throw new database exception
+        } catch (SQLException | DatabaseException exception) {
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return creditCard;
     }
 
     @Override
     public void update(CreditCard creditCard, String[] params) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void delete(CreditCard creditCard) {
-
+        throw new NotImplementedException();
     }
 
     @Override
-    public CreditCard getCardByNumber(long creditCardNumber) {
+    public CreditCard getCardByNumber(long creditCardNumber) throws DatabaseException {
         logger.info("Getting credit card by number");
         try (PreparedStatement statement = connection.prepareStatement(QUERY_TO_GET_CREDIT_CARD_BY_NUMBER);) {
             statement.setLong(1, creditCardNumber);
             statement.execute();
             return getCreditCardFromResultSet(statement.getResultSet());
         } catch (SQLException exception) {
-            // TODO: throw new database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
-    @Override
-    public CreditCard getCardByName() {
-        return null;
-    }
 
     @Override
-    public List<CreditCard> getAllCardsByName() {
-        return null;
-    }
-
-    @Override
-    public List<CreditCard> getAllCardsByNumber() {
-        return null;
-    }
-
-    @Override
-    public List<CreditCard> getAllCardsByMoneyOnAccount() {
-        return null;
-    }
-
-    @Override
-    public List<CreditCard> getAllUnblockedCardsOfCurrentUser(long userId) {
+    public List<CreditCard> getAllUnblockedCardsOfCurrentUser(long userId) throws DatabaseException {
         logger.info("Retrieving user's credit cards");
         return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_UNBLOCKED_CARDS);
     }
 
     @Override
-    public boolean replenishCreditCard(long creditCardNumber, double replenishMoney) {
+    public boolean replenishCreditCard(long creditCardNumber, double replenishMoney) throws DatabaseException {
         logger.info("Getting money from card");
         double resultOfReplenishing = getCardByNumber(creditCardNumber).getMoneyOnCard();
         logger.info("Replenishing money on card");
@@ -170,29 +149,28 @@ public class CreditCardDaoImpl implements CreditCardDao {
             statement.setLong(2, creditCardNumber);
             statement.executeUpdate();
         } catch (SQLException | NullPointerException exception) {
-            // TODO: throw new database exception
             logger.error(exception); // Money can just gone from card
-            return false;
+            throw new DatabaseException(exception.getMessage());
         }
         return true;
     }
 
     @Override
-    public void changeBlockStatusCardById(long cardId, int option) {
+    public void changeBlockStatusCardById(long cardId, int option) throws DatabaseException {
         try (PreparedStatement statement
                      = connection.prepareStatement(QUERY_TO_CHANGE_BLOCKING_STATUS_OF_CREDIT_CARD_BY_ID)) {
             statement.setInt(1, option);
             statement.setLong(2, cardId);
             statement.executeUpdate();
         } catch (SQLException exception) {
-            //TODO: Create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         logger.info("Card is successfully blocked");
     }
 
     @Override
-    public int getCountOfCardsThatBelongToUser(long userId) {
+    public int getCountOfCardsThatBelongToUser(long userId) throws DatabaseException {
         try (PreparedStatement statement
                      = connection.prepareStatement(QUERY_TO_GET_COUNT_OF_CARD_THAT_BELONG_TO_USER)) {
             statement.setLong(1, userId);
@@ -202,22 +180,22 @@ public class CreditCardDaoImpl implements CreditCardDao {
                 return resultSet.getInt(1);
             }
         } catch (SQLException exception) {
-            //TODO: Create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return 0;
     }
 
     @Override
     public List<CreditCard> getAllSortedCardsThatBelongToUserWithLimit(long userId, String sortingCriteria,
-                                                                       String sortingOrder, int page, int pageSize) {
+                                                                       String sortingOrder, int page, int pageSize) throws DatabaseException {
         String query = QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " ORDER BY " + sortingCriteria
                 + " " + sortingOrder + " " + LIMIT_OPTION;
         return getCreditCardsByCriteriaWithLimit(userId, query, page, pageSize);
     }
 
     @Override
-    public List<CreditCard> getAllCreditCardThatBelongToUserWithDefaultLimit(long userId) {
+    public List<CreditCard> getAllCreditCardThatBelongToUserWithDefaultLimit(long userId) throws DatabaseException {
         String query = QUERY_TO_GET_ALL_CARDS_BY_USER_ID + " " + LIMIT_OPTION;
         final int DEFAULT_PAGE_SIZE = 4;
         final int DEFAULT_PAGE = 1;
@@ -225,23 +203,23 @@ public class CreditCardDaoImpl implements CreditCardDao {
     }
 
     @Override
-    public List<CreditCard> getAllBlockedCreditCardsByUserId(long userId) {
+    public List<CreditCard> getAllBlockedCreditCardsByUserId(long userId) throws DatabaseException {
         return getCreditCardsByCriteria(userId, QUERY_TO_GET_ALL_BLOCKED_CARDS_BY_USER_ID);
     }
 
     @Override
-    public void blockAllUserCards(long userId) {
+    public void blockAllUserCards(long userId) throws DatabaseException {
         try (PreparedStatement statement =
                      connection.prepareStatement(QUERY_TO_BLOCK_ALL_USER_CARDS_BY_USER_ID)) {
             statement.setLong(1, userId);
             statement.executeUpdate();
         } catch (SQLException exception) {
-            //TODO: create database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
     }
 
-    private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) {
+    private List<CreditCard> getCreditCardsByCriteria(long userId, String sortingCriteria) throws DatabaseException {
         try (PreparedStatement statement = connection.prepareStatement(sortingCriteria)) {
             statement.setLong(1, userId);
             statement.execute();
@@ -250,13 +228,13 @@ public class CreditCardDaoImpl implements CreditCardDao {
             logger.info("Users credit cards are loaded");
             return creditCards;
         } catch (SQLException exception) {
-            //TODO: throw new database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
-    private List<CreditCard> getCreditCardsByCriteriaWithLimit(long userId, String sortingCriteria, int page, int pageSize) {
+    private List<CreditCard> getCreditCardsByCriteriaWithLimit(long userId, String sortingCriteria, int page, int pageSize)
+            throws DatabaseException {
         try (PreparedStatement statement = connection.prepareStatement(sortingCriteria)) {
             statement.setLong(1, userId);
             statement.setInt(2, pageSize);
@@ -267,21 +245,20 @@ public class CreditCardDaoImpl implements CreditCardDao {
             logger.info("Users credit cards are loaded");
             return creditCards;
         } catch (SQLException exception) {
-            //TODO: throw new database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
-        return null;
     }
 
-    private CreditCard getCreditCardFromResultSet(ResultSet resultSet) {
+    private CreditCard getCreditCardFromResultSet(ResultSet resultSet) throws DatabaseException {
         logger.info("Getting card from result set");
         try {
             if (resultSet.next()) {
                 return buildCreditCardFromResultSet(resultSet);
             }
         } catch (SQLException exception) {
-            // TODO: throw database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         logger.info("No credit card with this name was found");
         return null;
@@ -299,15 +276,15 @@ public class CreditCardDaoImpl implements CreditCardDao {
                 .build();
     }
 
-    private List<CreditCard> getCreditCardsFromResultSet(ResultSet resultSet) {
+    private List<CreditCard> getCreditCardsFromResultSet(ResultSet resultSet) throws DatabaseException {
         List<CreditCard> creditCards = new ArrayList<>();
         try {
             while (resultSet.next()) {
                 creditCards.add(buildCreditCardFromResultSet(resultSet));
             }
         } catch (SQLException exception) {
-            //TODO: here you need to add database exception
             logger.error(exception);
+            throw new DatabaseException(exception.getMessage());
         }
         return creditCards;
     }

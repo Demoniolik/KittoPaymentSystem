@@ -1,29 +1,27 @@
 package com.example.ServletTest.dao.creditcard;
 
 import com.example.ServletTest.dao.DAO;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 
 import java.util.List;
 
 public interface CreditCardDao extends DAO<CreditCard> {
-    CreditCard getCardByNumber(long creditCardNumber);
-    CreditCard getCardByName();
-    List<CreditCard> getAllCardsByName();
-    List<CreditCard> getAllCardsByNumber();
-    List<CreditCard> getAllCardsByMoneyOnAccount();
-    List<CreditCard> getAllUnblockedCardsOfCurrentUser(long userId);
+    CreditCard getCardByNumber(long creditCardNumber) throws DatabaseException;
 
-    boolean replenishCreditCard(long creditCardNumber, double replenishMoney);
+    List<CreditCard> getAllUnblockedCardsOfCurrentUser(long userId) throws DatabaseException;
 
-    void changeBlockStatusCardById(long cardId, int option);
+    boolean replenishCreditCard(long creditCardNumber, double replenishMoney) throws DatabaseException;
 
-    int getCountOfCardsThatBelongToUser(long userId);
+    void changeBlockStatusCardById(long cardId, int option) throws DatabaseException;
+
+    int getCountOfCardsThatBelongToUser(long userId) throws DatabaseException;
 
     List<CreditCard> getAllSortedCardsThatBelongToUserWithLimit(long userId, String sortingCriteria,
-                                                                String sortingOrder, int page, int pageSize);
-    List<CreditCard> getAllCreditCardThatBelongToUserWithDefaultLimit(long userId);
+                                                                String sortingOrder, int page, int pageSize) throws DatabaseException;
+    List<CreditCard> getAllCreditCardThatBelongToUserWithDefaultLimit(long userId) throws DatabaseException;
 
-    List<CreditCard> getAllBlockedCreditCardsByUserId(long userId);
+    List<CreditCard> getAllBlockedCreditCardsByUserId(long userId) throws DatabaseException;
 
-    void blockAllUserCards(long id);
+    void blockAllUserCards(long id) throws DatabaseException;
 }

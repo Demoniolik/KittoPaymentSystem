@@ -2,6 +2,7 @@ package com.example.ServletTest.command.getcommands;
 
 import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.creditcard.CreditCardDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.creditcard.CreditCard;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.creditcard.CreditCardService;
@@ -17,12 +18,14 @@ public class CardPagination implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CardPagination.class);
     private CreditCardService creditCardService;
     private String mainPage;
+    private String errorPage;
 
     public CardPagination() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
 
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
+        errorPage = properties.getProperty("errorPageDatabase");
     }
 
     @Override
@@ -42,7 +45,12 @@ public class CardPagination implements ServletCommand {
         String sortingOrder = (String) session.getAttribute("sortingOrder");
         long userId = ((User)session.getAttribute("user")).getId();
 
-        int amountOfCards = creditCardService.getCountOfCardsThatBelongToUser(userId);
+        int amountOfCards = 0;
+        try {
+            amountOfCards = creditCardService.getCountOfCardsThatBelongToUser(userId);
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         int maxPage = (int)Math.ceil((double) amountOfCards / pageSize);
 
         List<CreditCard> userCreditCards;
@@ -50,8 +58,12 @@ public class CardPagination implements ServletCommand {
             sortingCriteria = "id";
             sortingOrder = "ASC";
         }
-        userCreditCards = creditCardService
-                .getAllCreditCardsByCriteriaWithLimit(userId, sortingCriteria, sortingOrder, page, pageSize);
+        try {
+            userCreditCards = creditCardService
+                    .getAllCreditCardsByCriteriaWithLimit(userId, sortingCriteria, sortingOrder, page, pageSize);
+        } catch (DatabaseException e) {
+            return errorPage;
+        }
         request.setAttribute("page", page);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("maxPage", maxPage);

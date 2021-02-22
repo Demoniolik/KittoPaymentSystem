@@ -2,6 +2,7 @@ package com.example.ServletTest.command.postcommands;
 
 import com.example.ServletTest.command.ServletCommand;
 import com.example.ServletTest.dao.user.UserDaoImpl;
+import com.example.ServletTest.exception.DatabaseException;
 import com.example.ServletTest.model.user.User;
 import com.example.ServletTest.service.user.UserService;
 import com.example.ServletTest.util.MappingProperties;

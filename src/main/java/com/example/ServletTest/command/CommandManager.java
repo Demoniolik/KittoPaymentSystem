@@ -7,6 +7,7 @@ import com.example.ServletTest.command.getcommands.*;
 import com.example.ServletTest.command.getcommands.errorpages.GetCardAlreadyExistsErrorPage;
 import com.example.ServletTest.command.getcommands.errorpages.GetCardIsBlockedErrorPage;
 import com.example.ServletTest.command.getcommands.errorpages.GetCardNotFoundErrorPage;
+import com.example.ServletTest.command.getcommands.errorpages.GetDatabaseErrorPage;
 import com.example.ServletTest.command.postcommands.*;
 import org.apache.log4j.Logger;
 
@@ -41,6 +42,7 @@ public class CommandManager {
         getCommands.put("/getCardNotFoundErrorPage", new GetCardNotFoundErrorPage());
         getCommands.put("/getCardIsBlockedErrorPage", new GetCardIsBlockedErrorPage());
         getCommands.put("/getCardAlreadyExistsErrorPage", new GetCardAlreadyExistsErrorPage());
+        getCommands.put("/getDatabaseErrorPage", new GetDatabaseErrorPage());
 
         //GET commands for admin
         getCommands.put("/admin", new GoToAdminPage());
