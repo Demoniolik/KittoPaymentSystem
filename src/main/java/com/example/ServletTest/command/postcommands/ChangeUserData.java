@@ -14,13 +14,16 @@ import javax.servlet.http.HttpSession;
 
 public class ChangeUserData implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ChangeUserData.class);
-    private UserService userService;
-    private String personalCabinetPage;
+    private final UserService userService;
+    private final String personalCabinetPage;
+    private final String errorPage;
 
     public ChangeUserData() {
         userService = new UserService(UserDaoImpl.getInstance());
+
         MappingProperties properties = MappingProperties.getInstance();
         personalCabinetPage = properties.getProperty("personalCabinetPagePost");
+        errorPage = properties.getProperty("errorPageDatabasePost");
     }
 
     @Override
@@ -51,7 +54,12 @@ public class ChangeUserData implements ServletCommand {
             user.setPassword(password);
         }
 
-        userService.updateUserData(user);
+        try {
+            userService.updateUserData(user);
+        } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
+            return errorPage;
+        }
 
         return personalCabinetPage;
     }

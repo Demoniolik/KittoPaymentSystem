@@ -17,10 +17,10 @@ import java.util.List;
 
 public class GoToAdminPage implements ServletCommand {
     private static final Logger logger = Logger.getLogger(GoToAdminPage.class);
-    private UserService userService;
-    private UnblockRequestService unblockRequestService;
-    private String adminPage;
-    private String errorPage;
+    private final UserService userService;
+    private final UnblockRequestService unblockRequestService;
+    private final String adminPage;
+    private final String errorPage;
 
     public GoToAdminPage() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -34,20 +34,27 @@ public class GoToAdminPage implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing get admin page command");
+
         HttpSession session = request.getSession();
-        List<User> allUsers = null;
+        List<User> allUsers;
+
         try {
             allUsers = userService.getAllUsers();
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         session.setAttribute("allUsers", allUsers);
+
         try {
             session.setAttribute("unblockingRequests",
                     unblockRequestService.getUnapprovedUnblockingRequests());
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         return adminPage;
     }
 }

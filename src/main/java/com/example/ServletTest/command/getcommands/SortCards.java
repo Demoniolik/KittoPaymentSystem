@@ -18,12 +18,13 @@ import java.util.regex.Pattern;
 
 public class SortCards implements ServletCommand {
     private static final Logger logger = Logger.getLogger(SortCards.class);
-    private CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPage;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
+    private final String errorPage;
 
     public SortCards() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
+
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
         errorPage = properties.getProperty("errorPage");
@@ -32,6 +33,7 @@ public class SortCards implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing sorting credit cards command");
+
         //TODO: Refactor it
         String sortingCriteria = request.getParameter("sortingCriteria");
         String sortingOrder = request.getParameter("sortingOrder");
@@ -39,9 +41,11 @@ public class SortCards implements ServletCommand {
         Pattern pattern = Pattern.compile("\\b.{0,4}\\b");
         Matcher matcher = pattern.matcher(sortingCriteria);
         Matcher matcher2 = pattern.matcher(sortingOrder);
+
         if (!(matcher.find() && matcher2.find())) {
             return errorPage;
         }
+
         HttpSession session = request.getSession();
         long currentUserId = ((User)session.getAttribute("user")).getId();
         String pageSizeParam = (String) session.getAttribute("pageSize");
@@ -58,16 +62,18 @@ public class SortCards implements ServletCommand {
             page = Integer.parseInt(pageParam);
         }
 
-        List<CreditCard> creditCards =
-                null;
+        List<CreditCard> creditCards;
         try {
             creditCards = creditCardService
                     .getAllCreditCardsByCriteriaWithLimit(currentUserId ,sortingCriteria, sortingOrder, page, pageSize);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
         session.setAttribute("userCreditCardsWithPagination", creditCards);
+
         //TODO: Refactor it
+
         if (sortingCriteria.equals("number") && sortingOrder.equals("ASC")) {
             request.setAttribute("sortedByNumber", true);
         } else if (sortingCriteria.equals("number")) {
@@ -81,8 +87,10 @@ public class SortCards implements ServletCommand {
         } else {
             request.setAttribute("sortedByAmount", false);
         }
+
         session.setAttribute("sortingCriteria", sortingCriteria);
         session.setAttribute("sortingOrder", sortingOrder);
+
         return mainPage;
     }
 }

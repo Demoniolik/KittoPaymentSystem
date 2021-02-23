@@ -381,7 +381,7 @@
 
         <label for="replenishMoney"><fmt:message key="replenish_money" bundle="${bundle}"/></label>
 
-        <input type="number" min="0" name="<fmt:message key="replenish_money" bundle="${bundle}"/>" placeholder="0" required id="replenishMoney">
+        <input type="number" min="0" name="replenishMoney" placeholder="0" required id="replenishMoney">
 
         <button type="submit"><fmt:message key="replenish" bundle="${bundle}"/></button>
     </form>

@@ -16,14 +16,15 @@ import java.util.List;
 
 public class PreparePdfFile implements ServletCommand {
     private static final Logger logger = Logger.getLogger(PreparePdfFile.class);
-    private PaymentService paymentService;
-    private String mainPage;
+    private final PaymentService paymentService;
+    private final String mainPage;
     private String errorFailedToGeneratePdf;
-    private String errorPage;
+    private final String errorPage;
 
     public PreparePdfFile() {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         MappingProperties properties = MappingProperties.getInstance();
+
         mainPage = properties.getProperty("mainPage");
         errorFailedToGeneratePdf = properties.getProperty("errorFailedToGeneratePdf");
         errorPage = properties.getProperty("errorPageDatabase");
@@ -32,20 +33,27 @@ public class PreparePdfFile implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing generating pdf file command");
+
         long cardId = 1;
-        List<Payment> payments = null;
+        List<Payment> payments;
+
         try {
             payments = paymentService.getListOfPaymentsThatBelongToCreditCard(cardId);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         GeneratePdfFile generatePdfFile = new GeneratePdfFile();
         String fileName = "file" + cardId + ".pdf";
+
         try {
             generatePdfFile.createPdfFile(fileName, LoginCommand.wrapPaymentList(payments));
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         request.setAttribute("prepared", true);
         request.setAttribute("fileName", fileName);
         return mainPage;

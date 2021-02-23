@@ -19,14 +19,15 @@ import java.util.List;
 
 public class SelectPaymentsByCard implements ServletCommand {
     private static final Logger logger = Logger.getLogger(SelectPaymentsByCard.class);
-    private PaymentService paymentService;
-    private CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPage;
+    private final PaymentService paymentService;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
+    private final String errorPage;
 
     public SelectPaymentsByCard() {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
+
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
         errorPage = properties.getProperty("errorPageDatabase");
@@ -40,29 +41,27 @@ public class SelectPaymentsByCard implements ServletCommand {
         HttpSession session = request.getSession();
         String sortingCriteria = (String) session.getAttribute("paymentSortingCriteria");
         String sortingOrder = (String) session.getAttribute("paymentSortingOrder");
-        CreditCard card = null;
+        CreditCard card;
+
         try {
             card = creditCardService.getCreditCardByNumber(chosenCard);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
         if (sortingCriteria == null) {
             sortingCriteria = "id";
             sortingOrder = "DESC";
         }
-        List<Payment> payments =
-                null;
+        List<Payment> payments;
         try {
             payments = paymentService.getListOfPaymentsSortedByCriteria(card.getId(), sortingCriteria, sortingOrder);
+            session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
 
-        try {
-            session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
-        } catch (DatabaseException e) {
-            return errorPage;
-        }
         session.setAttribute("actualCardForSelectingPayments", chosenCard);
         return mainPage;
     }

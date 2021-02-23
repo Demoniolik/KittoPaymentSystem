@@ -30,7 +30,7 @@ public class UserService {
         return userDao.getUserSpecifiedNameByCardId(creditCardId);
     }
 
-    public void updateUserData(User user) {
+    public void updateUserData(User user) throws DatabaseException {
         logger.info("Changing data about user");
         userDao.updateUserData(user);
     }

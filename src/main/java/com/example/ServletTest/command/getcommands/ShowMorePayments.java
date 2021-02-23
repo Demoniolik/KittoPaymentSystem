@@ -34,6 +34,7 @@ public class ShowMorePayments implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing showing more payments command");
+
         String pageSizeParam = request.getParameter("limit");
         HttpSession session = request.getSession();
         String sortingCriteria = (String) session.getAttribute("paymentSortingCriteria");
@@ -60,6 +61,7 @@ public class ShowMorePayments implements ServletCommand {
                                 actualCardForSelectingPayments).getId(), paymentPageSize
                         );
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
         } else {
@@ -67,20 +69,18 @@ public class ShowMorePayments implements ServletCommand {
                 payments = paymentService.getAllPaymentsSortedWithLimitOption(creditCards.get(0).getId(), paymentPageSize,
                         sortingCriteria, sortingOrder);
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
         }
 
         request.setAttribute("paymentPageSize", paymentPageSize);
-        try {
-            request.setAttribute("maxPaymentPageSize", paymentService.getAmountOfCardPayments(creditCards.get(0).getId()));
-        } catch (DatabaseException e) {
-            return errorPage;
-        }
 
         try {
+            request.setAttribute("maxPaymentPageSize", paymentService.getAmountOfCardPayments(creditCards.get(0).getId()));
             session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
 

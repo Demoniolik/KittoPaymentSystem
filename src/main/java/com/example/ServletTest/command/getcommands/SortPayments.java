@@ -21,14 +21,15 @@ import java.util.regex.Pattern;
 
 public class SortPayments implements ServletCommand {
     private static final Logger logger = Logger.getLogger(SortPayments.class);
-    private PaymentService paymentService;
-    private CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPage;
+    private final PaymentService paymentService;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
+    private final String errorPage;
 
     public SortPayments() {
         paymentService = new PaymentService(PaymentDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
+
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
         errorPage = properties.getProperty("errorPageDatabase");
@@ -37,12 +38,16 @@ public class SortPayments implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing sorting payments by id command");
+
         String sortingCriteria = request.getParameter("paymentSortingCriteria");
         String sortingOrder = request.getParameter("paymentSortingOrder");
+
         Pattern pattern = Pattern.compile("\\b.{0,4}\\b");
         Matcher matcher = pattern.matcher(sortingCriteria);
         Matcher matcher2 = pattern.matcher(sortingOrder);
+
         if (!(matcher.find() && matcher2.find())) {
+            request.setAttribute("errorCause", "Do not mess with link!");
             return errorPage;
         }
 
@@ -57,6 +62,7 @@ public class SortPayments implements ServletCommand {
                 payments =
                         paymentService.getListOfPaymentsSortedByCriteria(creditCards.get(0).getId(), sortingCriteria, sortingOrder);
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
         } else {
@@ -68,6 +74,7 @@ public class SortPayments implements ServletCommand {
                                 sortingOrder
                         );
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
         }
@@ -75,8 +82,10 @@ public class SortPayments implements ServletCommand {
         try {
             session.setAttribute("creditCardPayments", LoginCommand.wrapPaymentList(payments));
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         if (sortingOrder.equals("ASC")) {
             request.setAttribute("sorted", true);
             session.setAttribute("paymentSortingOrder", "ASC");

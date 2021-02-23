@@ -33,6 +33,5 @@ public class MainServlet extends HttpServlet {
         ServletCommand command = commandManager.getPostCommand(request);
         String loadedMapping = command.execute(request, response);
         response.sendRedirect(request.getContextPath() + loadedMapping);
-        //request.getRequestDispatcher(loadedPage).forward(request, response);
     }
 }

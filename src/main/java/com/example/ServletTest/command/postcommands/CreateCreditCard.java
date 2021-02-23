@@ -19,20 +19,24 @@ import java.util.List;
 
 public class CreateCreditCard implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateCreditCard.class);
-    private CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPage;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
+    private final String errorPage;
+    private final String errorPageDataBase;
 
     public CreateCreditCard() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
+
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPagePost");
         errorPage = properties.getProperty("errorPageCardAlreadyExistsPost");
+        errorPageDataBase = properties.getProperty("errorPageDatabasePost");
     }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing creating credit card command");
+
         String cardName = request.getParameter("cardName");
         String cardNumber = request.getParameter("cardNumber");
 
@@ -43,7 +47,8 @@ public class CreateCreditCard implements ServletCommand {
                 return errorPage;
             }
         } catch (DatabaseException e) {
-            return errorPage;
+            request.setAttribute("errorCause", e.getMessage());
+            return errorPageDataBase;
         }
 
         HttpSession session = request.getSession();
@@ -63,7 +68,8 @@ public class CreateCreditCard implements ServletCommand {
                 session.setAttribute("userCreditCards", creditCards);
             }
         } catch (DatabaseException e) {
-            return errorPage;
+            request.setAttribute("errorCause", e.getMessage());
+            return errorPageDataBase;
         }
 
         return mainPage;

@@ -31,7 +31,7 @@ public class LoginCommand implements ServletCommand {
     private static String loginPage;
     private static String mainPage;
     private static String adminPage;
-    private String errorPage;
+    private final String errorPage;
 
     public LoginCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -48,15 +48,18 @@ public class LoginCommand implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing logging command");
+
         String resultPage = loginPage;
         String login = request.getParameter("login");
         String password = request.getParameter("password");
+
         if (login != null && password != null) {
-            User user = null;
+            User user;
             try {
                 user = userService.getUserByCredentials(login, password);
             } catch (DatabaseException e) {
-               return errorPage;
+                request.setAttribute("errorCause", e.getMessage());
+                return errorPage;
             }
             if (user != null && user.getUserType() == UserType.ADMIN) {
                 logger.info("Redirecting to admin page");
@@ -65,27 +68,20 @@ public class LoginCommand implements ServletCommand {
             }
             if (user != null) {
                 putUserToSession(request, user);
-                List<CreditCard> creditCards = null;
+                List<CreditCard> creditCards;
+                List<CreditCard> creditCardsWithPagination;
+
                 try {
                     creditCards = creditCardService.getAllUnblockedCreditCards(user.getId());
-                } catch (DatabaseException e) {
-                    return errorPage;
-                }
-                List<CreditCard> creditCardsWithPagination =
-                        null;
-                try {
                     creditCardsWithPagination = creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(user.getId());
+                    prepareDataForUser(request, creditCards, creditCardsWithPagination);
                 } catch (DatabaseException e) {
+                    request.setAttribute("errorCause", e.getMessage());
                     return errorPage;
                 }
 
-                try {
-                    prepareDataForUser(request, creditCards, creditCardsWithPagination);
-                } catch (DatabaseException e) {
-                    return errorPage;
-                }
                 resultPage = mainPage;
-            }else {
+            } else {
                 request.setAttribute("idLogged", false);
             }
         }
@@ -93,7 +89,7 @@ public class LoginCommand implements ServletCommand {
     }
 
     public static void prepareDataForUser(HttpServletRequest request, List<CreditCard> creditCards,
-                                   List<CreditCard> creditCardWithPagination) throws DatabaseException {
+                                          List<CreditCard> creditCardWithPagination) throws DatabaseException {
         HttpSession session = request.getSession();
         session.setAttribute("userCreditCards", creditCards);
         session.setAttribute("userCreditCardsWithPagination", creditCardWithPagination);
@@ -110,12 +106,14 @@ public class LoginCommand implements ServletCommand {
         session.setAttribute("user", user);
         session.setAttribute("authorized", true);
     }
+
     public static void putAdminToSession(HttpServletRequest request, User user) {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
         session.setAttribute("role", "admin");
         session.setAttribute("authorized", true);
     }
+
     public static List<PaymentWrapper> wrapPaymentList(List<Payment> payments) throws DatabaseException {
         logger.info("Wrapping payment");
         List<PaymentWrapper> paymentWrappers = new ArrayList<>();

@@ -16,9 +16,9 @@ import java.util.List;
 
 public class CardPagination implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CardPagination.class);
-    private CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPage;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
+    private final String errorPage;
 
     public CardPagination() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
@@ -30,10 +30,13 @@ public class CardPagination implements ServletCommand {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("Executing card pagination command");
+
         String pageParam = request.getParameter("page");
         String pageSizeParam = request.getParameter("pageSize");
         int page;
         int pageSize = 4;
+
         if (pageSizeParam.equals("")) {
             page = 2;
         } else {
@@ -49,6 +52,7 @@ public class CardPagination implements ServletCommand {
         try {
             amountOfCards = creditCardService.getCountOfCardsThatBelongToUser(userId);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
         int maxPage = (int)Math.ceil((double) amountOfCards / pageSize);
@@ -62,8 +66,10 @@ public class CardPagination implements ServletCommand {
             userCreditCards = creditCardService
                     .getAllCreditCardsByCriteriaWithLimit(userId, sortingCriteria, sortingOrder, page, pageSize);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         request.setAttribute("page", page);
         request.setAttribute("pageSize", pageSize);
         request.setAttribute("maxPage", maxPage);

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class LogoutCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(LogoutCommand.class);
-    private String loginPage;
+    private final String loginPage;
 
     public LogoutCommand() {
         MappingProperties properties = MappingProperties.getInstance();
@@ -19,6 +19,7 @@ public class LogoutCommand implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing login out command");
+
         request.getSession().invalidate();
         return loginPage;
     }

@@ -152,7 +152,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void updateUserData(User user) {
+    public void updateUserData(User user) throws DatabaseException {
         try (PreparedStatement statement =
                      connection.prepareStatement(QUERY_TO_UPDATE_USER)) {
             statement.setString(1, user.getFirstName());
@@ -164,19 +164,19 @@ public class UserDaoImpl implements UserDao {
             statement.executeUpdate();
             logger.info("User data has been successfully changed");
         } catch (SQLException exception) {
-            //TODO: here you need to throw database exception
             logger.info(exception);
+            throw new DatabaseException(exception.getMessage());
         }
     }
 
-    private User getUserFromResultSet(ResultSet resultSet) {
+    private User getUserFromResultSet(ResultSet resultSet) throws DatabaseException {
         try {
             if (resultSet.next()) {
                 return buildUserFromResultSet(resultSet);
             }
         } catch (SQLException exception) {
             logger.error(exception);
-            // TODO: throw database exception
+            throw new DatabaseException(exception.getMessage());
         }
         return null;
     }
@@ -195,7 +195,7 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
-    private List<User> getUsersFromResultSet(ResultSet resultSet) {
+    private List<User> getUsersFromResultSet(ResultSet resultSet) throws DatabaseException {
         List<User> users = new ArrayList<>();
         try {
             while (resultSet.next()) {
@@ -204,7 +204,7 @@ public class UserDaoImpl implements UserDao {
             }
         } catch (SQLException exception) {
             logger.error(exception.getMessage());
-            // TODO: throw database exception
+            throw new DatabaseException(exception.getMessage());
         }
         return users;
     }

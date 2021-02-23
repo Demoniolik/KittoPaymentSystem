@@ -18,7 +18,7 @@ public class RegisterCommand implements ServletCommand {
     private static UserService userService;
     private static String registrationPage;
     private static String mainPage;
-    private String errorPage;
+    private final String errorPage;
 
     public RegisterCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -51,12 +51,14 @@ public class RegisterCommand implements ServletCommand {
                     .setPassword(password)
                     .setUserType(UserType.USER)
                     .build();
+
             try {
                 if (userService.register(user)) {
                     resultPage = mainPage;
                     LoginCommand.putUserToSession(request, user);
                 }
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
         }

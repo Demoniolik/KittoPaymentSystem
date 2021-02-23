@@ -18,14 +18,15 @@ import java.util.List;
 
 public class GoToPersonalCabinet implements ServletCommand {
     private static final Logger logger = Logger.getLogger(GoToPersonalCabinet.class);
-    private CreditCardService creditCardService;
-    private UserService userService;
-    private String personalCabinetPage;
-    private String errorPage;
+    private final CreditCardService creditCardService;
+    private UserService userService; // For future use
+    private final String personalCabinetPage;
+    private final String errorPage;
 
     public GoToPersonalCabinet() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
         userService = new UserService(UserDaoImpl.getInstance());
+
         MappingProperties properties = MappingProperties.getInstance();
         personalCabinetPage = properties.getProperty("personalCabinetPage");
         errorPage = properties.getProperty("errorPageDatabase");
@@ -34,8 +35,10 @@ public class GoToPersonalCabinet implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing personal cabinet command");
+
         HttpSession session = request.getSession();
         boolean isLogged = (boolean) session.getAttribute("authorized");
+
         if (isLogged) {
             long userId = ((User)session.getAttribute("user")).getId();
 
@@ -43,6 +46,7 @@ public class GoToPersonalCabinet implements ServletCommand {
             try {
                 userBlockedCards = creditCardService.getAllBlockedCreditCardsThatBelongToUser(userId);
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
             session.setAttribute("userBlockedCreditCards", userBlockedCards);

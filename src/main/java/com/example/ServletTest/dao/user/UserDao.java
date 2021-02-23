@@ -9,5 +9,5 @@ public interface UserDao extends DAO<User> {
 
     String getUserSpecifiedNameByCardId(long id) throws DatabaseException;
 
-    void updateUserData(User user);
+    void updateUserData(User user) throws DatabaseException;
 }

@@ -21,16 +21,14 @@ import static com.example.ServletTest.command.postcommands.LoginCommand.prepareD
 
 public class LoginPageCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(LoginPageCommand.class);
-    private CreditCardService creditCardService;
-    private PaymentService paymentService;
+    private final CreditCardService creditCardService;
     private static String loginPage;
     private static String mainPage;
-    private String adminPage;
-    private String errorPage;
+    private final String adminPage;
+    private final String errorPage;
 
     public LoginPageCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
-        paymentService = new PaymentService(PaymentDaoImpl.getInstance());
 
         MappingProperties properties = MappingProperties.getInstance();
         mainPage = properties.getProperty("mainPage");
@@ -42,8 +40,10 @@ public class LoginPageCommand implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing login page command");
+
         String resultPage = loginPage;
         HttpSession session = request.getSession();
+
         if (session.getAttribute("authorized") != null
         && session.getAttribute("authorized").equals(true)) {
             if (session.getAttribute("role") != null &&
@@ -53,25 +53,17 @@ public class LoginPageCommand implements ServletCommand {
 
             long userId = ((User)session.getAttribute("user")).getId();
 
-            List<CreditCard> creditCards = null;
+            List<CreditCard> creditCards;
+            List<CreditCard> creditCardsView;
             try {
                 creditCards = creditCardService.getAllUnblockedCreditCards(userId);
-            } catch (DatabaseException e) {
-                return errorPage;
-            }
-            List<CreditCard> creditCardsView =
-                    null;
-            try {
                 creditCardsView = creditCardService.getAllCreditCardsThatBelongToUserWithDefaultLimit(userId);
+                prepareDataForUser(request, creditCards, creditCardsView);
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
 
-            try {
-                prepareDataForUser(request, creditCards, creditCardsView);
-            } catch (DatabaseException e) {
-                return errorPage;
-            }
             resultPage = mainPage;
         }
         else if (request.getParameter("login") == null || request.getParameter("password") == null) {

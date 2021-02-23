@@ -14,9 +14,9 @@ import javax.servlet.http.HttpSession;
 
 public class ReplenishCreditCardCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ReplenishCreditCardCommand.class);
-    private CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPage;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
+    private final String errorPage;
 
     public ReplenishCreditCardCommand() {
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
@@ -29,6 +29,7 @@ public class ReplenishCreditCardCommand implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing replenishing credit card command");
+
         double replenishMoney = Double.parseDouble(request.getParameter("replenishMoney"));
         // TODO: here you need to verify money to be positive number
         long cardNumber = Long.parseLong(request.getParameter("chosenCreditCard"));
@@ -40,14 +41,18 @@ public class ReplenishCreditCardCommand implements ServletCommand {
                 // TODO: throw exception and say user that card wasn't replenished
             }
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         HttpSession session = request.getSession();
         long userId = ((User)session.getAttribute("user")).getId();
+
         try {
             session.setAttribute("user_credit_cards",
                     creditCardService.getAllUnblockedCreditCards(userId));
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
         return mainPage;

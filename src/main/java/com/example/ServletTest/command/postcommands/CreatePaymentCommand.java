@@ -29,8 +29,8 @@ public class CreatePaymentCommand implements ServletCommand {
     private static UserService userService;
     private static PaymentService paymentService;
     private static CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPage;
+    private final String mainPage;
+    private final String errorPage;
     private static final Map<String, Long> paymentCategoryToCreditCardNumberAssociation =
             new ConcurrentHashMap<>();
 
@@ -57,25 +57,24 @@ public class CreatePaymentCommand implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing payment creation command");
+
         double moneyToPay = Double.parseDouble(request.getParameter("moneyToPay"));
         long sourceNumber = Long.parseLong(request.getParameter("sourceNumber"));
         String categoryOfPayment = request.getParameter("chosenCategory");
         long destinationCreditCardNumber =
                 paymentCategoryToCreditCardNumberAssociation.get(categoryOfPayment);
 
-        CreditCard sourceCreditCard = null;
+        CreditCard sourceCreditCard;
+        CreditCard destinationCreditCard;
         try {
             sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
-        } catch (DatabaseException e) {
-            return errorPage;
-        }
-        CreditCard destinationCreditCard = null;
-        try {
             destinationCreditCard = creditCardService.getCreditCardByNumber(destinationCreditCardNumber);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
-        Payment payment = null;
+
+        Payment payment;
         try {
             payment = new PaymentBuilder().setMoney(moneyToPay)
                     .setDescription(userService
@@ -87,19 +86,24 @@ public class CreatePaymentCommand implements ServletCommand {
                     .setPaymentCategory(getCategoryFromName(categoryOfPayment))
                     .build();
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
         if (paymentService.createPayment(payment)) {
             try {
                 creatingTransaction(moneyToPay, sourceNumber, destinationCreditCardNumber, payment);
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
+
             HttpSession session = request.getSession();
+
             try {
                 session.setAttribute("user_credit_cards",
                         creditCardService.getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId()));
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPage;
             }
             logger.info("Payment succeeded");

@@ -15,14 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CreateUnblockRequest implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateUnblockRequest.class);
-    private UnblockRequestService unblockRequestService;
-    private CreditCardService creditCardService;
-    private String personalCabinetPage;
-    private String errorPage;
+    private final UnblockRequestService unblockRequestService;
+    private final CreditCardService creditCardService;
+    private final String personalCabinetPage;
+    private final String errorPage;
 
     public CreateUnblockRequest() {
         unblockRequestService = new UnblockRequestService(UnblockRequestDaoImpl.getInstance());
         creditCardService = new CreditCardService(CreditCardDaoImpl.getInstance());
+
         MappingProperties properties = MappingProperties.getInstance();
         personalCabinetPage = properties.getProperty("personalCabinetPagePost");
         errorPage = properties.getProperty("errorPageDatabasePost");
@@ -32,6 +33,7 @@ public class CreateUnblockRequest implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing creating unblocking request for credit card");
+
         String cardNumberParam = request.getParameter("chosenCard");
         String descriptionParam = request.getParameter("reasonDescription");
 
@@ -43,6 +45,7 @@ public class CreateUnblockRequest implements ServletCommand {
             unblockingRequest.setCreditCardId(creditCardService
                     .getCreditCardByNumber(cardNumber).getId());
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
         unblockingRequest.setDescription(descriptionParam);
@@ -51,7 +54,6 @@ public class CreateUnblockRequest implements ServletCommand {
         if (unblockRequestService.createUnblockRequest(unblockingRequest)) {
             return personalCabinetPage;
         }
-
 
         return errorPage;
     }

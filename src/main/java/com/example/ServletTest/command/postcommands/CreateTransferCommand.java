@@ -25,13 +25,13 @@ import java.util.List;
 
 public class CreateTransferCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateTransferCommand.class);
-    private UserService userService;
-    private PaymentService paymentService;
-    private CreditCardService creditCardService;
-    private String mainPage;
-    private String errorPageCardDoesNotExist;
-    private String errorPageCardIsBlocked;
-    private String errorPageDatabase;
+    private final UserService userService;
+    private final PaymentService paymentService;
+    private final CreditCardService creditCardService;
+    private final String mainPage;
+    private final String errorPageCardDoesNotExist;
+    private final String errorPageCardIsBlocked;
+    private final String errorPageDatabase;
 
     public CreateTransferCommand() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -53,16 +53,13 @@ public class CreateTransferCommand implements ServletCommand {
         long sourceNumber = Long.parseLong(request.getParameter("chosenCreditCard"));
         long destinationNumber = Long.parseLong(request.getParameter("destinationNumber"));
 
-        CreditCard sourceCreditCard = null;
+        CreditCard sourceCreditCard;
+        CreditCard destinationCreditCard;
         try {
             sourceCreditCard = creditCardService.getCreditCardByNumber(sourceNumber);
-        } catch (DatabaseException e) {
-            return errorPageDatabase;
-        }
-        CreditCard destinationCreditCard = null;
-        try {
             destinationCreditCard = creditCardService.getCreditCardByNumber(destinationNumber);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPageDatabase;
         }
 
@@ -74,7 +71,7 @@ public class CreateTransferCommand implements ServletCommand {
             return errorPageCardIsBlocked;
         }
 
-        Payment payment = null;
+        Payment payment;
         try {
             payment = new PaymentBuilder().setMoney(moneyToPay)
                     .setDescription(userService.
@@ -86,34 +83,38 @@ public class CreateTransferCommand implements ServletCommand {
                     .setPaymentCategory(PaymentCategory.TRANSFER_TO_CARD)
                     .build();
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPageDatabase;
         }
 
         if (paymentService.createPayment(payment)) {
             try {
                 creditCardService.replenishCreditCard(sourceNumber, moneyToPay * -1);
-            } catch (DatabaseException e) {
-                return errorPageDatabase;
-            }
-            try {
                 creditCardService.replenishCreditCard(destinationNumber, moneyToPay);
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPageDatabase;
             }
+
             payment.setPaymentStatus(PaymentStatus.SENT);
             try {
                 paymentService.changeStatus(payment);
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPageDatabase;
             }
+
             HttpSession session = request.getSession();
-            List<CreditCard> creditCards = null;
+            List<CreditCard> creditCards;
+
             try {
                 creditCards = creditCardService
                         .getAllUnblockedCreditCards(((User)session.getAttribute("user")).getId());
             } catch (DatabaseException e) {
+                request.setAttribute("errorCause", e.getMessage());
                 return errorPageDatabase;
             }
+
             session.setAttribute("user_credit_cards", creditCards);
             logger.info("Transaction succeeded");
         }

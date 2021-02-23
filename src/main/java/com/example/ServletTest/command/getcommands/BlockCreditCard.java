@@ -32,21 +32,28 @@ public class BlockCreditCard implements ServletCommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing blocking credit card command");
         long cardId = Long.parseLong(request.getParameter("cardId"));
+
         //TODO: here you need to check if the card belongs to user, if not throw error page
+
         try {
             creditCardService.changeBlockingStatusCreditCardById(cardId, 1); // 1 is to block card
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         HttpSession session = request.getSession();
         long userId = ((User)session.getAttribute("user")).getId();
         List<CreditCard> userCards = null;
+
         try {
             userCards = creditCardService
                     .getAllCreditCardsThatBelongToUserWithDefaultLimit(userId);
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         session.setAttribute("userCreditCardsWithPagination", userCards);
         return mainPage;
     }

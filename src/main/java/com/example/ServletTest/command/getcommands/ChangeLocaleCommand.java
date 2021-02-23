@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ChangeLocaleCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ChangeLocaleCommand.class);
-    private String mainPage;
+    private final String mainPage;
 
     public ChangeLocaleCommand() {
         MappingProperties properties = MappingProperties.getInstance();
-        mainPage = properties.getProperty("mainPage"); // Check this moment
+        mainPage = properties.getProperty("mainPage");
     }
 
     @Override

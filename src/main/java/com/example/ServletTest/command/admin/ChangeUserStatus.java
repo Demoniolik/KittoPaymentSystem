@@ -17,10 +17,10 @@ import java.util.List;
 
 public class ChangeUserStatus implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ChangeUserStatus.class);
-    private UserService userService;
-    private CreditCardService creditCardService;
-    private String adminPage;
-    private String errorPage;
+    private final UserService userService;
+    private final CreditCardService creditCardService;
+    private final String adminPage;
+    private final String errorPage;
 
     public ChangeUserStatus() {
         userService = new UserService(UserDaoImpl.getInstance());
@@ -34,6 +34,7 @@ public class ChangeUserStatus implements ServletCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.info("Executing changing user status command");
+
         String option = request.getParameter("option");
         String userId = request.getParameter("userId");
 
@@ -41,26 +42,28 @@ public class ChangeUserStatus implements ServletCommand {
         try {
             user = userService.getUserById(Long.parseLong(userId));
         } catch (DatabaseException e) {
+            request.setAttribute("errorCause", e.getMessage());
             return errorPage;
         }
+
         if (option.equals("unblock")) {
             user.setBlocked(false);
         } else {
             user.setBlocked(true);
         }
-        userService.updateUserData(user);
-        try {
-            creditCardService.blockAllUserCards(user.getId());
-        } catch (DatabaseException e) {
-            return errorPage;
-        }
+
         HttpSession session = request.getSession();
-        List<User> allUsers = null;
+        List<User> allUsers;
+
         try {
+            userService.updateUserData(user);
+            creditCardService.blockAllUserCards(user.getId());
             allUsers = userService.getAllUsers();
         } catch (DatabaseException e) {
-            e.printStackTrace();
+            request.setAttribute("errorCause", e.getMessage());
+            return errorPage;
         }
+
         session.setAttribute("allUsers", allUsers);
         return adminPage;
     }
