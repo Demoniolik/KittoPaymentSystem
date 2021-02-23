@@ -13,6 +13,11 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This command register user in database
+ * all the data comes via POST method
+ */
+
 public class RegisterCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(RegisterCommand.class);
     private static UserService userService;

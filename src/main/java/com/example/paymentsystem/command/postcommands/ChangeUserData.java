@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * This command changes data about user in the database
+ * it loads all the data for the user
+ * user comes from form with POST method
+ */
+
 public class ChangeUserData implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ChangeUserData.class);
     private final UserService userService;

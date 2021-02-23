@@ -15,6 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * This class changes user status with option that comes from GET request
+ * Basically class block or unblock user
+ * It uses services that handle work with database and changes data right there
+ */
+
 public class ChangeUserStatus implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ChangeUserStatus.class);
     private final UserService userService;

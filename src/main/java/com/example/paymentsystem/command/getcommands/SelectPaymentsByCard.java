@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * This command selects payments by card
+ * data goes from a selector on a main page
+ */
+
 public class SelectPaymentsByCard implements ServletCommand {
     private static final Logger logger = Logger.getLogger(SelectPaymentsByCard.class);
     private final PaymentService paymentService;

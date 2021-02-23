@@ -7,6 +7,11 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class gives card not found error page
+ * in case destination card is not in database
+ */
+
 public class GetCardNotFoundErrorPage implements ServletCommand {
     private static final Logger logger = Logger.getLogger(GetCardNotFoundErrorPage.class);
     private String errorPage;

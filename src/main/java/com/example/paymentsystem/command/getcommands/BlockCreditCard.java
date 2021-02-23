@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * This class handles work with blocking user card
+ */
+
 public class BlockCreditCard implements ServletCommand {
     private static final Logger logger = Logger.getLogger(BlockCreditCard.class);
     private CreditCardService creditCardService;

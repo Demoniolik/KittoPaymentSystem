@@ -16,6 +16,10 @@ import java.util.List;
 
 import static com.example.paymentsystem.command.postcommands.LoginCommand.prepareDataForUser;
 
+/**
+ * This class gives login page to the user
+ */
+
 public class LoginPageCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(LoginPageCommand.class);
     private final CreditCardService creditCardService;

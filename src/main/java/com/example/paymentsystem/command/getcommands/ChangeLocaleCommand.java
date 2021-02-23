@@ -7,6 +7,10 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class works with changing localization on pages
+ */
+
 public class ChangeLocaleCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ChangeLocaleCommand.class);
     private final String mainPage;

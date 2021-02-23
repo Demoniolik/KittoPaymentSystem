@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * This class unlocks user card with request that are send from users
+ */
+
 public class UnblockUserCard implements ServletCommand {
     private static final Logger logger = Logger.getLogger(UnblockUserCard.class);
     private final CreditCardService creditCardService;

@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This command sort cards with given sorting parameters
+ */
+
 public class SortCards implements ServletCommand {
     private static final Logger logger = Logger.getLogger(SortCards.class);
     private final CreditCardService creditCardService;

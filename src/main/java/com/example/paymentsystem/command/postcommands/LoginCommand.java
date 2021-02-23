@@ -22,6 +22,13 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This command checks if user is present in database
+ * and login, password are matching
+ * Also this command call admin page command in case
+ * user role is admin
+ */
+
 public class LoginCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(LoginCommand.class);
     private static UserService userService;

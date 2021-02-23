@@ -12,6 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * This command changes amount of money on card
+ * all the data comes via POST method
+ */
+
 public class ReplenishCreditCardCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ReplenishCreditCardCommand.class);
     private final CreditCardService creditCardService;

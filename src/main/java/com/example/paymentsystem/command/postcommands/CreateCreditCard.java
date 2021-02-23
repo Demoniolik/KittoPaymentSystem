@@ -17,6 +17,11 @@ import javax.servlet.http.HttpSession;
 import java.security.SecureRandom;
 import java.util.List;
 
+/**
+ * This command creates credit card and puts it to database
+ * all the data comes wia POST method
+ */
+
 public class CreateCreditCard implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateCreditCard.class);
     private final CreditCardService creditCardService;

@@ -7,9 +7,14 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class gives error page to the user
+ * in case destination card of a transfer is blocked
+ */
+
 public class GetCardIsBlockedErrorPage implements ServletCommand {
     private static final Logger logger = Logger.getLogger(GetCardIsBlockedErrorPage.class);
-    private String errorPage;
+    private final String errorPage;
 
     public GetCardIsBlockedErrorPage() {
         MappingProperties properties = MappingProperties.getInstance();

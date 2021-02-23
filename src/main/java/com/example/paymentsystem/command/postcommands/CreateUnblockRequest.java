@@ -13,6 +13,12 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This command creates unblock request and puts it
+ * to database
+ * all data comes via POST method
+ */
+
 public class CreateUnblockRequest implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateUnblockRequest.class);
     private final UnblockRequestService unblockRequestService;

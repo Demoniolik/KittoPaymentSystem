@@ -7,6 +7,11 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This command gives registration page to the user
+ * also loads all the needed data
+ */
+
 public class RegisterPageCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(RegisterPageCommand.class);
     private final String registrationPage;

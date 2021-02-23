@@ -15,6 +15,10 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
+/**
+ * This class menages routes to the commands
+ */
+
 public class CommandManager {
     private static final Logger logger = Logger.getLogger(CommandManager.class);
     private HashMap<String, ServletCommand> getCommands;
@@ -63,6 +67,12 @@ public class CommandManager {
 
     }
 
+    /**
+     * This method seek for a get command and returns its command
+     * @param request - name of the command
+     * @return particular command that is found in map
+     */
+
     public ServletCommand getGetCommand(HttpServletRequest request) {
         String command = getMapping(request);
         if (getCommands.get(command) == null) {
@@ -71,6 +81,12 @@ public class CommandManager {
         return getCommands.get(command);
     }
 
+    /**
+     * This method seek for a post command and returns its command
+     * @param request - name of the command
+     * @return particular command that is found in map
+     */
+
     public ServletCommand getPostCommand(HttpServletRequest request) {
         String command = getMapping(request);
         if (postCommands.get(command) == null) {
@@ -78,6 +94,12 @@ public class CommandManager {
         }
         return postCommands.get(command);
     }
+
+    /**
+     * This method gets reed of context path so our commands ony contain its name without uri
+     * @param request - name of the command
+     * @return simplified command string without uri
+     */
 
     public String getMapping(HttpServletRequest request) {
         String mapping = request.getRequestURI().substring(request.getContextPath().length());

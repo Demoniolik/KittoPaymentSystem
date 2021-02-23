@@ -17,6 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * This command show list of payments
+ * page size is 15
+ */
+
 public class ShowMorePayments implements ServletCommand {
     private static final Logger logger = Logger.getLogger(ShowMorePayments.class);
     private final PaymentService paymentService;

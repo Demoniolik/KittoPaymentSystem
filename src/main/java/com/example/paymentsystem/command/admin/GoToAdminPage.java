@@ -15,6 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * This class gives access to the admin page
+ * if verifies user role in case it's not admin
+ */
+
 public class GoToAdminPage implements ServletCommand {
     private static final Logger logger = Logger.getLogger(GoToAdminPage.class);
     private final UserService userService;

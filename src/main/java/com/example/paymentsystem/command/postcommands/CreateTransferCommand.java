@@ -23,6 +23,11 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * This commands sends money between two cards in the system
+ * all the data comes via POST method
+ */
+
 public class CreateTransferCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreateTransferCommand.class);
     private final UserService userService;

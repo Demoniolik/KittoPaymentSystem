@@ -14,6 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * This class works with card pagination
+ * It shows specified page of list of cards
+ * each page has 4 cards
+ */
+
 public class CardPagination implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CardPagination.class);
     private final CreditCardService creditCardService;

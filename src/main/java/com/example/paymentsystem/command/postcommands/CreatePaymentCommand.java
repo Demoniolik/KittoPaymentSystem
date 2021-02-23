@@ -24,6 +24,11 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This command creates specified payment
+ * all the data comes via POST method
+ */
+
 public class CreatePaymentCommand implements ServletCommand {
     private static final Logger logger = Logger.getLogger(CreatePaymentCommand.class);
     private static UserService userService;

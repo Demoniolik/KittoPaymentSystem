@@ -16,6 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * This class gives access to the personal cabinet page
+ */
+
 public class GoToPersonalCabinet implements ServletCommand {
     private static final Logger logger = Logger.getLogger(GoToPersonalCabinet.class);
     private final CreditCardService creditCardService;

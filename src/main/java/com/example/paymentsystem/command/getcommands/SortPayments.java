@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This command sorts payments using given sorting parameters
+ */
+
 public class SortPayments implements ServletCommand {
     private static final Logger logger = Logger.getLogger(SortPayments.class);
     private final PaymentService paymentService;
