@@ -5,7 +5,7 @@
          version="4.0">
     <servlet>
         <servlet-name>Servlet</servlet-name>
-        <servlet-class>com.example.ServletTest.servlet.MainServlet</servlet-class>
+        <servlet-class>com.example.paymentsystem.servlet.MainServlet</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size><!--10 MB file size-->
         </multipart-config>
@@ -22,7 +22,7 @@
     </servlet-mapping>
     <filter>
         <filter-name>EncodingFilter</filter-name>
-        <filter-class>com.example.ServletTest.filter.EncodingFilter</filter-class>
+        <filter-class>com.example.paymentsystem.filter.EncodingFilter</filter-class>
     </filter>
 
     <filter-mapping>
@@ -32,7 +32,7 @@
 
     <filter>
         <filter-name>AccessFilter</filter-name>
-        <filter-class>com.example.ServletTest.filter.AccessFilter</filter-class>
+        <filter-class>com.example.paymentsystem.filter.AccessFilter</filter-class>
     </filter>
 
     <filter-mapping>
